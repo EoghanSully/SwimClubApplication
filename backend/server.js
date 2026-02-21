@@ -2,6 +2,8 @@ import express from "express" //Express framework for building the server
 import cors from "cors" //allows for frontend -> backend requests across different ports/origins
 import dotenv from "dotenv" //to read variables from .env file 
 import pool from "./config/db.js" //import connection pool    
+import errorHandler from "./middleware/error.js"; //importing error handling middleware 
+import userRoutes from "./features/users/route.js"; //importing user routes
 
 dotenv.config();
 
@@ -13,13 +15,10 @@ app.use(cors());
 app.use(express.json()); //parses Json requests
 
 //Routes
-//Using Thunder Client to test routes; based page display
-app.get('/', (req, res) => {
-  res.send('Welcome to the Swim Club!');
-}   );  
+app.use("/api", userRoutes);
 
 //Error handling middleware
-
+app.use(errorHandler);
 
 //Testing pool conncetion and retrieval of user data (with ThunderClient)
 app.get('/test-db', async (req, res) => {
