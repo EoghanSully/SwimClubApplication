@@ -1,0 +1,19 @@
+#Ignores external packages/libraries installed with npm install
+node_modules/
+#Ignores node_modules folders in all subdirectories (e.g., backend/node_modules, frontend/node_modules) 
+**/node_modules/
+
+# Database variables (environment variables) - Security
+.env
+**/.env
+
+# Logs - Doesn't currentlt exist but may be used in future
+logs
+*.log
+
+
+
+# Build outputs - may be needed in future if we decide to build the frontend and serve it with the backend, but currently we are running them separately during development 
+dist/
+build/
+
