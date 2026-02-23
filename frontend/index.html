@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Club App</title>
+</head>
+<body>
+    <h1>Club App - Teams Test</h1>
+    
+    <script type="module">
+        import { loadUsers, getUsersForDisplay } from './src/viewmodels/teamsVM.js';
+        
+        // Test the functions
+        console.log('Testing teamsVM.js...');
+        
+        // Load users and then display them
+        await loadUsers();
+        console.log('Users after loading:', getUsersForDisplay());
+    </script>
+</body>
+</html>

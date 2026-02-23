@@ -5,20 +5,20 @@ import pool from "./config/db.js" //import connection pool
 import errorHandler from "./middleware/error.js"; //importing error handling middleware 
 import userRoutes from "./features/users/route.js"; //importing user routes
 
-dotenv.config();
+dotenv.config(); //loads environment variables from .env file into process.env  
 
-const app = express();
-const port = process.env.SERVER_PORT || 5000;  
+const app = express(); //creates an instance of the Express application 
+const port = process.env.SERVER_PORT || 5000;  //sets port from .env file or defaults to 5000 if not specified  
 
 //Middleware
 app.use(cors());
 app.use(express.json()); //parses Json requests
 
 //Routes
-app.use("/api", userRoutes);
+app.use("/api", userRoutes); //accesses routes in the userRoutes file with the prefix /api (e.g., /api/users)
 
 //Error handling middleware
-app.use(errorHandler);
+app.use(errorHandler); //handles errors thrown in routes and sends appropriate responses  
 
 //Testing pool conncetion and retrieval of user data (with ThunderClient)
 app.get('/test-db', async (req, res) => {
@@ -34,5 +34,6 @@ app.get('/test-db', async (req, res) => {
 
 //Checking Server Running in terminal
 app.listen(port, () => {
-  console.log(`Server is running on http://localhost:${port}`);
+  console.log(`Server is running on http://localhost:${port}`); 
+  
 });
