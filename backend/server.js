@@ -2,24 +2,25 @@ import express from "express" //Express framework for building the server
 import cors from "cors" //allows for frontend -> backend requests across different ports/origins
 import dotenv from "dotenv" //to read variables from .env file 
 import pool from "./config/db.js" //import connection pool    
+import errorHandler from "./middleware/error.js"; //importing error handling middleware 
+import userRoutes from "./features/users/route.js"; //importing user routes
+import eventRoutes from "./features/events/routes.js"; //importing event routes
+import announcementRoutes from "./features/announcements/routes.js"; //importing announcement routes
+dotenv.config(); //loads environment variables from .env file into process.env  
 
-dotenv.config();
-
-const app = express();
-const port = process.env.SERVER_PORT || 5000;  
+const app = express(); //creates an instance of the Express application 
+const port = process.env.SERVER_PORT || 5000;  //sets port from .env file or defaults to 5000 if not specified  
 
 //Middleware
 app.use(cors());
 app.use(express.json()); //parses Json requests
 
 //Routes
-//Using Thunder Client to test routes; based page display
-app.get('/', (req, res) => {
-  res.send('Welcome to the Swim Club!');
-}   );  
-
+app.use("/api", userRoutes); //accesses routes in the userRoutes file with the prefix /api (e.g., /api/users)
+app.use("/api", eventRoutes); //accesses routes in the eventRoutes file with the prefix /api (e.g., /api/events)
+app.use("/api", announcementRoutes); //accesses routes in the announcementRoutes file with the prefix /api (e.g., /api/announcements)
 //Error handling middleware
-
+app.use(errorHandler); //handles errors thrown in routes and sends appropriate responses  
 
 //Testing pool conncetion and retrieval of user data (with ThunderClient)
 app.get('/test-db', async (req, res) => {
@@ -35,5 +36,6 @@ app.get('/test-db', async (req, res) => {
 
 //Checking Server Running in terminal
 app.listen(port, () => {
-  console.log(`Server is running on http://localhost:${port}`);
+  console.log(`Server is running on http://localhost:${port}`); 
+  
 });
