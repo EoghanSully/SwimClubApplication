@@ -23,3 +23,4 @@ export const deleteUser = async (id) => {
     const result = await pool.query("DELETE FROM users WHERE user_id=$1 RETURNING *", [id]);
     return result.rows[0];
 }
+

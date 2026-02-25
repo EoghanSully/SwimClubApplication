@@ -1,9 +1,7 @@
 //standardized reponse function
 import * as UserModel from './model.js';
+import handleResponse from '../../middleware/responseHandler.js';
 
-const handleResponse = (res, status,message, data = null) => { 
-    res.status(status).json({status, message, data }); //sends JSON response with status, message, and optional data
-};
 
 export const getAllUsers = async (req, res,next) => {  
     try{

@@ -4,7 +4,8 @@ import dotenv from "dotenv" //to read variables from .env file
 import pool from "./config/db.js" //import connection pool    
 import errorHandler from "./middleware/error.js"; //importing error handling middleware 
 import userRoutes from "./features/users/route.js"; //importing user routes
-
+import eventRoutes from "./features/events/routes.js"; //importing event routes
+import announcementRoutes from "./features/announcements/routes.js"; //importing announcement routes
 dotenv.config(); //loads environment variables from .env file into process.env  
 
 const app = express(); //creates an instance of the Express application 
@@ -16,7 +17,8 @@ app.use(express.json()); //parses Json requests
 
 //Routes
 app.use("/api", userRoutes); //accesses routes in the userRoutes file with the prefix /api (e.g., /api/users)
-
+app.use("/api", eventRoutes); //accesses routes in the eventRoutes file with the prefix /api (e.g., /api/events)
+app.use("/api", announcementRoutes); //accesses routes in the announcementRoutes file with the prefix /api (e.g., /api/announcements)
 //Error handling middleware
 app.use(errorHandler); //handles errors thrown in routes and sends appropriate responses  
 
