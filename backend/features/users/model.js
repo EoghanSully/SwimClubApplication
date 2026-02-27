@@ -17,10 +17,18 @@ export const getUserById = async (userId) => {
 
 }
 
-
-
-export const deleteUser = async (id) => {
-    const result = await pool.query("DELETE FROM users WHERE user_id=$1 RETURNING *", [id]);
+export const createUser = async (user) => {
+    try{
+        const { first_name, last_name, email, phone, password_hash, user_role } = user;
+    const result = await pool.query(
+        "INSERT INTO users (first_name, last_name, email, phone, password_hash, user_role) VALUES ($1, $2, $3, $4, $5, $6) RETURNING *",
+        [first_name, last_name, email, phone, password_hash, user_role]);
     return result.rows[0];
-}
+
+    } catch (err) {
+        console.error("Error creating user:", err);
+        throw err;
+    }   
+      
+};
 

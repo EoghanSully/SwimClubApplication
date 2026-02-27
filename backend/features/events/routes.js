@@ -1,11 +1,15 @@
 import express from 'express';
-import {getEventsByTeamId,createEvent,getAllEvents,deleteEvent} from './controller.js';
-
+import * as eventsController from './controller.js';
 const router = express.Router();    
 
-router.get("/events/:teamId", getEventsByTeamId);
-router.get("/events/admin", getAllEvents); 
-router.post("/event/create", createEvent);
-router.delete("/event/delete/:id", deleteEvent); 
+
+router.get("/events/admin", eventsController.getAllEvents); 
+router.get("/events/:teamId", eventsController.getMemberEvents);
+router.post("/event/create", eventsController.createEvent);
+router.put("/event/update", eventsController.updateEventInfo);
+router.delete("/event/delete/:id", eventsController.deleteEvent); 
+
+router.get("/events", eventsController.getEvents); 
+//to be used later with Token to check role and team ID
 
 export default router

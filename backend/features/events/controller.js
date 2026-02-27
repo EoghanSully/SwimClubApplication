@@ -36,6 +36,17 @@ export const createEvent = async (req,res,next) => {
     }
 };
 
+export const updateEventInfo = async (req,res,next) => {
+    try{
+        const event = await EventModel.UpdateEvent(req.body); //calls the UpdateEvent function from the model to update the event in the database with the data from the request body
+        if(!event) return handleResponse(res, 400, "Failed to update event"); //sends a 400 response if the event update failed
+        handleResponse(res, 200, "Event updated successfully", event); //sends a successful response with the updated event
+    }
+    catch (err) {
+        next(err); //passes any errors to the error handling middleware
+    }
+}
+
 export const deleteEvent = async (req, res,next) => {  
     try{
         const deletedEvent = await EventModel.deleteEvent(req.params.id); //calls the deleteEvent function from the model to delete the event from the database  
@@ -47,3 +58,15 @@ export const deleteEvent = async (req, res,next) => {
         next(err); //passes any errors to the error handling middleware
     }
 }; 
+
+export const getEvents = async (req,res,next) => {
+    try{
+        const events = await EventModel.getEvents(req.headers.userRole, req.headers.teamId); //calls the getEvents function from the model to retrieve events based on user role and team ID from the request headers
+        if (!events) return handleResponse(res, 404, "Events not found"); //sends a 404 response if the events are not found  
+        
+        handleResponse(res, 200, "Events retrieved successfully", events); //sends a successful response with the retrieved events 
+    } 
+    catch (err) {
+        next(err); //passes any errors to the error handling middleware
+    }
+};

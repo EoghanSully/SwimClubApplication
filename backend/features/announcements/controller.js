@@ -50,6 +50,20 @@ export const createAnnouncement = async (req,res,next) => {
     }
 };
 
+export const editAnnouncementDetails = async (req,res,next) => {
+    try{
+        const { id } = req.params; //extracts the announcement ID from the request parameters
+        const updatedAnnouncement = req.body; //extracts the updated announcement data from the request body
+        const editedAnnouncement = await AnnouncementModel.editAnnouncement(id, updatedAnnouncement); //calls the editAnnouncement function from the model to update the specified announcement in the database 
+        if(!editedAnnouncement) return handleResponse(res, 404, "Announcement not found"); //sends a 404 response if the announcement to be edited is not found
+        handleResponse(res, 200, "Announcement edited successfully", editedAnnouncement); //sends a successful response with the edited announcement details
+    }
+    catch(err){
+        console.log("Error in controller while editing announcement", err);
+        next(err);
+    }
+};
+
 export const deleteAnnouncement = async (req, res, next) => {
     try {
         const { id } = req.params; //extracts the announcement ID from the request parameters

@@ -48,6 +48,19 @@ export const createAnnouncement = async (announcement) => {
         
 } 
 
+export const editAnnouncement = async (id, announcement) => {
+    try{
+        const {category,title, description,audience,admin_id,team_id } = announcement;
+        const result = await pool.query(`UPDATE announcements SET category=$1, title=$2, description=$3, audience=$4, admin_id=$5, team_id=$6 WHERE announcement_id=$7 RETURNING *`,
+        [category, title, description, audience, admin_id, team_id, id]);
+        return result.rows[0];
+    } 
+    catch (err) {
+        console.error("Error editing announcement:", err);
+        throw err;
+    }
+};
+
 export const deleteAnnouncement = async (id) => {
     const result = await pool.query("DELETE FROM announcements WHERE announcement_id=$1 RETURNING *", [id]);
     return result.rows[0];

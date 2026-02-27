@@ -25,6 +25,16 @@ export const getUserbyId = async (req, res,next) => {
     }
 };    
 
+export const createUser = async (req, res,next) => {  
+    try{
+        const newUser = await UserModel.createUser(req.body); //calls the createUser function from the model to create a new user in the database   
+        handleResponse(res, 201, "User created successfully", newUser); //sends a successful response with the created user 
+    }
+    catch (err) {
+        next(err); //passes any errors to the error handling middleware
+    }
+};
+
 
 
 export const deleteUser = async (req, res,next) => {  
