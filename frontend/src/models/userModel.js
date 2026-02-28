@@ -13,3 +13,12 @@ export async function getAllUsers() {
   }
 }
 
+export async function getUser(user_id) {
+  try {
+    const response = await apiGet(`/user/${user_id}`); // Load users and store in allUsers variable
+    console.log("User loaded:", response.data); // Logs loaded user for debugging
+    return response.data; // Return the user data from the data property
+  } catch (error) {
+    console.error('Error loading users:', error.stack); // Logs error if loading fails
+  }
+}

@@ -3,7 +3,7 @@ import * as eventsController from './controller.js';
 const router = express.Router();    
 
 
-router.get("/events/admin", eventsController.getAllEvents); 
+router.get("/events", eventsController.getAllEvents); 
 router.get("/events/:teamId", eventsController.getMemberEvents);
 router.post("/event/create", eventsController.createEvent);
 router.put("/event/update", eventsController.updateEventInfo);

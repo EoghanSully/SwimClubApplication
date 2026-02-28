@@ -9,14 +9,14 @@
     <h1>Club App - Teams Test</h1>
     
     <script type="module">
-        import { loadUsers, getUsersForDisplay } from './src/viewmodels/teamsVM.js';
+        import * as profileVM from './src/viewmodels/profileVM.js';
         
         // Test the functions
-        console.log('Testing teamsVM.js...');
+        console.log('Testing profileVM.js...');
         
-        // Load users and then display them
-        await loadUsers();
-        console.log('Users after loading:', getUsersForDisplay());
+        // Load user profile and then display it
+        const userProfile = await profileVM.loadUserProfile(1); // Replace 1 with the actual user ID
+        console.log('User profile after loading:', profileVM.getUserProfileForDisplay(userProfile));
     </script>
 </body>
  

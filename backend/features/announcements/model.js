@@ -38,7 +38,7 @@ export const createAnnouncement = async (announcement) => {
     try{ 
         const {category,title, description,audience,admin_id,team_id } = announcement;
          const result = await pool.query(`INSERT INTO announcements (category, title, description, audience, admin_id, team_id) VALUES ($1, $2, $3, $4, $5, $6) RETURNING *`,
-        [category, title, description , audience, admin_iD, team_id]);
+        [category, title, description , audience, admin_id, team_id]);
     return result.rows;
     } 
     catch (err) {
