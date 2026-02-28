@@ -1,4 +1,4 @@
-const API_BASE_URL = 'http://127.0.0.1:8080/api';
+const API_BASE_URL = 'http://localhost:8080/api'; // Base URL for backend API, adjust if backend is hosted elsewhere
 
 export async function apiGet(endpoint) {
   const response = await fetch(`${API_BASE_URL}${endpoint}`, { //
@@ -38,11 +38,10 @@ export async function apiPost(endpoint, data) {
   return response.json();
 }
 
-
+//check if this is always better to call apiPut instead of apiPatch for updating events, since we are sending the whole event object with all fields in the request body, not just specific fields that need to be updated.
 export async function apiPatch(endpoint, data) { //updating specific fields of a resource
   const response = await fetch(`${API_BASE_URL}${endpoint}`, {
     method: 'PATCH',
-    credentials: 'include',
     headers: {
       'Content-Type': 'application/json',
       'Accept': 'application/json'
@@ -62,7 +61,6 @@ export async function apiPatch(endpoint, data) { //updating specific fields of a
 export async function apiPut(endpoint, data) { 
   const response = await fetch(`${API_BASE_URL}${endpoint}`, {
     method: 'PUT',
-    credentials: 'include',
     headers: {
       'Content-Type': 'application/json',
       'Accept': 'application/json'
@@ -79,10 +77,9 @@ export async function apiPut(endpoint, data) {
 }
 
 
-export async function apiDelete(endpoint) {
-  const response = await fetch(`${API_BASE_URL}${endpoint}`, {
+export async function apiDelete(endpoint, id) { //data parameter is optional, can be used to send additional info if needed (e.g., for soft deletes)
+  const response = await fetch(`${API_BASE_URL}${endpoint}/${id ? id : ''}`, {
     method: 'DELETE',
-    credentials: 'include',
     headers: {
       'Content-Type': 'application/json',
       'Accept': 'application/json'
