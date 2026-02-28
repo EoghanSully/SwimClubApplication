@@ -15,7 +15,10 @@ export const getAllUsers = async (req, res,next) => {
 
 export const getUserbyId = async (req, res,next) => {  
     try{
-        const user = await UserModel.getUserById(req.params.id); 
+        const userId = Number(req.params.id);
+        if (!Number.isInteger(userId)) return handleResponse(res, 400, "Invalid user id");
+
+        const user = await UserModel.getUserById(userId); 
         if (!user) return handleResponse(res, 404, "User not found"); //sends a 404 response if the user is not found  
         
         handleResponse(res, 200, "User retrieved successfully", user); //sends a successful response with the retrieved user 
@@ -39,7 +42,10 @@ export const createUser = async (req, res,next) => {
 
 export const deleteUser = async (req, res,next) => {  
     try{
-        const deletedUser = await UserModel.deleteUser(req.params.id); //calls the deleteUser function from the model to delete the user from the database  
+        const userId = Number(req.params.id);
+        if (!Number.isInteger(userId)) return handleResponse(res, 400, "Invalid user id");
+
+        const deletedUser = await UserModel.deleteUser(userId); //calls the deleteUser function from the model to delete the user from the database  
         if (!deletedUser) return handleResponse(res, 404, "User not found"); //sends a 404 response if the user is not found  
         
         handleResponse(res, 200, "User deleted successfully", deletedUser); //sends a successful response with the deleted user 
