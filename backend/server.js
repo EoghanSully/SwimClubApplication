@@ -9,6 +9,7 @@ import announcementRoutes from "./features/announcements/routes.js"; //importing
 import sessionPlanRoutes from "./features/sessionPlans/routes.js"; //importing session plan routes
 import teamRoutes from "./features/teams/routes.js"; //importing team routes
 import authRoutes from "./features/auth/routes.js"; //importing auth routes
+import cookieParser from "cookie-parser"; //middleware to parse cookies from incoming requests
 dotenv.config(); //loads environment variables from .env file into process.env  
 
 const app = express(); //creates an instance of the Express application 
@@ -17,6 +18,7 @@ const port = process.env.SERVER_PORT || 5000;  //sets port from .env file or def
 //Middleware
 app.use(cors());
 app.use(express.json()); //parses Json requests
+app.use(cookieParser()); //parses cookies from incoming requests, making them available on req.cookies
 
 //Routes
 app.use("/api", authRoutes); //accesses routes in the authRoutes file with the prefix /api/auth (e.g., /api/auth/login)
