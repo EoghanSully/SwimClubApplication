@@ -1,0 +1,39 @@
+    {
+      "email": "j.milwaki1@club.ie",
+      "password_hash": "Bangerang",
+
+      "email": "chris.brown16@club.ie",
+    "phone": "+353 1 215",
+    "password": "Thoughts1",
+  
+          "first_name": "Grace",
+      "last_name": "Dameson",
+      "email": "grace.wilson2@club.ie",
+      "phone": "+353 1 327",
+      "password" : "Midnight Thoughts",
+      "user_role": "coach",  
+
+      "event_id" : 9,
+      "category": "Competition",
+      "title": "Alpha Freestyle Meet",
+      "venue": "Pool B",
+      "description": "Regional competition for Alpha team.",
+      "duration": "2 hour 30 minutes",
+      "event_date": "2026-02-24T14:00:00.000Z",
+      "status": "scheduled",
+      "audience": "team",
+      "team_id": 1,
+    
+
+    
+      "plan_id": 6,
+      "title": "Session Plan 1 - Freestyle Drills",
+      "description": "Full session description for Session Plan 1 - Freestyle Drills.",
+      "team_id": null,
+      "warm_up": "200m easy swim, 4x50 drills",
+      "main_set": "8x100 freestyle @1:30",
+      "cool_down": "100m choice easy",
+      "coach_note": "Focus on technique",
+      "created_by": 8,
+      "created_at": "2026-02-16T18:02:09.541Z"
+    }

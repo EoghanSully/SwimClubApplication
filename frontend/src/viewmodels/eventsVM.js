@@ -1,9 +1,5 @@
 import * as eventsModel from '../models/eventsModel.js';
-
-let eventList = [];
-
-
-
+let eventList = []; // Local array to store events for display and manipulation in the view model
 
 export async function loadEvents() {
   try {
@@ -59,8 +55,4 @@ export async function deleteEvent(eventId) {
         console.error('Error deleting event:', error.stack);
         throw error;
     }       
-}
-
-export function getEventsForDisplay() {
-    return eventList; // Returns the current list of events for display in the UI
 }
