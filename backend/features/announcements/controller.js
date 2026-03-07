@@ -3,8 +3,9 @@ import errorHandler from '../../middleware/error.js';
 import * as AnnouncementModel from './model.js'; //event model for database interactions
 
 export const getAllAnnouncements = async (req, res,next) => {  
-    try{
-        const announcements = await AnnouncementModel.getAllAnnouncements(); //calls the getAllAnnouncements function from the model to retrieve all announcements from the database
+    try{//
+        const { user_role, team_id } = req.user;
+        const announcements = await AnnouncementModel.getAnnouncements(user_role,team_id); //calls the getAllAnnouncements function from the model to retrieve all announcements from the database
         handleResponse(res, 200, "Announcements retrieved successfully", announcements); //sends a successful response with the retrieved announcements 
     } 
     catch (err) {
@@ -12,31 +13,12 @@ export const getAllAnnouncements = async (req, res,next) => {
     }
 };  
 
-export const getMemberAnnouncements = async (req, res,next) => {  
-    try{
-        const { teamId } = req.params; //extracts the team ID from the request parameters
-        const announcements = await AnnouncementModel.getMemberAnnouncements(teamId); //calls the getMemberAnnouncements function from the model to retrieve all member announcements from the database
-        handleResponse(res, 200, "Member announcements retrieved successfully", announcements); //sends a successful response with the retrieved member announcements
-    } 
-    catch (err) {
-        next(err); //passes any errors to the error handling middleware
-    }
-};  
-
-export const getCoachAnnouncements = async (req,res,next) => {
-    try{
-        const teamID = req.params.teamID;
-        const announcements = await AnnouncementModel.getCoachAnnouncements(teamID); //calls the getCoachAnnouncements function from the model to retrieve all coach announcements from the database
-        handleResponse(res,200,"Coach announcements retrieved successfully", announcements); //sends a successful response with the retrieved coach announcements
-    }
-    catch(err){
-        console.error("Error retrieving coach announcements:", err); //logs error to console for debugging
-        next(err); //passes any errors to the error handling middleware
-    }
-}
 
 
 export const createAnnouncement = async (req,res,next) => {
+    if(req.user.user_role !== 'admin') {
+        return handleResponse(res, 401, "Unauthorized: Only admins can create announcements");
+    }
     try{
         const newAnnouncement = req.body; //extracts the new announcement data from the request body
         const createdAnnouncement = await AnnouncementModel.createAnnouncement(newAnnouncement); //calls the createAnnouncement function from the model to create a new announcement in the database
@@ -51,10 +33,13 @@ export const createAnnouncement = async (req,res,next) => {
 };
 
 export const updateAnnouncementDetails = async (req,res,next) => {
+    if(req.user.user_role !== 'admin') {
+        return handleResponse(res, 401, "Unauthorized: Only admins can update announcements");
+    }
     try{
-        const { id } = req.body.id; //extracts the announcement ID from the request parameters
+        console.log("Announcement req body:", req.body);
         const updatedAnnouncement = req.body; //extracts the updated announcement data from the request body
-        const editedAnnouncement = await AnnouncementModel.editAnnouncement(id, updatedAnnouncement); //calls the editAnnouncement function from the model to update the specified announcement in the database 
+        const editedAnnouncement = await AnnouncementModel.editAnnouncement(updatedAnnouncement); //calls the editAnnouncement function from the model to update the specified announcement in the database 
         if(!editedAnnouncement) return handleResponse(res, 404, "Announcement not found"); //sends a 404 response if the announcement to be edited is not found
         handleResponse(res, 200, "Announcement edited successfully", editedAnnouncement); //sends a successful response with the edited announcement details
     }
@@ -65,9 +50,12 @@ export const updateAnnouncementDetails = async (req,res,next) => {
 };
 
 export const deleteAnnouncement = async (req, res, next) => {
+    if(req.user.user_role !== 'admin') {
+        return handleResponse(res, 401, "Unauthorized: Only admins can delete announcements");
+    }
     try {
-        const { id } = req.params; //extracts the announcement ID from the request parameters
-        const deletedAnnouncement = await AnnouncementModel.deleteAnnouncement(id); //calls the deleteAnnouncement function from the model to delete the specified announcement from the database
+        const { announcement_id } = req.params; //extracts the announcement ID from the request parameters
+        const deletedAnnouncement = await AnnouncementModel.deleteAnnouncement(announcement_id); //calls the deleteAnnouncement function from the model to delete the specified announcement from the database
         if (deletedAnnouncement) {
             handleResponse(res, 200, "Announcement deleted successfully", deletedAnnouncement); //sends a successful response with the deleted announcement details
         } else {

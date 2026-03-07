@@ -1,7 +1,7 @@
 import pool from "../../config/db.js"; //importing database connection pool 
 import argon2 from "argon2";
 
-export const getAllUsers = async () => {
+export const getAllUsers = async () => { //used purely for test purposes for now
     try{
         const result = await pool.query('SELECT * FROM users'); //query to retrieve all users from database   
         return result.rows;
@@ -11,9 +11,8 @@ export const getAllUsers = async () => {
     }
 }
 
-
-export const getUserById = async (userId) => {
-    const result = await pool.query('SELECT * FROM users WHERE user_id = $1', [userId]); //query to retrieve user by ID from database
+export const getUserById = async (user_id) => { //use for diaplying user profile
+    const result = await pool.query('SELECT * FROM users WHERE user_id = $1', [user_id]); //query to retrieve user by ID from database
     return result.rows[0]; //returning the first (and only) user found with the specified ID    
 
 }
@@ -30,7 +29,16 @@ export const createUser = async (user) => {
     } catch (err) {
         console.error("Error creating user:", err);
         throw err;
-    }   
-      
+    }         
 };
+
+export const deleteUser = async (user_id) => {
+    try {
+        const result = await pool.query('DELETE FROM users WHERE user_id = $1 RETURNING *', [user_id]); //query to delete user by ID from database
+        return result.rows[0]; //returning the deleted user
+    } catch (err) { 
+        console.error("Error deleting user:", err);
+        throw err;
+    }   
+}
 

@@ -1,9 +1,12 @@
 import handleResponse from '../../middleware/responseHandler.js';
 import * as EventModel from './model.js'; //event model for database interactions
 
-export const getAllEvents = async (req, res,next) => {  
+
+export const getEvents = async (req, res,next) => {  
+    const user_role = req.user.user_role; //retrieving user role from the authenticated request
+    const team_id = req.user.team_id; //retrieving team ID from the authenticated request
     try{
-        const events = await EventModel.getAllEvents(); //calls the getAllEvents function from the model to retrieve all events from the database
+        const events = await EventModel.getEvents(user_role, team_id); //calls the getEvents function from the model to retrieve all events from the database based on user role and team ID
         handleResponse(res, 200, "Events retrieved successfully", events); //sends a successful response with the retrieved events 
     } 
     catch (err) {
@@ -11,20 +14,24 @@ export const getAllEvents = async (req, res,next) => {
     }
 };  
 
-//should we do it by user ID? *****
-export const getMemberEvents = async (req, res,next) => {  
+export const getPreviousEvents = async (req, res, next) => {
+    if (req.user.user_role !== 'admin'){
+        return handleResponse(res, 401, "Unauthorized"); //sends a 401 response if the user is not authenticated
+    }
     try{
-        const events = await EventModel.getMemberEvents(req.params.teamId); 
-        if (!events) return handleResponse(res, 404, "Events not found"); //sends a 404 response if the events are not found  
-        
-        handleResponse(res, 200, "Events retrieved successfully", events); //sends a successful response with the retrieved events 
+        const events = await EventModel.getPastEvents(); //calls the getPastEvents function from the model to retrieve past events from the database
+        handleResponse(res, 200, "Past events retrieved successfully", events); //sends a successful response with the retrieved past events
     } 
     catch (err) {
         next(err); //passes any errors to the error handling middleware
     }
-};  
+};
 
 export const createEvent = async (req,res,next) => {
+    if (req.user.user_role !== 'admin'){
+        return handleResponse(res, 401, "Unauthorized"); //sends a 401 response if the user is not authenticated
+    }
+
     try{
         const event = await EventModel.createEvent(req.body); //calls the createEvent function from the model to create a new event in the database with the data from the request body
         if(!event) return handleResponse(res, 400, "Failed to create event"); //sends a 400 response if the event creation failed
@@ -37,6 +44,9 @@ export const createEvent = async (req,res,next) => {
 };
 
 export const updateEventInfo = async (req,res,next) => {
+    if (req.user.user_role !== 'admin'){
+        return handleResponse(res, 401, "Unauthorized"); //sends a 401 response if the user is not authenticated
+    }
     try{
         const event = await EventModel.UpdateEvent(req.body); //calls the UpdateEvent function from the model to update the event in the database with the data from the request body
         if(!event) return handleResponse(res, 400, "Failed to update event"); //sends a 400 response if the event update failed
@@ -48,8 +58,13 @@ export const updateEventInfo = async (req,res,next) => {
 }
 
 export const deleteEvent = async (req, res,next) => {  
+    if (req.user.user_role !== 'admin'){
+        return handleResponse(res, 401, "Unauthorized"); //sends a 401 response if the user is not authenticated
+    }
+    const event_id = req.params.id; //retrieving event ID from the request parameters
+
     try{
-        const deletedEvent = await EventModel.deleteEvent(req.params.id); //calls the deleteEvent function from the model to delete the event from the database  
+        const deletedEvent = await EventModel.deleteEvent(event_id); //calls the deleteEvent function from the model to delete the event from the database  
         if (!deletedEvent) return handleResponse(res, 404, "Event not found"); //sends a 404 response if the event is not found  
         
         handleResponse(res, 200, "Event deleted successfully", deletedEvent); //sends a successful response with the deleted event 
@@ -59,14 +74,3 @@ export const deleteEvent = async (req, res,next) => {
     }
 }; 
 
-export const getEvents = async (req,res,next) => {
-    try{
-        const events = await EventModel.getEvents(req.headers.userRole, req.headers.teamId); //calls the getEvents function from the model to retrieve events based on user role and team ID from the request headers
-        if (!events) return handleResponse(res, 404, "Events not found"); //sends a 404 response if the events are not found  
-        
-        handleResponse(res, 200, "Events retrieved successfully", events); //sends a successful response with the retrieved events 
-    } 
-    catch (err) {
-        next(err); //passes any errors to the error handling middleware
-    }
-};

@@ -1,6 +1,6 @@
 import { apiDelete, apiGet, apiPost, apiPut } from '../utils/api.js';
 
-let allEvents = []; //
+let allEvents = []; //BEST CHOICE?
 
 export async function getAllEvents() {
   try {

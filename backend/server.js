@@ -12,6 +12,9 @@ import authRoutes from "./features/auth/routes.js"; //importing auth routes
 import cookieParser from "cookie-parser"; //middleware to parse cookies from incoming requests
 dotenv.config(); //loads environment variables from .env file into process.env  
 
+//ASK ABOUT SINGLE FILE FOR ALL IMPORTS
+
+
 const app = express(); //creates an instance of the Express application 
 const port = process.env.SERVER_PORT || 5000;  //sets port from .env file or defaults to 5000 if not specified  
 

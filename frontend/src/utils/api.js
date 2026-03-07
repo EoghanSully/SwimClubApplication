@@ -4,8 +4,8 @@ export async function apiGet(endpoint) {
   const response = await fetch(`${API_BASE_URL}${endpoint}`, { //
     method: 'GET',
             //Sends JWT cookie automatically
+    credentials: 'include',        
     headers: {
-      'Content-Type': 'application/json', //Tells server to expect JSON in request body (not needed for GET but included for consistency)
       'Accept': 'application/json' //Ensures server returns JSON responses
     }
   });
@@ -38,10 +38,12 @@ export async function apiPost(endpoint, data) {
   return response.json();
 }
 
+//QUESTION
 //check if this is always better to call apiPut instead of apiPatch for updating events, since we are sending the whole event object with all fields in the request body, not just specific fields that need to be updated.
 export async function apiPatch(endpoint, data) { //updating specific fields of a resource
   const response = await fetch(`${API_BASE_URL}${endpoint}`, {
     method: 'PATCH',
+    credentials: 'include',           //Sends JWT cookie automatically
     headers: {
       'Content-Type': 'application/json',
       'Accept': 'application/json'
@@ -61,6 +63,7 @@ export async function apiPatch(endpoint, data) { //updating specific fields of a
 export async function apiPut(endpoint, data) { 
   const response = await fetch(`${API_BASE_URL}${endpoint}`, {
     method: 'PUT',
+    credentials: 'include',           //Sends JWT cookie automatically
     headers: {
       'Content-Type': 'application/json',
       'Accept': 'application/json'
@@ -80,6 +83,7 @@ export async function apiPut(endpoint, data) {
 export async function apiDelete(endpoint, id) { //data parameter is optional, can be used to send additional info if needed (e.g., for soft deletes)
   const response = await fetch(`${API_BASE_URL}${endpoint}/${id ? id : ''}`, {
     method: 'DELETE',
+    credentials: 'include',           //Sends JWT cookie automatically
     headers: {
       'Content-Type': 'application/json',
       'Accept': 'application/json'
