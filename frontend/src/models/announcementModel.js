@@ -1,6 +1,6 @@
 import { apiDelete, apiGet, apiPost, apiPut } from '../utils/api.js';
 
-
+//
 export async function getAllAnnouncements() {
   try {
     const response = await apiGet('/announcements');  // Calls backend /api/announcements and returns response.json
@@ -12,9 +12,10 @@ export async function getAllAnnouncements() {
   }
 }
 
+//
 export async function createNewAnnouncement(announcementData) {
     try {
-        const response = await apiPost('/announcement/create', announcementData); // Calls backend /api/announcement/create with announcement data and returns response.json
+        const response = await apiPost('/announcements/create', announcementData); // Calls backend /api/announcements/create with announcement data and returns response.json
         console.log("Announcement created:", response.data); // Logs created announcement for debugging
         return response.data; // Return the created announcement from the data property
     } catch (error) {
@@ -25,7 +26,7 @@ export async function createNewAnnouncement(announcementData) {
 
 export async function updateAnnouncement(announcementData) {
     try {
-        const response = await apiPut('/announcement/update', announcementData); // Calls backend /api/announcement/update with announcement data and returns response.json
+        const response = await apiPut('/announcements/update', announcementData); // Calls backend /api/announcements/update with announcement data and returns response.json
         console.log("Announcement updated:", response.data); // Logs updated announcement for debugging
         return response.data; // Return the updated announcement from the data property
     } catch (error) {
@@ -36,7 +37,7 @@ export async function updateAnnouncement(announcementData) {
 
 export async function deleteAnnouncement(announcementId) {
     try {       
-        const response = await apiDelete(`/announcement/delete/${announcementId}`); // Calls backend /api/announcement/delete/:id with announcement ID and returns response.json
+        const response = await apiDelete(`/announcements/delete/${announcementId}`); // Calls backend /api/announcements/delete/:id with announcement ID and returns response.json
         console.log("Announcement deleted:", response); // Logs delete status for debugging
         return response; // Return delete status
     } catch (error) {

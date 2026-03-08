@@ -1,8 +1,8 @@
 //if(!req.header.authToken) {
-// res.status(400).send({ error: "Auth token missing" }); } ---add later
+// res.status(400).send({ error: "Auth token missing" }); } -
 
 //if(!req.header.authToken === "coach" || !req.header.authToken === "admin")
-// res.status(401).send({ error: "Unauthorized" }); } ---add later{  
+// res.status(401).send({ error: "Unauthorized" }); } --- 
 
 import { verifyToken } from '../features/auth/jwt.js'; 
 
@@ -13,7 +13,7 @@ export function authenticateJWT(req, res, next) {
 
   
     if (!cookieToken) { //if no token is found in the cookie, send a 401 response indicating authentication is required
-      console.warn('No JWT token found in cookies');
+      console.warn('No JWT token found in cookies'); //.warn logs a warning if no token is found for debugging purposes
       return res.status(401).json({ message: 'Authentication required, no token found in cookie' });
     }
 

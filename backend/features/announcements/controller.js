@@ -7,7 +7,7 @@ export const getAllAnnouncements = async (req, res,next) => {
         const { user_role, team_id } = req.user;
         const announcements = await AnnouncementModel.getAnnouncements(user_role,team_id); //calls the getAllAnnouncements function from the model to retrieve all announcements from the database
         handleResponse(res, 200, "Announcements retrieved successfully", announcements); //sends a successful response with the retrieved announcements 
-    } 
+    } //catches any errors that occur during the retrieval process
     catch (err) {
         next(err, "Error in controller while retrieving all announcements"); //passes any errors to the error handling middleware
     }

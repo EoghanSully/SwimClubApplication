@@ -15,16 +15,6 @@ export async function getAllPlans() {
   }
 }
 
-export async function getPlanByTeamId(teamId) {
-    try {
-        const response = await apiGet(`/plans/team/${teamId}`); // Calls backend /api/plans/team/:teamId and returns response.json
-        console.log(`Plan for team ${teamId} loaded:`, response.data); // Logs retrieved plan for debugging
-        return response.data; // Return the plan for the specified team from the data property
-    } catch (error) {
-        console.error(`Fetch Plan for team ${teamId} failure:`, error.stack); // Logs error if API call fails
-        throw error;
-    }
-}
 
 export async function createNewPlan(planData) {
     try {
