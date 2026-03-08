@@ -22,3 +22,25 @@ export async function getUser(user_id) {
     console.error('Error loading users:', error.stack); // Logs error if loading fails
   }
 }
+
+export async function createUser(user) {
+  try {
+    const response = await apiPost(`/user/new`, user); // Load users and store in allUsers variable
+    console.log("User created:", response.data); // Logs created user for debugging
+    return response.data; // Return the user data from the data property
+  } catch (error) {
+    console.error('Error creating user:', error.stack); // Logs error if creation fails
+    throw error;
+  }
+}
+
+export async function deleteUser(user_id) {
+  try {
+    const response = await apiDelete(`/user/delete/${user_id}`); // Calls backend /api/user/:id with DELETE method
+    console.log("User deleted:", response.data); // Logs deleted user for debugging
+    return response.data; // Return the deleted user data from the data property
+  } catch (error) {
+    console.error('Error deleting user:', error.stack); // Logs error if deletion fails
+    throw error;
+  }
+}

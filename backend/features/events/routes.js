@@ -11,6 +11,4 @@ router.put("/events/update", authenticateJWT, eventsController.updateEventInfo);
 router.delete("/events/delete/:id", authenticateJWT, eventsController.deleteEvent); 
 
 
-//to be used later with Token to check role and team ID
-
-export default router
+export default router 
