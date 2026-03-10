@@ -1,7 +1,8 @@
+//import "dotenv/config"; //loads environment variables from .env file into process.env
 import express from "express" //Express framework for building the server
-import cors from "cors" //allows for frontend -> backend requests across different ports/origins
-import dotenv from "dotenv" //to read variables from .env file 
+import cors from "cors" //allows for frontend -> backend requests across different ports/originsimport dotenv from "dotenv" //to read variables from .env file 
 import pool from "./config/db.js" //import connection pool    
+import dotenv from "dotenv"; //to read variables from .env file
 import errorHandler from "./middleware/error.js"; //importing error handling middleware 
 import userRoutes from "./features/users/route.js"; //importing user routes
 import eventRoutes from "./features/events/routes.js"; //importing event routes

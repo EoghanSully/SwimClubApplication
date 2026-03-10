@@ -24,7 +24,7 @@ export const loginVerify = async (req, res,next) => {
            
         }); //sets the JWT token in a cookie
 
-        handleResponse(res, 200, "Login successful", { user: response[0], token });
+        handleResponse(res, 200, "Login successful");
         //successful response with token for Thunder Client testing REMOVE TOKEN RETURNING IN PRODUCTION
     } 
     catch (err) {

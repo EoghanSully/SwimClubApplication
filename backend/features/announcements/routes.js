@@ -1,6 +1,6 @@
 import express from 'express';
 import * as announcementController from './controller.js';
-import { authenticateJWT } from '../../middleware/authMideelware.js'
+import { authenticateJWT } from '../../middleware/authMiddleware.js'
 
 
 const router = express.Router();    

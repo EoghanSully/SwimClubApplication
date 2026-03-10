@@ -1,6 +1,6 @@
 import express from "express";
 import * as PlanController from "./controller.js"; //session plans controller for handling requests
-import { authenticateJWT } from "../../middleware/authMideelware.js"; //middleware for JWT authentication
+import { authenticateJWT } from "../../middleware/authMiddleware.js"; //middleware for JWT authentication
 
 const router = express.Router();
 

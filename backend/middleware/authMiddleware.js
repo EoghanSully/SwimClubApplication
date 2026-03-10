@@ -24,7 +24,7 @@ export function authenticateJWT(req, res, next) {
 
   }
   catch (err) {
-      console.error('JWT verification error:', err.message);
+      console.error('JWT verification error:', err.message, err.stack);
       if (err.name === 'TokenExpiredError') {
         return res.status(401).json({ message: 'Token expired' });
       }
