@@ -27,7 +27,6 @@ export async function createNewAnnouncement(announcementData) {
 export async function updateAnnouncement(announcementData) {
     try {
         const response = await apiPut('/announcements/update', announcementData); // Calls backend /api/announcements/update with announcement data and returns response.json
-        console.log("Announcement updated:", response.data); // Logs updated announcement for debugging
         return response.data; // Return the updated announcement from the data property
     } catch (error) {
         console.error('Update Announcement failure:', error.stack);
@@ -38,7 +37,6 @@ export async function updateAnnouncement(announcementData) {
 export async function deleteAnnouncement(announcementId) {
     try {       
         const response = await apiDelete(`/announcements/delete/${announcementId}`); // Calls backend /api/announcements/delete/:id with announcement ID and returns response.json
-        console.log("Announcement deleted:", response); // Logs delete status for debugging
         return response; // Return delete status
     } catch (error) {
         console.error('Delete Announcement failure:', error.stack);
