@@ -21,9 +21,9 @@ export const createAnnouncement = async (req,res,next) => {
     }
     try{
         const newAnnouncement = req.body; //extracts the new announcement data from the request body
-        const createdAnnouncement = await AnnouncementModel.createAnnouncement(newAnnouncement); //calls the createAnnouncement function from the model to create a new announcement in the database
-        
+        const createdAnnouncement = await AnnouncementModel.createAnnouncement(newAnnouncement); //calls the createAnnouncement function from the model to create a new announcement in the database 
         if(!createdAnnouncement) return handleResponse(res, 400, "Failed to create announcement"); //sends a 400 response if the announcement creation failed
+        
         handleResponse(res,201,"Announcement created successfully", createdAnnouncement); //sends a successful response with the created announcement details
     }
     catch(err){
@@ -37,7 +37,6 @@ export const updateAnnouncementDetails = async (req,res,next) => {
         return handleResponse(res, 401, "Unauthorized: Only admins can update announcements");
     }
     try{
-        console.log("Announcement req body:", req.body);
         const updatedAnnouncement = req.body; //extracts the updated announcement data from the request body
         const editedAnnouncement = await AnnouncementModel.editAnnouncement(updatedAnnouncement); //calls the editAnnouncement function from the model to update the specified announcement in the database 
         if(!editedAnnouncement) return handleResponse(res, 404, "Announcement not found"); //sends a 404 response if the announcement to be edited is not found
@@ -58,9 +57,9 @@ export const deleteAnnouncement = async (req, res, next) => {
         const deletedAnnouncement = await AnnouncementModel.deleteAnnouncement(announcement_id); //calls the deleteAnnouncement function from the model to delete the specified announcement from the database
         if (deletedAnnouncement) {
             handleResponse(res, 200, "Announcement deleted successfully", deletedAnnouncement); //sends a successful response with the deleted announcement details
-        } else {
-            handleResponse(res, 404, "Announcement not found"); //sends a not found response if the announcement does not exist
         }
+       handleResponse(res, 404, "Announcement not found"); //sends a not found response if the announcement does not exist
+        
     } catch (err) {
         next(err); //passes any errors to the error handling middleware
     }
