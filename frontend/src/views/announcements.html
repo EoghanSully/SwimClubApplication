@@ -1,0 +1,78 @@
+<div class="container">
+  <div class="announcements-header-row">
+    <h1>Announcements</h1>
+    <button id="create-announcement-btn" class="btn btn-primary hidden">
+      + Create Announcement
+    </button>
+  </div>
+  
+  <!-- Category Filters -->
+  <div id="announcement-filter-buttons" class="announcements-filters" style="margin-bottom: 2rem;"></div>
+  
+  <!-- Announcements List -->
+  <div id="announcements-list" class="announcements-feed"></div>
+  
+  <!-- Create Announcement Modal -->
+  <div id="create-announcement-modal" class="modal hidden">
+    <div class="modal-content" style="max-width: 600px;">
+      <div class="modal-header">
+        <h2 class="modal-title">Create Announcement</h2>
+        <button class="modal-close-btn" onclick="closeCreateModal()">×</button>
+      </div>
+      
+      <form id="create-announcement-form" class="modal-body">
+        <div class="form-group">
+          <label class="form-label">Announcement Title</label>
+          <input id="announcement-title-input" type="text" class="form-input" required />
+        </div>
+        
+        <div class="form-group">
+          <label class="form-label">Content</label>
+          <textarea id="announcement-content-input" class="form-textarea" required></textarea>
+        </div>
+        
+        <div class="form-group">
+          <label class="form-label">Category</label>
+          <select id="announcement-category-input" class="form-input" required>
+            <option value="TRAINING">Training</option>
+            <option value="COMPETITION">Competition</option>
+            <option value="SOCIAL">Social</option>
+            <option value="SOCIETY">Society</option>
+            <option value="FUNDRAISER">Fundraiser</option>
+            <option value="GENERAL">General</option>
+          </select>
+        </div>
+        
+        <div class="form-group">
+          <label class="form-label">Target Audience</label>
+          <select id="announcement-target-input" class="form-input" required>
+            <option value="ALL">All Members</option>
+            <option value="COACHES">Coaches Only</option>
+          </select>
+        </div>
+        
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" onclick="closeCreateModal()">
+            Cancel
+          </button>
+          <button type="submit" class="btn btn-primary">
+            Create Announcement
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+<style>
+  .announcements-header-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 2rem;
+  }
+  
+  .hidden {
+    display: none !important;
+  }
+</style>

@@ -1,58 +1,233 @@
-import * as eventsModel from '../models/eventsModel.js';
-let eventList = []; // Local array to store events for display and manipulation in the view model
+// ============================================
+// EVENTS/SCHEDULE VIEW MODEL
+// University of Galway Swim Club
+// ============================================
 
+import * as eventsModel from '../models/eventsModel.js';
+import * as teamModel from '../models/teamModel.js';
+
+let eventList = [];
+
+/**
+ * Load all events from backend
+ */
 export async function loadEvents() {
   try {
     eventList = await eventsModel.getAllEvents();
-    console.log("Events loaded in view model:"); // Logs events for debugging
+    console.log("Events loaded in view model:", eventList);
     if(eventList.length === 0) {
       console.warn("No events found. Check backend API and database.");
     }
-    console.log(eventList); // Displays events in a table format in the console for easier reading
+    return eventList;
   } catch (error) {
     console.error('Error loading events:', error.stack);
+    throw error;
   }
 }
 
+/**
+ * Filter events by role, team, and type
+ */
+export async function getFilteredEvents(user, role, filters = {}) {
+  try {
+    const events = eventList.length ? eventList : (await loadEvents());
+    const { teamId, eventType, dateRange } = filters;
+    
+    return events.filter(e => {
+      // Role-based filtering
+      if (role === 'MEMBER') {
+        if (!user.teamIds.includes(e.teamId || '') && e.teamId !== 'CLUB') {
+          return false;
+        }
+      } else if (role === 'COACH') {
+        if (teamId && e.teamId !== teamId) return false;
+      }
+      
+      // Team filter
+      if (teamId && e.teamId !== teamId) return false;
+      
+      // Event type filter
+      if (eventType && e.type !== eventType) return false;
+      
+      // Date range filter
+      if (dateRange) {
+        const eventDate = new Date(e.date);
+        if (eventDate < dateRange.start || eventDate > dateRange.end) {
+          return false;
+        }
+      }
+      
+      return true;
+    });
+  } catch (error) {
+    console.error('Error filtering events:', error.stack);
+    throw error;
+  }
+}
 
-export async function createEvent(eventData) {
-    try {
-        const newEvent = await eventsModel.createNewEvent(eventData); // Calls model to create a new event with provided data
-        eventList.push(newEvent); // Adds the newly created event to the local events array
-        console.log("Event created and added to events array:", newEvent); // Logs the created event for debugging
-        return newEvent; // Return the newly created event for further use (e.g., updating UI)
-    } catch (error) {
-        console.error('Error creating event:', error.stack);
-        throw error;
+/**
+ * Get events for specific day
+ */
+export async function getEventsForDay(date) {
+  try {
+    const events = eventList.length ? eventList : (await loadEvents());
+    const targetDate = new Date(date).toDateString();
+    return events.filter(e => {
+      return new Date(e.date).toDateString() === targetDate;
+    });
+  } catch (error) {
+    console.error('Error getting events for day:', error.stack);
+    return [];
+  }
+}
+
+/**
+ * Get event type color
+ */
+export function getEventTypeColor(type) {
+  const colors = {
+    'TRAINING': '#2563eb',
+    'COMPETITION': '#dc2626',
+    'SOCIAL': '#16a34a',
+    'SOCIETY': '#d97706'
+  };
+  return colors[type] || '#6b7280';
+}
+
+/**
+ * Get event type label
+ */
+export function getEventTypeLabel(type) {
+  const labels = {
+    'TRAINING': 'Training Session',
+    'COMPETITION': 'Competition Event',
+    'SOCIAL': 'Social Event',
+    'SOCIETY': 'Society Event'
+  };
+  return labels[type] || type;
+}
+
+/**
+ * Generate calendar data for a month
+ */
+export async function generateCalendar(year, month) {
+  try {
+    const events = eventList.length ? eventList : (await loadEvents());
+    const firstDay = new Date(year, month, 1);
+    const lastDay = new Date(year, month + 1, 0);
+    const daysInMonth = lastDay.getDate();
+    const startDayOfWeek = firstDay.getDay();
+    
+    const weeks = [];
+    let currentWeek = [];
+    
+    // Add empty cells for days before month starts
+    for (let i = 0; i < startDayOfWeek; i++) {
+      currentWeek.push(null);
     }
+    
+    // Add days of month
+    for (let day = 1; day <= daysInMonth; day++) {
+      const date = new Date(year, month, day);
+      const dayEvents = await getEventsForDay(date);
+      
+      currentWeek.push({
+        date: date,
+        day: day,
+        events: dayEvents,
+        isToday: isToday(date)
+      });
+      
+      // Start new week on Sunday
+      if (currentWeek.length === 7) {
+        weeks.push(currentWeek);
+        currentWeek = [];
+      }
+    }
+    
+    // Fill remaining cells
+    while (currentWeek.length < 7 && currentWeek.length > 0) {
+      currentWeek.push(null);
+    }
+    
+    if (currentWeek.length > 0) {
+      weeks.push(currentWeek);
+    }
+    
+    return weeks;
+  } catch (error) {
+    console.error('Error generating calendar:', error.stack);
+    return [];
+  }
 }
 
-export async function updateEvent(eventData) {  
-    try {
-        const updatedEvent = await eventsModel.updateEvent(eventData); // Calls model to update an existing event with provided data
-        const index = eventList.findIndex(event => event.id === updatedEvent.id); // Finds the index of the updated event in the local events array
-        if (index !== -1) {
-            eventList[index] = updatedEvent; // Updates the event in the local array with the new data
-            console.log("Event updated in events array:", updatedEvent); // Logs the updated event for debugging
-        } else {
-            console.warn("Updated event not found in local array:", updatedEvent); // Warns if the updated event is not found in the local array
-        }       
-        return updatedEvent; // Return the updated event for further use (e.g., updating UI)
-    } catch (error) {
-        console.error('Error updating event:', error.stack);
-        throw error;
-    }       
+/**
+ * Check if date is today
+ */
+function isToday(date) {
+  const today = new Date();
+  return date.toDateString() === today.toDateString();
 }
 
-//FIND MORE EFFECTIVE WAY TO UPDATE THE EVENTS ARRAY IN THE VIEW MODEL
+/**
+ * Create new event
+ */
+export async function createEvent(formData) {
+  try {
+    const newEvent = await eventsModel.createNewEvent(formData);
+    eventList.push(newEvent);
+    console.log("Event created and added to list:", newEvent);
+    return newEvent;
+  } catch (error) {
+    console.error('Error creating event:', error.stack);
+    throw error;
+  }
+}
+
+/**
+ * Update existing event
+ */
+export async function updateEvent(eventData) {
+  try {
+    const updatedEvent = await eventsModel.updateEvent(eventData);
+    const index = eventList.findIndex(e => e.id === updatedEvent.id);
+    if (index !== -1) {
+      eventList[index] = updatedEvent;
+    }
+    console.log("Event updated:", updatedEvent);
+    return updatedEvent;
+  } catch (error) {
+    console.error('Error updating event:', error.stack);
+    throw error;
+  }
+}
+
+/**
+ * Delete event
+ */
 export async function deleteEvent(eventId) {
-    try {
-        const deletedEvent = await eventsModel.deleteEvent(eventId); // Calls model to delete an event by its ID
-        eventList = eventList.filter(event => event.id !== eventId); // Removes the deleted event from the local events array
-        console.log("Event deleted and removed from events array:", deletedEvent); // Logs the deleted event for debugging
-        return deletedEvent; // Return the deleted event for further use (e.g., updating UI)
-    } catch (error) {
-        console.error('Error deleting event:', error.stack);
-        throw error;
-    }       
+  try {
+    await eventsModel.deleteEvent(eventId);
+    eventList = eventList.filter(e => e.id !== eventId);
+    console.log("Event deleted with ID:", eventId);
+    return { success: true };
+  } catch (error) {
+    console.error('Error deleting event:', error.stack);
+    throw error;
+  }
+}
+
+/**
+ * Get team name from ID
+ */
+export async function getTeamName(teamId) {
+  try {
+    if (teamId === 'CLUB') return 'All Club';
+    const teams = await teamModel.getAllTeams();
+    const team = teams.find(t => t.id === teamId);
+    return team ? team.name : 'Unknown';
+  } catch (error) {
+    console.error('Error getting team name:', error.stack);
+    return 'Unknown';
+  }
 }

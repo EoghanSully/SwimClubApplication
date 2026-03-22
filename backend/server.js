@@ -17,10 +17,21 @@ dotenv.config(); //loads environment variables from .env file into process.env
 
 
 const app = express(); //creates an instance of the Express application 
-const port = process.env.SERVER_PORT || 5000;  //sets port from .env file or defaults to 5000 if not specified  
+const port = process.env.SERVER_PORT || 5500;  //sets port from .env file or defaults to 5500 if not specified  
 
-//Middleware
-app.use(cors());
+//middleware
+app.use(cors({
+  origin: 'http://127.0.0.1:5500', //allow requests from this origin
+  credentials: true, //allow cookies to be sent with requests
+}))
+
+app.use(express.json()); //parses Json requests
+app.use(cookieParser()); //parses cookies from incoming requests, making them available on req.cookies
+
+
+app.use(cors(corsOptions));
+// express-cors middleware already handles OPTIONS preflight requests when used as middleware.
+// The explicit app.options() route is removed to avoid path-to-regexp issues in Express 5.
 app.use(express.json()); //parses Json requests
 app.use(cookieParser()); //parses cookies from incoming requests, making them available on req.cookies
 

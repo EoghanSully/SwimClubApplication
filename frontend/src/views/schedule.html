@@ -1,0 +1,243 @@
+<div class="container">
+  <div class="schedule-header">
+    <h1>Schedule & Calendar</h1>
+  </div>
+  
+  <!-- Filters -->
+  <div id="schedule-filters" class="schedule-filters"></div>
+  
+  <!-- Calendar -->
+  <div class="schedule-layout">
+    <div class="calendar-section">
+      <div class="calendar-nav">
+        <button id="calendar-prev" class="nav-arrow">← Previous</button>
+        <h2 id="calendar-month-year"></h2>
+        <button id="calendar-next" class="nav-arrow">Next →</button>
+      </div>
+      
+      <div id="calendar-grid" class="calendar-grid"></div>
+    </div>
+    
+    <!-- Day Events Sidebar -->
+    <div class="day-events-section">
+      <div id="day-events" class="empty-state">
+        <p>Select a date to view events</p>
+      </div>
+    </div>
+  </div>
+  
+  <!-- Event Modal -->
+  <div id="event-modal" class="modal hidden"></div>
+</div>
+
+<style>
+  .schedule-header {
+    margin-bottom: 2rem;
+  }
+  
+  .schedule-filters {
+    margin-bottom: 2rem;
+  }
+  
+  .filter-row {
+    display: flex;
+    gap: 1rem;
+    flex-wrap: wrap;
+    align-items: center;
+    margin-bottom: 2rem;
+  }
+  
+  .filter-buttons {
+    display: flex;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+  }
+  
+  .schedule-layout {
+    display: grid;
+    grid-template-columns: 2fr 1fr;
+    gap: 2rem;
+    margin-bottom: 2rem;
+  }
+  
+  .calendar-section {
+    background-color: white;
+    border: 2px solid var(--gray-200);
+    border-radius: 1rem;
+    padding: 2rem;
+  }
+  
+  .calendar-nav {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 2rem;
+  }
+  
+  .nav-arrow {
+    background-color: var(--maroon-primary);
+    color: white;
+    border: none;
+    padding: 0.5rem 1rem;
+    border-radius: 0.5rem;
+    font-weight: 700;
+    cursor: pointer;
+    transition: background-color 0.3s;
+  }
+  
+  .nav-arrow:hover {
+    background-color: var(--maroon-dark);
+  }
+  
+  .calendar-grid {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 0.75rem;
+  }
+  
+  .calendar-day-label {
+    text-align: center;
+    font-weight: 700;
+    font-size: 0.875rem;
+    color: var(--gray-500);
+    text-transform: uppercase;
+    padding: 0.5rem;
+  }
+  
+  .calendar-day {
+    aspect-ratio: 1;
+    border: 2px solid var(--gray-200);
+    border-radius: 0.75rem;
+    background-color: var(--white);
+    cursor: pointer;
+    padding: 0.5rem;
+    transition: all 0.3s;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.25rem;
+  }
+  
+  .calendar-day:hover {
+    border-color: var(--gray-300);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+  }
+  
+  .calendar-day.today {
+    background-color: rgb(219, 234, 254);
+    border-color: rgb(59, 130, 246);
+  }
+  
+  .calendar-day.selected {
+    background-color: var(--maroon-primary);
+    color: white;
+    border-color: var(--maroon-primary);
+  }
+  
+  .calendar-empty {
+    display: none;
+  }
+  
+  .calendar-day-num {
+    font-weight: 700;
+    font-size: 0.875rem;
+  }
+  
+  .calendar-indicators {
+    display: flex;
+    gap: 0.15rem;
+    justify-content: center;
+  }
+  
+  .event-indicator {
+    width: 4px;
+    height: 4px;
+    border-radius: 50%;
+  }
+  
+  .day-events-section {
+    background-color: white;
+    border: 2px solid var(--gray-200);
+    border-radius: 1rem;
+    padding: 2rem;
+    max-height: 600px;
+    overflow-y: auto;
+  }
+  
+  .event-list-item {
+    width: 100%;
+    padding: 1rem;
+    margin-bottom: 1rem;
+    background-color: var(--gray-50);
+    border: 1px solid var(--gray-200);
+    border-radius: 0.75rem;
+    text-align: left;
+    cursor: pointer;
+    transition: all 0.3s;
+  }
+  
+  .event-list-item:hover {
+    background-color: var(--gray-100);
+  }
+  
+  .event-item-header {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin-bottom: 0.5rem;
+  }
+  
+  .event-type-badge {
+    color: white;
+    padding: 0.25rem 0.5rem;
+    border-radius: 0.25rem;
+    font-size: 0.65rem;
+    font-weight: 700;
+    white-space: nowrap;
+  }
+  
+  .event-item-header h4 {
+    font-size: 1rem;
+    color: var(--gray-900);
+  }
+  
+  .event-item-time,
+  .event-item-location,
+  .event-item-team {
+    font-size: 0.875rem;
+    color: var(--gray-600);
+    margin: 0.25rem 0;
+  }
+  
+  .event-detail-section {
+    display: flex;
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+    padding: 1rem;
+    background-color: var(--gray-50);
+    border-radius: 0.75rem;
+  }
+  
+  .detail-icon {
+    font-size: 1.5rem;
+    flex-shrink: 0;
+  }
+  
+  .detail-label {
+    font-size: 0.75rem;
+    font-weight: 700;
+    color: var(--gray-600);
+    text-transform: uppercase;
+    margin-bottom: 0.25rem;
+  }
+  
+  .hidden {
+    display: none !important;
+  }
+  
+  @media (max-width: 1024px) {
+    .schedule-layout {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>

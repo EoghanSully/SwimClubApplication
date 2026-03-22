@@ -1,4 +1,4 @@
-const API_BASE_URL = 'http://localhost:8080/api'; // Base URL for backend API, adjust if backend is hosted elsewhere
+const API_BASE_URL = 'http://localhost:8080/api'; // Base URL for backend API (set from backend .env: SERVER_PORT=8080)
 
 export async function apiGet(endpoint) {
   const response = await fetch(`${API_BASE_URL}${endpoint}`, { //
@@ -37,7 +37,23 @@ export async function apiPost(endpoint, data) {
   
   return response.json();
 }
-
+export async function apiPostLogin(endpoint, data) {
+  const response = await fetch(`${API_BASE_URL}${endpoint}`, {
+    method: 'POST',          //Sends JWT cookie automatically
+    headers: {
+      'Content-Type': 'application/json',
+      'Accept': 'application/json'
+    },
+    body: JSON.stringify(data) //Converts data object to JSON string for request body
+  });
+  
+  if (!response.ok) {
+    const error = await response.json().catch(() => ({}));
+    throw new Error(error.message || `HTTP ${response.status}`);
+  }
+  
+  return response.json();
+}
 //QUESTION
 //check if this is always better to call apiPut instead of apiPatch for updating events, since we are sending the whole event object with all fields in the request body, not just specific fields that need to be updated.
 export async function apiPatch(endpoint, data) { //updating specific fields of a resource
