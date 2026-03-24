@@ -1,8 +1,3 @@
-//if(!req.header.authToken) {
-// res.status(400).send({ error: "Auth token missing" }); } -
-
-//if(!req.header.authToken === "coach" || !req.header.authToken === "admin")
-// res.status(401).send({ error: "Unauthorized" }); } --- 
 
 import { verifyToken } from '../features/auth/jwt.js'; 
 

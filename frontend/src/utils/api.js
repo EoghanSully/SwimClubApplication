@@ -18,7 +18,7 @@ export async function apiGet(endpoint) {
   return response.json(); //Parses and returns JSON response body from server
 }
 
-
+//
 export async function apiPost(endpoint, data) {
   const response = await fetch(`${API_BASE_URL}${endpoint}`, {
     method: 'POST',

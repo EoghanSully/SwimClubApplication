@@ -9,14 +9,21 @@
     <h1>Club App - Teams Test</h1>
     
     <script type="module">
-        import * as profileVM from './src/viewmodels/profileVM.js';
+        import * as loginModel from './src/models/loginModel.js';
         
         // Test the functions
-        console.log('Testing profileVM.js...');
+        console.log('Testing loginModel.js...');
+        const testCredentials = {
+            email: "j.milwaki1@club.ie",
+            password: "Bangerang"
+        };
+        console.log('Test credentials:', testCredentials);
         
-        // Load user profile and then display it
-        const userProfile = await profileVM.loadUserProfile(1); // Replace 1 with the actual user ID
-        console.log('User profile after loading:', profileVM.getUserProfileForDisplay(userProfile));
+        loginModel.userLogin(testCredentials).then(response => {
+            window.location.href = "https://universityofgalway.instructure.com/courses/45633/modules";
+        }).catch(error => {
+            console.error('Login error:', error);
+        });
     </script>
 </body>
  
