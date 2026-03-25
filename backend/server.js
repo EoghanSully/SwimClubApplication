@@ -1,4 +1,3 @@
-//import "dotenv/config"; //loads environment variables from .env file into process.env
 import express from "express" //Express framework for building the server
 import cors from "cors" //allows for frontend -> backend requests across different ports/originsimport dotenv from "dotenv" //to read variables from .env file 
 import pool from "./config/db.js" //import connection pool    
@@ -19,19 +18,11 @@ dotenv.config(); //loads environment variables from .env file into process.env
 const app = express(); //creates an instance of the Express application 
 const port = process.env.SERVER_PORT || 5500;  //sets port from .env file or defaults to 5500 if not specified  
 
-//middleware
+//Middleware
 app.use(cors({
-  origin: 'http://127.0.0.1:5500', //allow requests from this origin
-  credentials: true, //allow cookies to be sent with requests
-}))
-
-app.use(express.json()); //parses Json requests
-app.use(cookieParser()); //parses cookies from incoming requests, making them available on req.cookies
-
-
-app.use(cors(corsOptions));
-// express-cors middleware already handles OPTIONS preflight requests when used as middleware.
-// The explicit app.options() route is removed to avoid path-to-regexp issues in Express 5.
+  origin: 'http://127.0.0.1:5500', //allows requests from the frontend origin
+  credentials: true                 //allows cookies (JWT) to be sent with requests
+}));
 app.use(express.json()); //parses Json requests
 app.use(cookieParser()); //parses cookies from incoming requests, making them available on req.cookies
 

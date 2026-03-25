@@ -4,7 +4,7 @@
 // ============================================
 
 import { AppState } from '../app.js';
-import { formatDateLong, formatDateShort } from '../utils/date.js';
+import { formatDateShort } from '../utils/date.js';
 import * as eventModel from '../models/eventsModel.js';
 import * as announcementModel from '../models/announcementModel.js';
 import * as userModel from '../models/userModel.js';
@@ -172,7 +172,7 @@ function renderHero(user, role) {
       heroBanner.innerHTML = `
         <div class="hero-content">
           <h1 class="hero-title">Next Training Session</h1>
-          <p class="hero-subtitle">${formatDateLong(nextSession.date)} • ${nextSession.startTime}</p>
+          <p class="hero-subtitle">{{nextSession.startTime}}</p>
           <p class="hero-subtitle">${nextSession.title || ''}</p>
           <a href="#schedule" class="hero-btn">View Schedule</a>
         </div>

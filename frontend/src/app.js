@@ -41,9 +41,8 @@ async function initApp() {
   
   // Check if user is already logged in
   const storedUser = localStorage.getItem('currentUser');
-  const token = localStorage.getItem('token');
   
-  if (!storedUser || !token) {
+  if (!storedUser) {
     console.log('No authenticated session found, redirecting to login...');
     router('login');
     return;

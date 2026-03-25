@@ -1,13 +1,19 @@
-const API_BASE_URL = 'http://localhost:8080/api'; // Base URL for backend API (set from backend .env: SERVER_PORT=8080)
+const API_BASE_URL = 'http://127.0.0.1:8080/api'; // Must use 127.0.0.1 to match CORS origin config in server.js
+
+function authHeaders(extra = {}) { //extra is an optional object of additional headers to merge with auth headers, e.g. Content-Type for JSON requests
+  const token = localStorage.getItem('token');
+  return {
+    'Accept': 'application/json',
+    ...(token ? { 'Authorization': `Bearer ${token}` } : {}),
+    ...extra
+  };
+}
 
 export async function apiGet(endpoint) {
-  const response = await fetch(`${API_BASE_URL}${endpoint}`, { //
+  const response = await fetch(`${API_BASE_URL}${endpoint}`, {
     method: 'GET',
-            //Sends JWT cookie automatically
-    credentials: 'include',        
-    headers: {
-      'Accept': 'application/json' //Ensures server returns JSON responses
-    }
+    credentials: 'include',
+    headers: authHeaders()
   });
   
   if (!response.ok) {
@@ -22,12 +28,9 @@ export async function apiGet(endpoint) {
 export async function apiPost(endpoint, data) {
   const response = await fetch(`${API_BASE_URL}${endpoint}`, {
     method: 'POST',
-    credentials: 'include',           //Sends JWT cookie automatically
-    headers: {
-      'Content-Type': 'application/json',
-      'Accept': 'application/json'
-    },
-    body: JSON.stringify(data) //Converts data object to JSON string for request body
+    credentials: 'include',
+    headers: authHeaders({ 'Content-Type': 'application/json' }),
+    body: JSON.stringify(data)
   });
   
   if (!response.ok) {
@@ -56,14 +59,11 @@ export async function apiPostLogin(endpoint, data) {
 }
 //QUESTION
 //check if this is always better to call apiPut instead of apiPatch for updating events, since we are sending the whole event object with all fields in the request body, not just specific fields that need to be updated.
-export async function apiPatch(endpoint, data) { //updating specific fields of a resource
+export async function apiPatch(endpoint, data) {
   const response = await fetch(`${API_BASE_URL}${endpoint}`, {
     method: 'PATCH',
-    credentials: 'include',           //Sends JWT cookie automatically
-    headers: {
-      'Content-Type': 'application/json',
-      'Accept': 'application/json'
-    },
+    credentials: 'include',
+    headers: authHeaders({ 'Content-Type': 'application/json' }),
     body: JSON.stringify(data)
   });
   
@@ -79,11 +79,8 @@ export async function apiPatch(endpoint, data) { //updating specific fields of a
 export async function apiPut(endpoint, data) { 
   const response = await fetch(`${API_BASE_URL}${endpoint}`, {
     method: 'PUT',
-    credentials: 'include',           //Sends JWT cookie automatically
-    headers: {
-      'Content-Type': 'application/json',
-      'Accept': 'application/json'
-    },
+    credentials: 'include',
+    headers: authHeaders({ 'Content-Type': 'application/json' }),
     body: JSON.stringify(data)
   });
   
@@ -96,14 +93,11 @@ export async function apiPut(endpoint, data) {
 }
 
 
-export async function apiDelete(endpoint, id) { //data parameter is optional, can be used to send additional info if needed (e.g., for soft deletes)
+export async function apiDelete(endpoint, id) {
   const response = await fetch(`${API_BASE_URL}${endpoint}/${id ? id : ''}`, {
     method: 'DELETE',
-    credentials: 'include',           //Sends JWT cookie automatically
-    headers: {
-      'Content-Type': 'application/json',
-      'Accept': 'application/json'
-    }
+    credentials: 'include',
+    headers: authHeaders()
   });
   
   if (!response.ok) {

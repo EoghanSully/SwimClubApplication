@@ -53,12 +53,12 @@ export const deleteAnnouncement = async (req, res, next) => {
         return handleResponse(res, 401, "Unauthorized: Only admins can delete announcements");
     }
     try {
-        const { announcement_id } = req.params; //extracts the announcement ID from the request parameters
+        const { id: announcement_id } = req.params; //extracts the announcement ID from the request parameters
         const deletedAnnouncement = await AnnouncementModel.deleteAnnouncement(announcement_id); //calls the deleteAnnouncement function from the model to delete the specified announcement from the database
         if (deletedAnnouncement) {
-            handleResponse(res, 200, "Announcement deleted successfully", deletedAnnouncement); //sends a successful response with the deleted announcement details
+            return handleResponse(res, 200, "Announcement deleted successfully", deletedAnnouncement); //sends a successful response with the deleted announcement details
         }
-       handleResponse(res, 404, "Announcement not found"); //sends a not found response if the announcement does not exist
+        handleResponse(res, 404, "Announcement not found"); //sends a not found response if the announcement does not exist
         
     } catch (err) {
         next(err); //passes any errors to the error handling middleware
