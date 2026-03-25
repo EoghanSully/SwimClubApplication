@@ -31,7 +31,8 @@ export async function login(email, password) {
     currentUser = userData;
     currentRole = userData.user_role;
     
-    // Store in localStorage for session persistence (auth via httpOnly cookie)
+    // Store in localStorage — token is sent as Bearer header on all subsequent API calls
+    localStorage.setItem('token', response.token);
     localStorage.setItem('currentUserId', userData.user_id);
     localStorage.setItem('currentUser', JSON.stringify(userData));
     

@@ -1,18 +1,17 @@
-
 import { verifyToken } from '../features/auth/jwt.js'; 
 
 export function authenticateJWT(req, res, next) {
   try {
-    //console.log('Authenticating JWT for request:', req.method, req.path); // Log the incoming request method and path for debugging purposes
-    const cookieToken = req.cookies?.jwt; //get token from cookie if it exists, otherwise undefined
+    const cookieToken = req.cookies?.jwt;
+    const authHeader = req.headers['authorization'];
+    const bearerToken = authHeader?.startsWith('Bearer ') ? authHeader.slice(7) : null;
+    const token = cookieToken || bearerToken; 
 
-  
-    if (!cookieToken) { //if no token is found in the cookie, send a 401 response indicating authentication is required
-      //console.warn('No JWT token found in cookies'); //.warn logs a warning if no token is found for debugging purposes
+    if (!token) {
       return res.status(401).json({ message: 'Authentication required, no token found in cookie' });
     }
 
-    const decoded = verifyToken(cookieToken); //verify token and decode payload
+    const decoded = verifyToken(token); //verify token and decode payload
 
     req.user = decoded; // Attach decoded token payload to request object for downstream use  
     next();

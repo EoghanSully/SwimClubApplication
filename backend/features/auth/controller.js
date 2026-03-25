@@ -17,14 +17,14 @@ export const loginVerify = async (req, res,next) => {
         res.cookie('jwt', token, { 
             httpOnly: true, 
             secure: process.env.NODE_ENV === 'production',
-            sameSite: 'Strict',
+            sameSite: 'Strict', // Safe: 127.0.0.1:5500 and 127.0.0.1:8080 are same-site (ports ignored in same-site check)
             maxAge: 60 * 60 * 1000, // 1 hour in milliseconds
             path : "/" //sends cookie on all paths starting with / (all of them) 
             //should be secure in production to ensure it's only sent over HTTPS, but can be http in development for testing purposes. Adjust as needed based on your deployment environment.
            
         }); //sets the JWT token in a cookie
 
-        handleResponse(res, 200, "Login successful", { user_id: response[0].user_id, user_role: response[0].user_role, team_id: response[0].team_id });
+        handleResponse(res, 200, "Login successful", { user_id: response[0].user_id, user_role: response[0].user_role, team_id: response[0].team_id, token });
     } 
     catch (err) {
         next(err); //passes any errors to the error handling middleware

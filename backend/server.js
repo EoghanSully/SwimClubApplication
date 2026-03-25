@@ -1,4 +1,3 @@
-//import "dotenv/config"; //loads environment variables from .env file into process.env
 import express from "express" //Express framework for building the server
 import cors from "cors" //allows for frontend -> backend requests across different ports/originsimport dotenv from "dotenv" //to read variables from .env file 
 import pool from "./config/db.js" //import connection pool    
