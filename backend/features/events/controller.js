@@ -74,3 +74,18 @@ export const deleteEvent = async (req, res,next) => {
     }
 }; 
 
+export const updateEventAttendance = async (req, res, next) => {
+    const { user_role } = req.user; //retrieving user role from the authenticated request
+    if (user_role !== 'admin' && user_role !== 'coach') {
+        return handleResponse(res, 401, "Unauthorized"); //only admin and coach can update attendance
+    }
+    const { event_id, user_id, attended} = req.body; //retrieving event ID, member ID, and attendance status from the request body
+    try {
+        const record = await EventModel.updateAttendance(event_id, user_id, attended); //upserts attendance record
+        if (!record) return handleResponse(res, 400, "Failed to update attendance");
+        handleResponse(res, 200, "Attendance updated successfully", record);
+    } catch (err) {
+        next(err);
+    }
+};
+

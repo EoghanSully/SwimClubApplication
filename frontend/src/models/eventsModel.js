@@ -52,4 +52,24 @@ export async function deleteEvent(eventId) {
     }
 }
 
+export async function getEventAttendance(eventId) {
+    try {
+        const response = await apiGet(`/events/${eventId}/attendance`); // Calls backend /api/events/:event_id/attendance
+        return response.data;
+    } catch (error) {
+        console.error('Fetch attendance failure:', error.stack);
+        throw error;
+    }
+}
+
+export async function updateEventAttendance(attendanceData) {
+    try {
+        const response = await apiPut('/events/attendance', attendanceData); // Calls backend /api/events/attendance
+        return response.data;
+    } catch (error) {
+        console.error('Update attendance failure:', error.stack);
+        throw error;
+    }
+}
+
 

@@ -9,6 +9,6 @@ router.get("/events/past", authenticateJWT, eventsController.getPreviousEvents);
 router.post("/events/create", authenticateJWT, eventsController.createEvent);
 router.put("/events/update", authenticateJWT, eventsController.updateEventInfo);
 router.delete("/events/delete/:id", authenticateJWT, eventsController.deleteEvent); 
-
+router.post("/events/attendance", authenticateJWT, eventsController.updateEventAttendance); //route for updating attendance records
 
 export default router 

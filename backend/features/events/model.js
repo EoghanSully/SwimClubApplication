@@ -67,3 +67,18 @@ export const getPastEvents = async () => {
         throw err;
     }
 }
+
+export const updateAttendance = async (event_id, user_id, attended) => {
+    try {
+        const result = await pool.query(
+            `INSERT INTO event_attendance (event_id, user_id, attended) VALUES ($1, $2, $3)
+             ON CONFLICT (event_id, user_id) DO UPDATE SET attended = EXCLUDED.attended
+             RETURNING *`,
+            [event_id, user_id, attended]
+        );
+        return result.rows[0];
+    } catch (err) {
+        console.error("Error upserting attendance:", err);
+        throw err;
+    }
+};
