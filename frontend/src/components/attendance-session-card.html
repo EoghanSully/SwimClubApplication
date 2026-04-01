@@ -1,0 +1,11 @@
+<!-- Attendance Session Card Template -->
+<!-- Placeholders: {{eventId}}, {{activeClass}}, {{teamName}}, {{displayDate}}, {{timeRange}}, {{presentCount}}, {{absentCount}} -->
+<article class="attendance-session-item {{activeClass}}" data-event-id="{{eventId}}">
+  <span class="attendance-session-tag">{{teamName}}</span>
+  <h4 class="attendance-session-date">{{displayDate}}</h4>
+  <p class="attendance-session-time">{{timeRange}}</p>
+  <div class="attendance-session-metrics">
+    <span>✓ {{presentCount}}</span>
+    <span>✕ {{absentCount}}</span>
+  </div>
+</article>

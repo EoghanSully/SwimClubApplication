@@ -8,12 +8,25 @@ import * as loginModel from '../models/loginModel.js';
 let currentUser = null;
 let currentRole = null;
 
+function normalizeUser(user) {
+  if (!user) return null;
+
+  return {
+    ...user,
+    role: typeof user.role === 'string' ? user.role.toUpperCase() : 'MEMBER',
+    teamIds: Array.isArray(user.teamIds)
+      ? user.teamIds
+      : user.teamId !== undefined && user.teamId !== null
+        ? [user.teamId]
+        : []
+  };
+}
+
 /**
  * Login user
  */
 export async function login(email, password) {
   try {
-    const user = { email, password };
     const response = await loginModel.userLogin({ email, password });
     
     if (!response || !response.user) {
@@ -21,18 +34,18 @@ export async function login(email, password) {
     }
     
     // Set current user and role
-    currentUser = response.user;
-    currentRole = response.user.role;
+    currentUser = normalizeUser(response.user);
+    currentRole = currentUser.role;
     
     // Store in localStorage
-    localStorage.setItem('currentUserId', response.user.id);
-    localStorage.setItem('currentUser', JSON.stringify(response.user));
+    localStorage.setItem('currentUserId', currentUser.id);
+    localStorage.setItem('currentUser', JSON.stringify(currentUser));
     if (response.token) {
       localStorage.setItem('token', response.token);
     }
     
-    console.log('Login successful for:', response.user.name);
-    return { success: true, user: response.user };
+    console.log('Login successful for:', currentUser.name);
+    return { success: true, user: currentUser };
   } catch (error) {
     console.error('Login error:', error.stack);
     return { success: false, error: error.message || 'Login failed' };
@@ -85,7 +98,7 @@ export function restoreSession() {
   try {
     const storedUser = localStorage.getItem('currentUser');
     if (storedUser) {
-      currentUser = JSON.parse(storedUser);
+      currentUser = normalizeUser(JSON.parse(storedUser));
       currentRole = currentUser.role;
       console.log('Session restored for:', currentUser.name);
       return currentUser;

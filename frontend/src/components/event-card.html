@@ -1,0 +1,12 @@
+<!-- Day Event Card Template -->
+<!-- Rendered in scheduleVM.js renderDayEvents() -->
+<!-- Placeholders: {{eventJson}}, {{typeColor}}, {{type}}, {{title}}, {{startTime}}, {{endTime}}, {{location}}, {{teamBadge}} -->
+<button class="event-list-item" onclick="openEventModal({{eventJson}})">
+  <div class="event-item-header">
+    <span class="event-type-badge" style="background-color: {{typeColor}}">{{type}}</span>
+    <h4>{{title}}</h4>
+  </div>
+  <p class="event-item-time">🕐 {{startTime}} - {{endTime}}</p>
+  <p class="event-item-location">📍 {{location}}</p>
+  {{teamBadge}}
+</button>

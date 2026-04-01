@@ -1,4 +1,21 @@
-const API_BASE_URL = 'http://localhost:8080/api'; // Base URL for backend API (set from backend .env: SERVER_PORT=8080)
+const API_HOST = typeof window !== 'undefined' && window.location?.hostname
+  ? window.location.hostname
+  : 'localhost';
+const API_BASE_URL = `http://${API_HOST}:8080/api`; // Match frontend host (localhost or 127.0.0.1)
+
+function handleUnauthorized() {
+  try {
+    localStorage.removeItem('currentUser');
+    localStorage.removeItem('currentUserId');
+    localStorage.removeItem('token');
+  } catch (_) {
+    // Ignore storage errors (e.g., non-browser contexts)
+  }
+
+  if (typeof window !== 'undefined' && window.location.hash !== '#login') {
+    window.location.hash = 'login';
+  }
+}
 
 export async function apiGet(endpoint) {
   const response = await fetch(`${API_BASE_URL}${endpoint}`, { //
@@ -12,6 +29,9 @@ export async function apiGet(endpoint) {
   
   if (!response.ok) {
     const error = await response.json().catch(() => ({})); //Tries to parse error message from response, defaults to empty object if parsing fails
+    if (response.status === 401) {
+      handleUnauthorized();
+    }
     throw new Error(error.message || `HTTP ${response.status}`); //Throws error with message from server or generic HTTP status if no message provided
   }
   
@@ -32,14 +52,18 @@ export async function apiPost(endpoint, data) {
   
   if (!response.ok) {
     const error = await response.json().catch(() => ({}));
-    throw new Error(error.message || `HTTP ${response.status}`);
+    if (response.status === 401) {
+      handleUnauthorized();
+    }
+    throw new Error(error.message || error.error || `HTTP ${response.status}`);
   }
   
   return response.json();
 }
 export async function apiPostLogin(endpoint, data) {
   const response = await fetch(`${API_BASE_URL}${endpoint}`, {
-    method: 'POST',          //Sends JWT cookie automatically
+    method: 'POST',
+    credentials: 'include',           //Sends JWT cookie automatically
     headers: {
       'Content-Type': 'application/json',
       'Accept': 'application/json'
@@ -69,6 +93,9 @@ export async function apiPatch(endpoint, data) { //updating specific fields of a
   
   if (!response.ok) {
     const error = await response.json().catch(() => ({}));
+    if (response.status === 401) {
+      handleUnauthorized();
+    }
     throw new Error(error.message || `HTTP ${response.status}`);
   }
   
@@ -89,6 +116,9 @@ export async function apiPut(endpoint, data) {
   
   if (!response.ok) {
     const error = await response.json().catch(() => ({}));
+    if (response.status === 401) {
+      handleUnauthorized();
+    }
     throw new Error(error.message || `HTTP ${response.status}`);
   }
   
@@ -108,6 +138,9 @@ export async function apiDelete(endpoint, id) { //data parameter is optional, ca
   
   if (!response.ok) {
     const error = await response.json().catch(() => ({}));
+    if (response.status === 401) {
+      handleUnauthorized();
+    }
     throw new Error(error.message || `HTTP ${response.status}`);
   }
   

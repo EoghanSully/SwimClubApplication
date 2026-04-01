@@ -1,0 +1,246 @@
+/* ============================================
+	 NAVIGATION STYLES
+	 University of Galway Swim Club
+	 ============================================ */
+
+/* ============================================
+	 TOP NAVIGATION BAR
+	 ============================================ */
+.top-nav {
+	position: fixed;
+	top: 0;
+	left: 0;
+	width: 100%;
+	height: 80px;
+	background: var(--maroon-primary);
+	border-bottom: 4px solid var(--maroon-dark);
+	box-shadow: var(--shadow-xl);
+	z-index: 100;
+}
+
+.nav-container {
+	max-width: 1600px;
+	margin: 0 auto;
+	height: 100%;
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	padding: 0 var(--spacing-12);
+	gap: var(--spacing-6);
+}
+
+/* ============================================
+	 LOGO
+	 ============================================ */
+.nav-logo {
+	flex-shrink: 0;
+	display: flex;
+	align-items: center;
+	gap: 1.2rem;
+}
+
+.logo-box {
+	width: 56px;
+	height: 56px;
+	background: var(--white);
+	border: 3px solid var(--white);
+	border-radius: var(--radius-md);
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	font-size: 1.5rem;
+	font-weight: 900;
+	color: var(--maroon-primary);
+	box-shadow: var(--shadow-lg);
+	transition: all 0.2s ease;
+	cursor: pointer;
+}
+
+.logo-box:hover {
+	transform: scale(1.08);
+	box-shadow: var(--shadow-xl);
+}
+
+.logo-text {
+	display: flex;
+	flex-direction: column;
+	gap: 0;
+}
+
+.logo-brand {
+	font-size: 1.1rem;
+	font-weight: 900;
+	color: var(--white);
+	text-transform: uppercase;
+	letter-spacing: 0.08em;
+	line-height: 1;
+}
+
+.logo-subtitle {
+	font-size: 0.65rem;
+	font-weight: 700;
+	color: rgba(255, 255, 255, 0.8);
+	text-transform: uppercase;
+	letter-spacing: 0.06em;
+	line-height: 1;
+}
+
+/* ============================================
+	 NAV ITEMS
+	 ============================================ */
+.nav-items {
+	display: flex;
+	gap: 2.5rem;
+	flex: 1;
+	justify-content: center;
+}
+
+.nav-item {
+	display: flex;
+	align-items: center;
+	padding: var(--spacing-3) var(--spacing-5);
+	margin: 0;
+	border-radius: 999px;
+	border: 1px solid transparent;
+	background: transparent;
+	box-shadow: none;
+	font-size: 0.875rem;
+	font-weight: 700;
+	text-transform: uppercase;
+	letter-spacing: 0.1em;
+	text-decoration: none;
+	color: var(--white);
+	transition: all 0.2s ease;
+	position: relative;
+}
+
+.nav-item:hover {
+	color: var(--white);
+	background: rgba(255, 255, 255, 0.08);
+	transform: translateY(-1px);
+}
+
+.nav-item.active {
+	background: var(--white);
+	color: var(--maroon-primary);
+	border-color: var(--white);
+	border-radius: 999px;
+	box-shadow: 0 10px 20px rgba(0, 0, 0, 0.16);
+}
+
+.nav-icon {
+	width: 20px;
+	height: 20px;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+}
+
+.nav-label {
+	white-space: nowrap;
+}
+
+/* ============================================
+	 USER INFO
+	 ============================================ */
+.nav-user {
+	display: flex;
+	flex-direction: column;
+	align-items: flex-end;
+	gap: var(--spacing-1);
+	flex-shrink: 0;
+}
+
+.user-name {
+	font-size: 1rem;
+	font-weight: 900;
+	color: var(--white);
+	text-transform: uppercase;
+	letter-spacing: 0.05em;
+}
+
+.user-role {
+	font-size: 0.75rem;
+	font-weight: 700;
+	color: rgba(255, 255, 255, 0.7);
+	text-transform: uppercase;
+	letter-spacing: 0.1em;
+}
+
+.logout-btn {
+	margin-top: var(--spacing-1);
+	padding: var(--spacing-1) var(--spacing-3);
+	background: rgba(255, 255, 255, 0.2);
+	color: var(--white);
+	border: 1px solid rgba(255, 255, 255, 0.3);
+	border-radius: var(--radius-sm);
+	font-size: 0.75rem;
+	font-weight: 700;
+	text-transform: uppercase;
+	cursor: pointer;
+	transition: all 0.2s ease;
+}
+
+.logout-btn:hover {
+	background: rgba(255, 255, 255, 0.3);
+	border-color: rgba(255, 255, 255, 0.5);
+}
+
+/* ============================================
+	 RESPONSIVE
+	 ============================================ */
+@media (max-width: 1200px) {
+	.nav-items {
+		gap: 1.5rem;
+	}
+
+	.nav-item {
+		padding: var(--spacing-2) var(--spacing-4);
+		font-size: 0.75rem;
+		border-radius: var(--radius-sm);
+	}
+
+	.nav-label {
+		display: none;
+	}
+
+	.nav-icon {
+		width: 24px;
+		height: 24px;
+		font-size: 1.25rem;
+	}
+}
+
+@media (max-width: 768px) {
+	.top-nav {
+		height: 64px;
+	}
+
+	.nav-container {
+		padding: 0 var(--spacing-4);
+	}
+
+	.logo-box {
+		width: 40px;
+		height: 40px;
+		font-size: 1rem;
+	}
+
+	.nav-items {
+		gap: var(--spacing-1);
+	}
+
+	.nav-item {
+		padding: var(--spacing-2);
+		border-radius: var(--radius-sm);
+	}
+
+	.user-name {
+		font-size: 0.875rem;
+	}
+
+	.user-role,
+	.logout-btn {
+		display: none;
+	}
+}

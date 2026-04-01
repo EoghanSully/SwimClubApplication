@@ -5,11 +5,10 @@
 
 import { AppState } from '../app.js';
 import * as teamModel from '../models/teamModel.js';
-import * as userModel from '../models/userModel.js';
+import { formatDate } from '../utils/date.js';
+import { loadComponent, renderTemplate } from '../utils/components.js';
 
 let teamsList = [];
-let usersList = [];
-let attendanceList = [];
 let currentMembers = [];
 
 /**
@@ -18,7 +17,6 @@ let currentMembers = [];
 export async function loadTeams() {
   try {
     teamsList = await teamModel.getAllTeams();
-    usersList = await userModel.getAllUsers();
     console.log("Teams loaded in view model:", teamsList);
     if(teamsList.length === 0) {
       console.warn("No teams found. Check backend API and database.");
@@ -39,9 +37,16 @@ export async function getAccessibleTeams(user, role) {
     
     if (role === 'ADMIN') {
       return teams;
-    } else if (role === 'COACH') {
-      return teams.filter(t => t.coachIds && t.coachIds.includes(user.id));
     }
+
+    if (role === 'COACH') {
+      return teams.filter(team => team.coachIds?.includes(user.id));
+    }
+
+    if (role === 'MEMBER') {
+      return teams.filter(team => user.teamIds?.includes(team.id));
+    }
+
     return [];
   } catch (error) {
     console.error('Error getting accessible teams:', error.stack);
@@ -54,8 +59,9 @@ export async function getAccessibleTeams(user, role) {
  */
 export async function getTeamMembers(teamId) {
   try {
-    const users = usersList.length ? usersList : (await userModel.getAllUsers());
-    return users.filter(u => u.teamIds && u.teamIds.includes(teamId));
+    const teams = teamsList.length ? teamsList : (await loadTeams());
+    const team = teams.find(t => String(t.id) === String(teamId));
+    return team?.members || [];
   } catch (error) {
     console.error('Error getting team members:', error.stack);
     return [];
@@ -68,11 +74,10 @@ export async function getTeamMembers(teamId) {
 export async function getTeamCoaches(teamId) {
   try {
     const teams = teamsList.length ? teamsList : (await loadTeams());
-    const users = usersList.length ? usersList : (await userModel.getAllUsers());
-    const team = teams.find(t => t.id === teamId);
+    const team = teams.find(t => String(t.id) === String(teamId));
     
-    if (!team || !team.coachIds) return [];
-    return users.filter(u => team.coachIds.includes(u.id));
+    if (!team || !team.coachIds || team.coachIds.length === 0) return [];
+    return team.coachIds.map(coachId => ({ id: coachId, name: `Coach ${coachId}` }));
   } catch (error) {
     console.error('Error getting team coaches:', error.stack);
     return [];
@@ -119,7 +124,7 @@ export function filterMembers(members, searchTerm, roleFilter = 'ALL') {
   });
 }
 
-function renderMemberList(members) {
+async function renderMemberList(members) {
   const membersContainer = document.getElementById('members-list');
   if (!membersContainer) return;
 
@@ -128,19 +133,15 @@ function renderMemberList(members) {
     return;
   }
 
-  membersContainer.innerHTML = members.map(member => `
-    <div class="member-card" onclick="viewMemberProfile('${member.id}')">
-      <div class="member-avatar">${member.name.charAt(0)}</div>
-      <div class="member-info">
-        <h4 class="member-name">${member.name}</h4>
-        <p class="member-email">${member.email}</p>
-      </div>
-      <div class="member-meta">
-        <span class="member-role-badge ${member.role.toLowerCase()}">${member.role}</span>
-      </div>
-      <div class="member-action">→</div>
-    </div>
-  `).join('');
+  const cardTemplate = await loadComponent('team-card');
+  membersContainer.innerHTML = members.map(member => renderTemplate(cardTemplate, {
+    id: member.id,
+    initial: member.name.charAt(0),
+    name: member.name,
+    email: member.email,
+    roleLower: member.role.toLowerCase(),
+    role: member.role
+  })).join('');
 }
 
 window.filterMembers = function () {
@@ -152,7 +153,7 @@ window.filterMembers = function () {
 };
 
 window.viewMemberProfile = async function (memberId) {
-  const member = usersList.find(u => u.id === memberId);
+  const member = currentMembers.find(u => String(u.id) === String(memberId));
   if (!member) return;
 
   const stats = await getMemberStats(memberId);
@@ -247,8 +248,8 @@ export async function initTeams() {
       : '<span class="no-coaches">No coaches assigned</span>';
     document.getElementById('team-member-count').textContent = details.members.length;
 
-    window.currentMembers = details.members;
-    filterMembers();
+    currentMembers = details.members;
+    window.filterMembers(currentMembers, '', 'ALL');
   });
 }
 

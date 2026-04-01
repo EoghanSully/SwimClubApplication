@@ -1,13 +1,21 @@
 import pool from "../../config/db.js"; //importing database connection pool 
 
+function normalizeIds(value) {
+    if (!value) return [];
+    if (Array.isArray(value)) return value.filter((id) => id !== null && id !== undefined).map(Number);
+    return [Number(value)];
+}
 
-export const getPLans = async (user_role,team_id) => { //for all users, including members
+export const getPLans = async (user) => {
+    const user_role = user.user_role;
+    const coachTeamIds = normalizeIds(user.coach_team_ids || user.team_ids || user.team_id);
+
     try{
         if(user_role === 'admin'){
             const result = await pool.query('SELECT * FROM session_plans'); //query to retrieve all session plans from database for admin users
             return result.rows;
-        }else if(user_role === 'coach' || user_role === 'member'){
-            const result = await pool.query('SELECT * FROM session_plans WHERE team_id = $1', [team_id]); //query to retrieve session plans for a specific team from database for coach and member users
+        }else if(user_role === 'coach'){
+            const result = await pool.query('SELECT * FROM session_plans WHERE team_id = ANY($1::int[])', [coachTeamIds]); //query to retrieve session plans for scoped coach teams
             return result.rows;
         }
         else {
@@ -59,5 +67,10 @@ export const deletePlan = async (id) => {
         console.error("Error deleting session plan:", err);
         throw err;
     }
+}
+
+export const getPlanById = async (id) => {
+    const result = await pool.query('SELECT * FROM session_plans WHERE plan_id = $1', [id]);
+    return result.rows[0] || null;
 }
 

@@ -1,24 +1,34 @@
-<div class="container">
-  <!-- Hero Banner -->
-  <div id="hero-banner" class="hero-banner"></div>
-  
-  <!-- Quick Action Tiles -->
-  <div class="tiles-section">
-    <h2>Quick Actions</h2>
-    <div id="tiles-container" class="tiles-grid"></div>
-  </div>
-  
-  <!-- Announcements Section -->
-  <div class="announcements-section">
-    <div class="announcements-header">
-      <h2>Recent Announcements</h2>
-      <button class="btn btn-primary btn-small" onclick="window.location.hash='announcements'" style="margin-top: 0;">
-        View All
-      </button>
+<!-- Dashboard View -->
+<div class="dashboard-container">
+  <div class="dashboard-layout">
+    <!-- Main Content -->
+    <div class="dashboard-main">
+      <!-- Hero Section -->
+      <div class="hero-section">
+        <div class="hero-content" id="hero-content">
+          <!-- Will be populated by JavaScript -->
+        </div>
+      </div>
+
+      <!-- Quick Actions -->
+      <div class="quick-actions-section">
+        <h2 class="section-title">Quick Actions</h2>
+        <div class="quick-actions-grid" id="quick-actions-grid">
+          <!-- Will be populated by JavaScript -->
+        </div>
+      </div>
     </div>
-    
-    <div id="announcement-filters" class="announcements-filters"></div>
-    
-    <div id="announcements-feed" class="announcements-feed"></div>
+
+    <!-- Announcements Sidebar -->
+    <aside class="dashboard-announcements-sidebar">
+      <h3 class="announcements-sidebar-title">
+        <span>Announcements</span>
+        <button type="button" class="announcements-sidebar-add-btn" data-sidebar-create-announcement aria-label="Create announcement">+</button>
+      </h3>
+      <div id="dashboard-announcements-list" class="announcements-sidebar-list">
+        <!-- Will be populated by JavaScript -->
+      </div>
+    </aside>
   </div>
 </div>
+

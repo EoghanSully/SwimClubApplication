@@ -1,2 +1,44 @@
-<div id="attendance-container">
-  <div class="loading-spinner"></div>
+<div class="attendance-page">
+  <section class="attendance-hero">
+    <div>
+      <h1 class="attendance-hero-title">ATTENDANCE</h1>
+      <p class="attendance-hero-subtitle">ADMIN MANAGEMENT SECTION</p>
+    </div>
+    <button type="button" class="attendance-hero-btn" id="attendance-history-btn">PREVIOUS SESSIONS</button>
+  </section>
+
+  <section class="attendance-header-card">
+    <div>
+      <h2 class="attendance-header-title">Attendance Review</h2>
+      <p class="attendance-header-text">Monitor session participation and record attendance</p>
+    </div>
+    <div class="attendance-filter-wrap">
+      <select id="attendance-team-filter" class="attendance-team-filter">
+        <option value="ALL">All Teams</option>
+      </select>
+    </div>
+  </section>
+
+  <section class="attendance-layout" id="attendance-container">
+    <aside class="attendance-sessions-panel">
+      <div class="attendance-sessions-header">
+        <h3>TRAINING SESSIONS</h3>
+        <span class="attendance-count-pill" id="attendance-session-count">0</span>
+      </div>
+      <div id="attendance-session-list" class="attendance-session-list"></div>
+    </aside>
+
+    <section class="attendance-roster-panel">
+      <div class="attendance-roster-header">
+        <div>
+          <h3 id="attendance-roster-title">Session Roster Details</h3>
+          <p id="attendance-roster-subtitle">Select a session to begin</p>
+        </div>
+        <button type="button" id="attendance-save-btn" class="attendance-save-btn" disabled>SAVE CHANGES</button>
+      </div>
+      <div id="attendance-roster-list" class="attendance-roster-list">
+        <div class="attendance-empty-state">Select a training session to manage attendance.</div>
+      </div>
+    </section>
+  </section>
+</div>

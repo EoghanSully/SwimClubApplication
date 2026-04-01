@@ -1,2 +1,70 @@
-<div id="teams-list" class="teams-container">
-  <div class="loading-spinner"></div>
+<!-- Teams Management View -->
+<div class="teams-container container">
+  <div class="teams-header announcements-header-row">
+    <h1 class="page-title">Teams Management</h1>
+  </div>
+
+  <div class="teams-filters" style="margin-bottom: 1.5rem;">
+    <div class="filter-group">
+      <label class="filter-label">Select Team</label>
+      <select id="team-select" class="filter-select form-input" style="max-width: 320px;">
+        <option value="">Choose a team...</option>
+      </select>
+    </div>
+  </div>
+
+  <div class="team-details-section" id="team-details-section" style="display: none;">
+    <div class="team-header-card profile-section-card" style="margin-bottom: 1.5rem;">
+      <div class="team-header-content">
+        <h2 class="team-name" id="team-name"></h2>
+        <div class="team-coaches" id="team-coaches"></div>
+      </div>
+      <div class="team-stats">
+        <div class="team-stat">
+          <div class="stat-value" id="team-member-count">0</div>
+          <div class="stat-label">Members</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="members-search-section profile-section-card" style="margin-bottom: 1.5rem; display: flex; gap: 1rem; flex-wrap: wrap; align-items: center;">
+      <div class="search-input-group">
+        <input type="text" id="member-search" class="search-input form-input" placeholder="Search members..." oninput="filterMembers()">
+      </div>
+      <div class="filter-group">
+        <label class="filter-label">Role</label>
+        <select id="role-filter" onchange="filterMembers()" class="filter-select form-input">
+          <option value="ALL">All Roles</option>
+          <option value="MEMBER">Members</option>
+          <option value="COACH">Coaches</option>
+          <option value="ADMIN">Admins</option>
+        </select>
+      </div>
+    </div>
+
+    <div class="members-list-section">
+      <h3 class="section-subtitle" style="margin-bottom: 1rem;">Team Members</h3>
+      <div class="members-list" id="members-list"></div>
+    </div>
+  </div>
+
+  <div class="empty-state" id="empty-state">
+    <div class="empty-state-icon">👥</div>
+    <h3 class="empty-state-title">Select a Team</h3>
+    <p class="empty-state-text">Choose a team from the dropdown to view members and details</p>
+  </div>
+</div>
+
+<div class="modal" id="member-profile-modal" style="display: none;">
+  <div class="modal-overlay" onclick="closeMemberProfileModal()"></div>
+  <div class="modal-content modal-large" style="max-width: 900px;">
+    <div class="modal-header bg-maroon">
+      <div>
+        <h2 class="modal-title text-white" id="profile-member-name"></h2>
+        <p class="modal-subtitle text-white" id="profile-member-role"></p>
+      </div>
+      <button class="modal-close text-white" onclick="closeMemberProfileModal()">×</button>
+    </div>
+    <div class="profile-content" id="profile-content"></div>
+  </div>
+</div>

@@ -4,12 +4,51 @@
  */
 
 import { AppState } from '../app.js';
-import { apiGet } from '../utils/api.js';
-import { getCalendarDays, isSameDay, formatDate, formatTime, isSessionPast, eventTypeLabel, eventTypeToColor } from '../utils/date.js';
+import * as eventModel from '../models/eventsModel.js';
+import * as teamModel from '../models/teamModel.js';
+import { getCalendarDays, isSameDay, formatDateLong, formatTime, eventTypeLabel, eventTypeToColor } from '../utils/date.js';
+import { loadComponent, renderTemplate } from '../utils/components.js';
+
+function escapeHtml(value) {
+  return String(value ?? '')
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#39;');
+}
+
+function getEventAudienceLabel(event) {
+  if (event.teamId) {
+    return AppState.teams.find((team) => Number(team.id) === Number(event.teamId))?.name || 'Team Event';
+  }
+
+  if (event.audience === 'coach') return 'Coaches';
+  if (event.audience === 'team') return 'Team Event';
+  return 'All Club';
+}
+
+// ============================================
+// MODAL FUNCTIONS (Global)
+// ============================================
+window.openCreateEventModal = function () {
+  const modal = document.getElementById('create-event-modal');
+  if (modal) {
+    modal.style.setProperty('display', 'flex', 'important');
+  }
+};
+
+window.closeCreateEventModal = function () {
+  const modal = document.getElementById('create-event-modal');
+  const form = document.getElementById('create-event-form');
+  if (modal) {
+    modal.style.setProperty('display', 'none', 'important');
+    if (form) form.reset();
+  }
+};
 
 let currentDate = new Date();
 let selectedDay = null;
-let selectedEvent = null;
 let filterTeamId = null;
 let filterEventType = 'ALL';
 
@@ -20,21 +59,142 @@ export async function initSchedule() {
   const role = user?.role || 'MEMBER';
   
   try {
-    const events = AppState.events.length ? AppState.events : (await apiGet('/events') || []);
-    const teams = AppState.teams.length ? AppState.teams : (await apiGet('/teams') || []);
-    
-    // Render calendar
-    renderCalendar(events, user, role);
-    
-    // Render team filter
-    renderTeamFilter(teams, user, role);
-    
-    // Attach listeners
-    attachScheduleListeners(events, user, role);
-    
-  } catch (error) {
-    console.error('❌ Schedule error:', error);
+  let events = AppState.events;
+  if (!events.length) {
+    try {
+      events = await eventModel.getAllEvents();
+      AppState.events = events;
+    } catch (e) {
+      console.warn('Could not load events for schedule:', e.message);
+      events = [];
+    }
   }
+
+  let teams = AppState.teams.length ? AppState.teams : [];
+  if (!teams.length) {
+    try {
+      teams = await teamModel.getAllTeams();
+      AppState.teams = teams;
+    } catch (e) {
+      console.warn('Could not load teams for schedule:', e.message);
+      teams = [];
+    }
+  }
+
+  // Always render the calendar grid (even if empty)
+  renderCalendar(events, user, role);
+  renderTeamFilter(teams, user, role);
+  attachScheduleListeners(events, user, role);
+  setupCreateEvent(events, teams, user, role);
+  } catch (err) {
+    console.error('Schedule init error:', err);
+  }
+}
+
+function setupCreateEvent(events, teams, user, role) {
+  const createBtn = document.getElementById('create-event-btn');
+  const emptyCreateBtn = document.getElementById('create-event-empty-btn');
+  const modal = document.getElementById('create-event-modal');
+  const form = document.getElementById('create-event-form');
+  const audienceSelect = document.getElementById('event-audience');
+  const teamGroup = document.getElementById('event-team-group');
+  const teamSelect = document.getElementById('event-team-select');
+
+  if (!createBtn || !modal || !form || !audienceSelect || !teamGroup || !teamSelect) return;
+
+  if (role !== 'ADMIN' && role !== 'COACH') {
+    createBtn.style.display = 'none';
+    if (emptyCreateBtn) emptyCreateBtn.style.display = 'none';
+    return;
+  }
+
+  createBtn.style.setProperty('display', 'inline-flex', 'important');
+  if (emptyCreateBtn) {
+    emptyCreateBtn.style.setProperty('display', 'inline-flex', 'important');
+  }
+
+  const scopedTeams = role === 'ADMIN'
+    ? teams
+    : teams.filter((team) => team.coachIds?.includes(user.id) || user.coachTeamIds?.includes(team.id));
+
+  teamSelect.innerHTML = '<option value="">Select team</option>' + scopedTeams.map((team) => `
+    <option value="${team.id}">${team.name}</option>
+  `).join('');
+
+  if (role === 'COACH') {
+    audienceSelect.innerHTML = '<option value="team">Specific Team</option>';
+    audienceSelect.value = 'team';
+    if (scopedTeams.length === 1) {
+      teamSelect.value = String(scopedTeams[0].id);
+    }
+  }
+
+  const toggleTeamGroup = () => {
+    const show = audienceSelect.value === 'team';
+    teamGroup.style.display = show ? 'block' : 'none';
+
+    if (show && !teamSelect.value && scopedTeams.length === 1) {
+      teamSelect.value = String(scopedTeams[0].id);
+    }
+  };
+
+  audienceSelect.addEventListener('change', toggleTeamGroup);
+  toggleTeamGroup();
+
+  form.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const formData = new FormData(form);
+
+    const eventDate = formData.get('eventDate');
+    const startTime = formData.get('startTime');
+    const durationMinutes = Number(formData.get('durationMinutes') || 60);
+    const audience = role === 'COACH' ? 'team' : formData.get('audience');
+    const rawTeamId = formData.get('teamId');
+    const parsedTeamId = rawTeamId !== null && String(rawTeamId).trim() !== ''
+      ? Number(rawTeamId)
+      : null;
+
+    if (audience === 'team' && (!parsedTeamId || Number.isNaN(parsedTeamId))) {
+      alert('Please select a team for a team-specific event.');
+      return;
+    }
+
+    const payload = {
+      category: formData.get('category'),
+      title: formData.get('title'),
+      venue: formData.get('venue'),
+      description: formData.get('description') || '',
+      duration: minutesToInterval(durationMinutes),
+      event_date: `${eventDate}T${startTime}:00.000Z`,
+      status: 'scheduled',
+      audience,
+      team_id: parsedTeamId
+    };
+
+    try {
+      await eventModel.createNewEvent(payload);
+      const updatedEvents = await eventModel.getAllEvents();
+      AppState.events = updatedEvents;
+      renderCalendar(updatedEvents, user, role);
+      if (selectedDay) {
+        const dayEvents = getFilteredEvents(updatedEvents, user, role).filter((event) => {
+          const eventDate = new Date(event.date);
+          return isSameDay(eventDate, selectedDay);
+        });
+        renderDayEvents(dayEvents);
+      }
+      window.closeCreateEventModal();
+    } catch (err) {
+      console.error('Create event failed:', err);
+      alert(err.message || 'Unable to create event');
+    }
+  });
+}
+
+function minutesToInterval(minutes) {
+  const hrs = Math.floor(minutes / 60);
+  const mins = minutes % 60;
+  return `${String(hrs).padStart(2, '0')}:${String(mins).padStart(2, '0')}:00`;
 }
 
 function getFilteredEvents(allEvents, user, role) {
@@ -98,7 +258,7 @@ function renderCalendar(allEvents, user, role) {
     
     return `
       <button class="calendar-day ${isToday ? 'today' : ''} ${isSelected ? 'selected' : ''}" 
-              onclick="selectDay(new Date('${day.toISOString()}'), ${dayEvents.length} events)">
+              onclick="selectDay(new Date('${day.toISOString()}'))">
         <div class="calendar-day-num">${day.getDate()}</div>
         <div class="calendar-indicators">${indicators}</div>
       </button>
@@ -118,7 +278,7 @@ function renderTeamFilter(teams, user, role) {
   
   filterContainer.innerHTML = `
     <div class="filter-row">
-      <select id="team-filter" class="form-input" style="width: auto; padding: 0.5rem 1rem;">
+      <select id="team-filter" class="form-input schedule-team-select">
         <option value="">All Teams</option>
         ${availableTeams.map(team => `
           <option value="${team.id}">${team.name}</option>
@@ -136,100 +296,86 @@ function renderTeamFilter(teams, user, role) {
   `;
 }
 
-function renderDayEvents(events) {
+async function renderDayEvents(events) {
   const dayEventsContainer = document.getElementById('day-events');
+  const canCreate = ['ADMIN', 'COACH'].includes(AppState.currentUser?.role);
   if (!dayEventsContainer) return;
   
   if (events.length === 0) {
-    dayEventsContainer.innerHTML = '<div class="empty-state"><p>No events on this day</p></div>';
+    dayEventsContainer.innerHTML = `
+      <div class="empty-state">
+        <p>No events on this day</p>
+        ${canCreate ? '<button class="btn btn-primary create-event-empty-btn" onclick="window.openCreateEventModal()">+ Create Event</button>' : ''}
+      </div>
+    `;
     return;
   }
   
-  dayEventsContainer.innerHTML = events.map(e => `
-    <button class="event-list-item" onclick="openEventModal(${JSON.stringify(e).replace(/"/g, '&quot;')})">
-      <div class="event-item-header">
-        <span class="event-type-badge" style="background-color: ${eventTypeToColor(e.type)}">
-          ${e.type}
-        </span>
-        <h4>${e.title}</h4>
-      </div>
-      <p class="event-item-time">🕐 ${e.startTime} - ${e.endTime}</p>
-      <p class="event-item-location">📍 ${e.location}</p>
-      ${e.teamId ? `<p class="event-item-team">👥 Team</p>` : ''}
-    </button>
-  `).join('');
+  const cardTemplate = await loadComponent('event-card');
+  dayEventsContainer.innerHTML = events.map(e => renderTemplate(cardTemplate, {
+    eventJson: JSON.stringify(e).replace(/"/g, '&quot;'),
+    typeColor: eventTypeToColor(e.type),
+    type: e.type,
+    title: e.title,
+    startTime: e.startTime,
+    endTime: e.endTime,
+    location: e.location,
+    teamBadge: e.teamId ? '<p class="event-item-team">👥 Team</p>' : ''
+  })).join('');
 }
 
 function renderEventModal(event) {
   const modal = document.getElementById('event-modal');
-  if (!modal) return;
-  
-  const isPast = isSessionPast(event.date, event.startTime);
-  
-  modal.innerHTML = `
-    <div class="modal-content">
-      <div class="modal-header" style="background-color: ${eventTypeToColor(event.type)}">
+  const title = document.getElementById('event-modal-title');
+  const meta = document.getElementById('event-modal-meta');
+  const content = document.getElementById('event-modal-content');
+  if (!modal || !title || !meta || !content) return;
+
+  const eventType = eventTypeLabel(event.type || event.category || 'EVENT');
+  const audienceLabel = getEventAudienceLabel(event);
+  const safeDescription = escapeHtml(event.description || 'No description provided.').replace(/\n/g, '<br>');
+
+  title.textContent = event.title || 'Event Details';
+  meta.textContent = `${eventType} • ${audienceLabel}`;
+  content.innerHTML = `
+    <div class="event-modal-meta-card">
+      <div class="event-modal-meta-item">
+        <span class="event-modal-meta-icon">📅</span>
         <div>
-          <p style="color: white; font-size: 0.75rem; font-weight: 700; margin-bottom: 0.5rem;">
-            ${formatDate(event.date)}
-          </p>
-          <h2 style="color: white;">${event.title}</h2>
+          <div class="event-modal-meta-label">Date</div>
+          <div class="event-modal-meta-value">${escapeHtml(formatDateLong(event.date))}</div>
         </div>
-        <button class="modal-close-btn" onclick="closeEventModal()">×</button>
       </div>
-      
-      <div class="modal-body">
-        <div class="event-detail-section">
-          <div class="detail-icon">📅</div>
-          <div>
-            <p class="detail-label">Date & Time</p>
-            <p>${formatDate(event.date)}</p>
-            <p>${event.startTime} - ${event.endTime}</p>
-          </div>
+      <div class="event-modal-meta-item">
+        <span class="event-modal-meta-icon">🕐</span>
+        <div>
+          <div class="event-modal-meta-label">Time</div>
+          <div class="event-modal-meta-value">${escapeHtml(formatTime(event.startTime))} - ${escapeHtml(formatTime(event.endTime))}</div>
         </div>
-        
-        <div class="event-detail-section">
-          <div class="detail-icon">📍</div>
-          <div>
-            <p class="detail-label">Location</p>
-            <p>${event.location}</p>
-          </div>
+      </div>
+      <div class="event-modal-meta-item">
+        <span class="event-modal-meta-icon">📍</span>
+        <div>
+          <div class="event-modal-meta-label">Location</div>
+          <div class="event-modal-meta-value">${escapeHtml(event.location || 'TBC')}</div>
         </div>
-        
-        ${event.teamId ? `
-          <div class="event-detail-section">
-            <div class="detail-icon">👥</div>
-            <div>
-              <p class="detail-label">Team</p>
-              <p>${AppState.teams.find(t => t.id === event.teamId)?.name || 'Team'}</p>
-            </div>
-          </div>
-        ` : ''}
-        
-        <div class="event-detail-section">
-          <div class="detail-icon">ℹ️</div>
-          <div>
-            <p class="detail-label">Description</p>
-            <p>${event.description || 'No description'}</p>
-          </div>
+      </div>
+      <div class="event-modal-meta-item">
+        <span class="event-modal-meta-icon">👥</span>
+        <div>
+          <div class="event-modal-meta-label">Audience</div>
+          <div class="event-modal-meta-value">${escapeHtml(audienceLabel)}</div>
         </div>
-        
-        ${event.type === 'TRAINING' && (AppState.currentUser.role === 'ADMIN' || AppState.currentUser.role === 'COACH') 
-          ? `
-            <div style="margin-top: 2rem; display: flex; gap: 1rem;">
-              <button class="btn btn-success" onclick="goToPage('sessions')">
-                📋 View Session Plan
-              </button>
-              <button class="btn btn-primary" onclick="goToPage('attendance')">
-                ✅ Mark Attendance
-              </button>
-            </div>
-          ` : ''}
       </div>
     </div>
+    <div class="event-modal-type-badge" style="background: ${eventTypeToColor(event.type)};">${escapeHtml(event.type || 'EVENT')}</div>
+    <div class="event-modal-section-title">${escapeHtml(event.title || 'Event')}</div>
+    <div class="event-modal-description">
+      ${safeDescription}
+    </div>
   `;
-  
-  modal.classList.remove('hidden');
+
+  modal.style.setProperty('display', 'flex', 'important');
 }
 
 function attachScheduleListeners(allEvents, user, role) {
@@ -241,7 +387,6 @@ function attachScheduleListeners(allEvents, user, role) {
     prevBtn.addEventListener('click', () => {
       currentDate.setMonth(currentDate.getMonth() - 1);
       renderCalendar(allEvents, user, role);
-      attachScheduleListeners(allEvents, user, role);
     });
   }
   
@@ -249,7 +394,6 @@ function attachScheduleListeners(allEvents, user, role) {
     nextBtn.addEventListener('click', () => {
       currentDate.setMonth(currentDate.getMonth() + 1);
       renderCalendar(allEvents, user, role);
-      attachScheduleListeners(allEvents, user, role);
     });
   }
   
@@ -266,7 +410,6 @@ function attachScheduleListeners(allEvents, user, role) {
         });
         renderDayEvents(dayEvents);
       }
-      attachScheduleListeners(allEvents, user, role);
     });
   }
   
@@ -285,13 +428,12 @@ function attachScheduleListeners(allEvents, user, role) {
         });
         renderDayEvents(dayEvents);
       }
-      attachScheduleListeners(allEvents, user, role);
     });
   });
 }
 
 // Global functions for onclick handlers
-window.selectDay = function(day, count) {
+window.selectDay = function(day) {
   selectedDay = day;
   const filteredEvents = getFilteredEvents(AppState.events, AppState.currentUser, AppState.currentUser.role);
   const dayEvents = filteredEvents.filter(e => {
@@ -308,7 +450,7 @@ window.openEventModal = function(event) {
 
 window.closeEventModal = function() {
   const modal = document.getElementById('event-modal');
-  if (modal) modal.classList.add('hidden');
+  if (modal) modal.style.setProperty('display', 'none', 'important');
 };
 
 window.goToPage = function(page) {

@@ -1,0 +1,115 @@
+<!-- Session Plans View -->
+<div class="session-plans-container">
+	<div class="plans-hero-section">
+		<div class="plans-hero-icon" aria-hidden="true">
+			<svg viewBox="0 0 24 24" fill="none">
+				<rect x="5" y="3" width="14" height="18" rx="2" stroke="currentColor" stroke-width="1.8"/>
+				<path d="M9 3.75h6" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+				<path d="M9 9h6M9 13h6M9 17h4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+			</svg>
+		</div>
+		<div class="plans-hero-copy">
+			<div class="plans-hero-label">ADMIN MANAGEMENT SECTION</div>
+			<h1 class="plans-hero-title">Session Plans</h1>
+		</div>
+	</div>
+
+	<div class="plans-description">
+		<p>Collaborate on training sets and drill progressions across all teams.</p>
+	</div>
+
+	<div class="plans-toolbar">
+		<div class="plans-filter-wrap">
+			<span class="plans-filter-icon" aria-hidden="true">
+				<svg viewBox="0 0 24 24" fill="none">
+					<path d="M4 6h16l-6.4 7.4v5.1l-3.2-1.8v-3.3L4 6Z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/>
+				</svg>
+			</span>
+			<select id="plans-team-filter" class="plans-filter-pill">
+				<option value="ALL">All Teams</option>
+			</select>
+		</div>
+	</div>
+
+	<div class="plans-section-header">
+		<h2 class="plans-section-title">Active Session Plans</h2>
+		<span class="plans-count-badge" id="plans-count-badge">0 PLANS FOUND</span>
+	</div>
+
+	<div class="session-plans-grid" id="session-plans-grid"></div>
+</div>
+
+<div class="modal" id="view-plan-modal" style="display: none;">
+	<div class="modal-overlay" onclick="closeViewPlanModal()"></div>
+	<div class="modal-content modal-large">
+		<div class="modal-header bg-maroon">
+			<div>
+				<h2 class="modal-title text-white" id="plan-modal-title"></h2>
+				<p class="modal-subtitle text-white" id="plan-modal-subtitle"></p>
+			</div>
+			<button class="modal-close text-white" onclick="closeViewPlanModal()">×</button>
+		</div>
+		<div class="plan-view-content" id="plan-view-content" style="padding: var(--spacing-8);"></div>
+	</div>
+</div>
+
+<div class="modal" id="create-plan-modal" style="display: none;">
+	<div class="modal-overlay" onclick="closeCreatePlanModal()"></div>
+	<div class="modal-content modal-large">
+		<div class="modal-header bg-maroon">
+			<h2 class="modal-title text-white">Create New Session Plan</h2>
+			<button class="modal-close text-white" onclick="closeCreatePlanModal()">×</button>
+		</div>
+		<div class="create-plan-submit-strip">
+			<button type="button" class="btn btn-primary create-plan-submit-top" onclick="document.getElementById('create-plan-form')?.requestSubmit()">✓ Submit & Create Session Plan</button>
+		</div>
+		<form id="create-plan-form" style="padding: var(--spacing-8);">
+			<div class="form-group">
+				<label class="form-label">Plan Title</label>
+				<input type="text" name="title" class="form-input" required>
+			</div>
+			<div class="form-row" style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 1rem;">
+				<div class="form-group">
+					<label class="form-label">Team</label>
+					<select name="teamId" class="form-select form-input" id="plan-team-select" required></select>
+				</div>
+				<div class="form-group">
+					<label class="form-label">Category</label>
+					<select name="category" class="form-select form-input" required>
+						<option value="THRESHOLD">Threshold</option>
+						<option value="SPRINT">Sprint</option>
+						<option value="ENDURANCE">Endurance</option>
+						<option value="TECHNIQUE">Technique</option>
+						<option value="RACE_PREP">Race Prep</option>
+						<option value="RECOVERY">Recovery</option>
+						<option value="GENERAL">General</option>
+					</select>
+				</div>
+			</div>
+			<div class="form-group">
+				<label class="form-label">Date</label>
+				<input type="date" name="date" class="form-input" required>
+			</div>
+			<div class="form-group">
+				<label class="form-label">Warm-Up</label>
+				<textarea name="warmUp" class="form-textarea" required></textarea>
+			</div>
+			<div class="form-group">
+				<label class="form-label">Main Set</label>
+				<textarea name="mainSet" class="form-textarea" required></textarea>
+			</div>
+			<div class="form-group">
+				<label class="form-label">Cool-Down</label>
+				<textarea name="coolDown" class="form-textarea" required></textarea>
+			</div>
+			<div class="form-group">
+				<label class="form-label">Notes (Optional)</label>
+				<textarea name="notes" class="form-textarea"></textarea>
+			</div>
+			<div class="form-actions">
+				<button type="button" class="btn btn-secondary" onclick="closeCreatePlanModal()">Cancel</button>
+				<button type="submit" class="btn btn-primary create-plan-submit-btn">✓ Submit & Create Session Plan</button>
+			</div>
+		</form>
+	</div>
+</div>

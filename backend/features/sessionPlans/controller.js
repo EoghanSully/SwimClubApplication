@@ -1,10 +1,25 @@
 import handleResponse from '../../middleware/responseHandler.js';
 import * as PlanModel from './model.js'; //session plans model
 
+function normalizeIds(value) {
+    if (!value) return [];
+    if (Array.isArray(value)) return value.map(Number);
+    return [Number(value)];
+}
+
+function getCoachTeams(user) {
+    const coachTeams = normalizeIds(user.coach_team_ids);
+    if (coachTeams.length) return coachTeams;
+    return normalizeIds(user.team_ids || user.team_id);
+}
+
 export const getAllPlans = async (req, res,next) => {  
-    const {user_role, team_id} = req.user;
+    const {user_role} = req.user;
+    if (user_role !== 'admin' && user_role !== 'coach') {
+        return handleResponse(res, 403, "Only admins and coaches can access session plans");
+    }
     try{
-        const plans = await PlanModel.getPLans(user_role, team_id); //calls the getPLans function from the model to retrieve all session plans from the database
+        const plans = await PlanModel.getPLans(req.user); //calls the getPLans function from the model to retrieve all session plans from the database
         handleResponse(res, 200, "Session plans retrieved successfully", plans); //sends a successful response with the retrieved session plans
     } 
     catch (err) {
@@ -14,8 +29,15 @@ export const getAllPlans = async (req, res,next) => {
 
 
 export const createPlan = async (req,res,next) => {
-    if(req.user.user_role !== 'coach') {
-        return handleResponse(res, 403, "Only coaches can create session plans"); //sends a 403 response if the user is not a coach
+    if(req.user.user_role !== 'coach' && req.user.user_role !== 'admin') {
+        return handleResponse(res, 403, "Only admins and coaches can create session plans");
+    }
+
+    if (req.user.user_role === 'coach') {
+        const coachTeams = getCoachTeams(req.user);
+        if (!coachTeams.includes(Number(req.body.team_id))) {
+            return handleResponse(res, 403, "Coaches can only create plans for teams they coach");
+        }
     }
     const user_id = req.user.user_id; 
     try{
@@ -30,8 +52,20 @@ export const createPlan = async (req,res,next) => {
 };
 
 export const updatePlanInfo = async (req,res,next) => {
-    if(req.user.user_role !== 'coach') {
-        return handleResponse(res, 403, "Only coaches can update session plans"); //sends a 403 response if the user is not a coach
+    if(req.user.user_role !== 'coach' && req.user.user_role !== 'admin') {
+        return handleResponse(res, 403, "Only admins and coaches can update session plans");
+    }
+
+    if (req.user.user_role === 'coach') {
+        const existing = await PlanModel.getPlanById(req.body.plan_id);
+        const coachTeams = getCoachTeams(req.user);
+        if (!existing || !coachTeams.includes(Number(existing.team_id))) {
+            return handleResponse(res, 403, "Coaches can only update plans for teams they coach");
+        }
+
+        if (!coachTeams.includes(Number(req.body.team_id ?? existing.team_id))) {
+            return handleResponse(res, 403, "Invalid team scope for coach");
+        }
     }
     try{
         const plan = await PlanModel.updatePlan(req.body); //calls the updatePlan function from the model to update the session plan in the database with the data from the request body
@@ -44,8 +78,16 @@ export const updatePlanInfo = async (req,res,next) => {
 }
 
 export const deletePlan = async (req, res,next) => {  
-    if(req.user.user_role !== 'coach') {
-        return handleResponse(res, 403, "Only coaches can delete session plans"); //sends a 403 response if the user is not a coach
+    if(req.user.user_role !== 'coach' && req.user.user_role !== 'admin') {
+        return handleResponse(res, 403, "Only admins and coaches can delete session plans");
+    }
+
+    if (req.user.user_role === 'coach') {
+        const existing = await PlanModel.getPlanById(req.params.id);
+        const coachTeams = getCoachTeams(req.user);
+        if (!existing || !coachTeams.includes(Number(existing.team_id))) {
+            return handleResponse(res, 403, "Coaches can only delete plans for teams they coach");
+        }
     }
     try{
         const deletedPlan = await PlanModel.deletePlan(req.params.id); //calls the deletePlan function from the model to delete the session plan from the database  

@@ -1,0 +1,14 @@
+<!-- Team Member Card Template -->
+<!-- Rendered in teamsVM.js renderMemberList() -->
+<!-- Placeholders: {{id}}, {{initial}}, {{name}}, {{email}}, {{roleLower}}, {{role}} -->
+<div class="member-card" onclick="viewMemberProfile('{{id}}')">
+  <div class="member-avatar">{{initial}}</div>
+  <div class="member-info">
+    <h4 class="member-name">{{name}}</h4>
+    <p class="member-email">{{email}}</p>
+  </div>
+  <div class="member-meta">
+    <span class="member-role-badge {{roleLower}}">{{role}}</span>
+  </div>
+  <div class="member-action">?</div>
+</div>

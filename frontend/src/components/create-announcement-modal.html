@@ -1,0 +1,61 @@
+<!-- Sidebar Create Announcement Modal Component -->
+<!-- Injected once into document.body at app startup by injectSharedComponents() in app.js -->
+<div id="sidebar-create-announcement-modal" class="modal" style="display: none;">
+  <div class="modal-overlay" onclick="window.closeSidebarCreateAnnouncementModal()"></div>
+  <div class="modal-content">
+    <div class="modal-header bg-maroon">
+      <h2 class="modal-title text-white">Create Announcement</h2>
+      <button class="modal-close text-white" onclick="window.closeSidebarCreateAnnouncementModal()">×</button>
+    </div>
+    <form id="sidebar-create-announcement-form" style="padding: var(--spacing-8);">
+      <div class="form-group">
+        <label class="form-label">Title</label>
+        <input type="text" name="title" class="form-input" required />
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">Content</label>
+        <textarea name="content" class="form-textarea" required></textarea>
+      </div>
+
+      <div class="form-row">
+        <div class="form-group">
+          <label class="form-label">Category</label>
+          <select name="category" class="form-select form-input" required>
+            <option value="GENERAL">General</option>
+            <option value="TRAINING">Training</option>
+            <option value="COMPETITION">Competition</option>
+            <option value="SOCIAL">Social</option>
+            <option value="FUNDRAISER">Fundraiser</option>
+            <option value="SOCIETY">Society</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Target Audience</label>
+          <select name="target" id="sidebar-announcement-target" class="form-select form-input" required>
+            <option value="ALL">All Members</option>
+            <option value="COACHES">Coaches Only</option>
+            <option value="TEAM">Specific Team</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="form-group" id="sidebar-announcement-team-group" style="display: none;">
+        <label class="form-label">Target Team</label>
+        <select name="teamId" id="sidebar-announcement-team-select" class="form-select form-input">
+          <option value="">Select a team</option>
+        </select>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">Related Event (Optional)</label>
+        <input type="text" name="eventId" class="form-input" placeholder="Event ID (optional)" />
+      </div>
+
+      <div class="modal-footer form-actions">
+        <button type="button" class="btn btn-secondary" onclick="window.closeSidebarCreateAnnouncementModal()">Cancel</button>
+        <button type="submit" class="btn btn-primary">Create Announcement</button>
+      </div>
+    </form>
+  </div>
+</div>

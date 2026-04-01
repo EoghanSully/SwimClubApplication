@@ -1,0 +1,461 @@
+/* ============================================
+	 TEAMS MANAGEMENT STYLES
+	 University of Galway Swim Club
+	 ============================================ */
+
+/* ============================================
+	 TEAMS CONTAINER
+	 ============================================ */
+.teams-container {
+	padding: var(--spacing-8);
+	max-width: 1400px;
+	margin: 0 auto;
+}
+
+/* ============================================
+	 TEAMS HEADER
+	 ============================================ */
+.teams-header {
+	margin-bottom: var(--spacing-8);
+}
+
+/* ============================================
+	 TEAMS FILTERS
+	 ============================================ */
+.teams-filters {
+	margin-bottom: var(--spacing-8);
+	padding: var(--spacing-6);
+	background: var(--white);
+	border-radius: var(--radius-xl);
+	border: 2px solid var(--gray-200);
+	box-shadow: var(--shadow-md);
+}
+
+/* ============================================
+	 TEAM HEADER CARD
+	 ============================================ */
+.team-header-card {
+	background: var(--maroon-primary);
+	border-radius: var(--radius-xl);
+	padding: var(--spacing-8);
+	box-shadow: var(--shadow-xl);
+	border: 2px solid var(--maroon-dark);
+	margin-bottom: var(--spacing-8);
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	gap: var(--spacing-6);
+}
+
+.team-header-content {
+	flex: 1;
+}
+
+.team-name {
+	font-size: 2.25rem;
+	font-weight: 900;
+	text-transform: uppercase;
+	letter-spacing: 0.05em;
+	color: var(--white);
+	margin-bottom: var(--spacing-3);
+}
+
+.team-coaches {
+	display: flex;
+	align-items: center;
+	gap: var(--spacing-2);
+	flex-wrap: wrap;
+}
+
+.coaches-label {
+	font-size: 0.875rem;
+	font-weight: 700;
+	text-transform: uppercase;
+	color: rgba(255, 255, 255, 0.8);
+}
+
+.coach-badge {
+	padding: var(--spacing-2) var(--spacing-3);
+	background: rgba(255, 255, 255, 0.2);
+	border: 2px solid rgba(255, 255, 255, 0.3);
+	border-radius: var(--radius-md);
+	color: var(--white);
+	font-size: 0.875rem;
+	font-weight: 700;
+}
+
+.no-coaches {
+	font-size: 0.875rem;
+	color: rgba(255, 255, 255, 0.7);
+	font-style: italic;
+}
+
+.team-stats {
+	display: flex;
+	gap: var(--spacing-6);
+}
+
+.team-stat {
+	text-align: center;
+	padding: var(--spacing-4);
+	background: rgba(255, 255, 255, 0.1);
+	border-radius: var(--radius-lg);
+	min-width: 120px;
+}
+
+.stat-value {
+	font-size: 2.5rem;
+	font-weight: 900;
+	color: var(--white);
+}
+
+.stat-label {
+	font-size: 0.875rem;
+	font-weight: 700;
+	text-transform: uppercase;
+	letter-spacing: 0.1em;
+	color: rgba(255, 255, 255, 0.8);
+	margin-top: var(--spacing-1);
+}
+
+/* ============================================
+	 MEMBERS SEARCH SECTION
+	 ============================================ */
+.members-search-section {
+	display: flex;
+	gap: var(--spacing-6);
+	margin-bottom: var(--spacing-8);
+	padding: var(--spacing-6);
+	background: var(--white);
+	border-radius: var(--radius-xl);
+	border: 2px solid var(--gray-200);
+	box-shadow: var(--shadow-md);
+}
+
+.search-input-group {
+	flex: 2;
+}
+
+.search-input {
+	width: 100%;
+	padding: var(--spacing-4);
+	border: 2px solid var(--gray-200);
+	border-radius: var(--radius-lg);
+	background: var(--gray-50);
+	font-size: 1rem;
+	font-weight: 500;
+	transition: all 0.2s ease;
+}
+
+.search-input:focus {
+	outline: none;
+	border-color: var(--maroon-primary);
+	background: var(--white);
+	box-shadow: 0 0 0 3px rgba(168, 0, 80, 0.1);
+}
+
+/* ============================================
+	 MEMBERS LIST SECTION
+	 ============================================ */
+.members-list-section {
+	background: var(--white);
+	border-radius: var(--radius-xl);
+	border: 2px solid var(--gray-200);
+	padding: var(--spacing-8);
+	box-shadow: var(--shadow-md);
+}
+
+.section-subtitle {
+	font-size: 1.5rem;
+	font-weight: 900;
+	text-transform: uppercase;
+	letter-spacing: 0.05em;
+	color: var(--gray-900);
+	margin-bottom: var(--spacing-6);
+	padding-bottom: var(--spacing-4);
+	border-bottom: 2px solid var(--gray-100);
+}
+
+.members-list {
+	display: flex;
+	flex-direction: column;
+	gap: var(--spacing-4);
+}
+
+.member-card {
+	display: grid;
+	grid-template-columns: auto 1fr auto auto;
+	gap: var(--spacing-4);
+	align-items: center;
+	padding: var(--spacing-6);
+	background: var(--white);
+	border: 2px solid var(--gray-200);
+	border-radius: var(--radius-lg);
+	cursor: pointer;
+	transition: all 0.2s ease;
+}
+
+.member-card:hover {
+	border-color: var(--maroon-primary);
+	box-shadow: var(--shadow-md);
+	background: var(--gray-50);
+}
+
+.member-avatar {
+	width: 56px;
+	height: 56px;
+	border-radius: var(--radius-lg);
+	background: var(--maroon-primary);
+	color: var(--white);
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	font-size: 1.5rem;
+	font-weight: 900;
+	flex-shrink: 0;
+}
+
+.member-info {
+	flex: 1;
+}
+
+.member-name {
+	font-size: 1.125rem;
+	font-weight: 700;
+	color: var(--gray-900);
+	margin-bottom: var(--spacing-1);
+}
+
+.member-email {
+	font-size: 0.875rem;
+	color: var(--gray-600);
+}
+
+.member-meta {
+	display: flex;
+	flex-direction: column;
+	gap: var(--spacing-2);
+	align-items: flex-end;
+}
+
+.member-role-badge {
+	padding: var(--spacing-2) var(--spacing-3);
+	border-radius: var(--radius-md);
+	font-size: 0.75rem;
+	font-weight: 700;
+	text-transform: uppercase;
+	letter-spacing: 0.05em;
+}
+
+.member-role-badge.admin {
+	background: #fee2e2;
+	color: #dc2626;
+	border: 2px solid #dc2626;
+}
+
+.member-role-badge.coach {
+	background: #dbeafe;
+	color: #2563eb;
+	border: 2px solid #2563eb;
+}
+
+.member-role-badge.member {
+	background: #dcfce7;
+	color: #16a34a;
+	border: 2px solid #16a34a;
+}
+
+.member-joined {
+	font-size: 0.75rem;
+	color: var(--gray-500);
+}
+
+.member-action {
+	font-size: 1.5rem;
+	color: var(--gray-300);
+	transition: color 0.2s ease;
+}
+
+.member-card:hover .member-action {
+	color: var(--maroon-primary);
+}
+
+.no-members {
+	text-align: center;
+	padding: var(--spacing-12);
+	color: var(--gray-500);
+	font-weight: 700;
+}
+
+/* ============================================
+	 EMPTY STATE
+	 ============================================ */
+.empty-state {
+	text-align: center;
+	padding: var(--spacing-12);
+	background: var(--white);
+	border-radius: var(--radius-xl);
+	border: 2px solid var(--gray-200);
+}
+
+.empty-state-icon {
+	font-size: 4rem;
+	margin-bottom: var(--spacing-4);
+}
+
+.empty-state-title {
+	font-size: 1.5rem;
+	font-weight: 900;
+	text-transform: uppercase;
+	color: var(--gray-900);
+	margin-bottom: var(--spacing-2);
+}
+
+.empty-state-text {
+	font-size: 1rem;
+	color: var(--gray-600);
+}
+
+/* ============================================
+	 PROFILE MODAL CONTENT
+	 ============================================ */
+.profile-content {
+	padding: var(--spacing-8);
+}
+
+.profile-grid {
+	display: flex;
+	flex-direction: column;
+	gap: var(--spacing-6);
+}
+
+.profile-section {
+	background: var(--gray-50);
+	border-radius: var(--radius-lg);
+	padding: var(--spacing-6);
+	border: 2px solid var(--gray-100);
+}
+
+.profile-section-title {
+	font-size: 1.125rem;
+	font-weight: 900;
+	text-transform: uppercase;
+	letter-spacing: 0.05em;
+	color: var(--gray-900);
+	margin-bottom: var(--spacing-4);
+	padding-bottom: var(--spacing-3);
+	border-bottom: 2px solid var(--gray-200);
+}
+
+.profile-info-grid {
+	display: grid;
+	grid-template-columns: 1fr 1fr;
+	gap: var(--spacing-4);
+}
+
+.profile-info-item {
+	display: flex;
+	flex-direction: column;
+	gap: var(--spacing-2);
+}
+
+.info-label {
+	font-size: 0.75rem;
+	font-weight: 700;
+	text-transform: uppercase;
+	letter-spacing: 0.1em;
+	color: var(--gray-500);
+}
+
+.info-value {
+	font-size: 1rem;
+	font-weight: 700;
+	color: var(--gray-900);
+}
+
+.profile-teams-list {
+	display: flex;
+	flex-wrap: wrap;
+	gap: var(--spacing-3);
+}
+
+.profile-team-badge {
+	padding: var(--spacing-3) var(--spacing-4);
+	background: var(--white);
+	border: 2px solid var(--maroon-primary);
+	border-radius: var(--radius-lg);
+	font-weight: 700;
+	color: var(--maroon-primary);
+	font-size: 0.875rem;
+	text-transform: uppercase;
+	letter-spacing: 0.05em;
+}
+
+.attendance-stats-grid {
+	display: grid;
+	grid-template-columns: repeat(3, 1fr);
+	gap: var(--spacing-4);
+}
+
+.stat-card {
+	background: var(--white);
+	padding: var(--spacing-4);
+	border-radius: var(--radius-lg);
+	text-align: center;
+	border: 2px solid var(--gray-200);
+}
+
+.stat-card-value {
+	font-size: 2rem;
+	font-weight: 900;
+	color: var(--maroon-primary);
+}
+
+.stat-card-label {
+	font-size: 0.75rem;
+	font-weight: 700;
+	text-transform: uppercase;
+	letter-spacing: 0.1em;
+	color: var(--gray-600);
+	margin-top: var(--spacing-1);
+}
+
+.no-data {
+	text-align: center;
+	color: var(--gray-500);
+	font-style: italic;
+	padding: var(--spacing-4);
+}
+
+/* ============================================
+	 RESPONSIVE
+	 ============================================ */
+@media (max-width: 768px) {
+	.team-header-card {
+		flex-direction: column;
+		align-items: flex-start;
+	}
+
+	.members-search-section {
+		flex-direction: column;
+	}
+
+	.member-card {
+		grid-template-columns: auto 1fr auto;
+		grid-template-rows: auto auto;
+	}
+
+	.member-meta {
+		grid-column: 1 / -1;
+		flex-direction: row;
+		justify-content: space-between;
+		width: 100%;
+		padding-top: var(--spacing-3);
+		border-top: 1px solid var(--gray-200);
+	}
+
+	.profile-info-grid,
+	.attendance-stats-grid {
+		grid-template-columns: 1fr;
+	}
+}

@@ -1,0 +1,9 @@
+<!-- Attendance Roster Row Template -->
+<!-- Placeholders: {{userId}}, {{nameClass}}, {{name}}, {{presentClass}}, {{absentClass}} -->
+<div class="attendance-roster-row" data-user-id="{{userId}}">
+  <div class="attendance-member-name {{nameClass}}">{{name}}</div>
+  <div class="attendance-toggle-group">
+    <button type="button" class="attendance-toggle-btn present {{presentClass}}" data-set-status="present" data-user-id="{{userId}}">PRESENT</button>
+    <button type="button" class="attendance-toggle-btn absent {{absentClass}}" data-set-status="absent" data-user-id="{{userId}}">ABSENT</button>
+  </div>
+</div>

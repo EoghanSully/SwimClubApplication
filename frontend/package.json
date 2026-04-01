@@ -1,0 +1,9 @@
+{
+	"name": "swimclub-frontend",
+	"version": "1.0.0",
+	"private": true,
+	"type": "module",
+	"scripts": {
+		"start": "npx http-server . -p 5500 -c-1"
+	}
+}

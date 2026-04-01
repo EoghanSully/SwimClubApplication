@@ -1,10 +1,10 @@
 //import "dotenv/config"; //loads environment variables from .env file into process.env
-import express from "express" //Express framework for building the server
-import cors from "cors" //allows for frontend -> backend requests across different ports/originsimport dotenv from "dotenv" //to read variables from .env file 
-import pool from "./config/db.js" //import connection pool    
-import dotenv from "dotenv"; //to read variables from .env file
-import errorHandler from "./middleware/error.js"; //importing error handling middleware 
-import userRoutes from "./features/users/route.js"; //importing user routes
+import express from "express"; // Express framework for building the server
+import cors from "cors"; // allows for frontend -> backend requests across different ports/origins
+import dotenv from "dotenv"; // to read variables from .env file
+import pool from "./config/db.js"; // import connection pool
+import errorHandler from "./middleware/error.js"; // importing error handling middleware
+import userRoutes from "./features/users/route.js"; // importing user routes
 import eventRoutes from "./features/events/routes.js"; //importing event routes
 import announcementRoutes from "./features/announcements/routes.js"; //importing announcement routes
 import sessionPlanRoutes from "./features/sessionPlans/routes.js"; //importing session plan routes
@@ -17,23 +17,17 @@ dotenv.config(); //loads environment variables from .env file into process.env
 
 
 const app = express(); //creates an instance of the Express application 
-const port = process.env.SERVER_PORT || 5500;  //sets port from .env file or defaults to 5500 if not specified  
+const port = process.env.SERVER_PORT || 3000;  //sets port from .env file or defaults to 3000 if not specified  
 
 //middleware
 app.use(cors({
-  origin: 'http://127.0.0.1:5500', //allow requests from this origin
-  credentials: true, //allow cookies to be sent with requests
-}))
+  origin: ['http://127.0.0.1:5500', 'http://localhost:5500'], // allow requests from these origins
+  credentials: true, // allow cookies to be sent with requests
+}));
 
-app.use(express.json()); //parses Json requests
-app.use(cookieParser()); //parses cookies from incoming requests, making them available on req.cookies
-
-
-app.use(cors(corsOptions));
-// express-cors middleware already handles OPTIONS preflight requests when used as middleware.
-// The explicit app.options() route is removed to avoid path-to-regexp issues in Express 5.
-app.use(express.json()); //parses Json requests
-app.use(cookieParser()); //parses cookies from incoming requests, making them available on req.cookies
+// express-cors middleware handles OPTIONS preflight requests automatically
+app.use(express.json()); // parses JSON requests
+app.use(cookieParser()); // parses cookies from incoming requests, making them available on req.cookies
 
 //Routes
 app.use("/api", authRoutes); //accesses routes in the authRoutes file with the prefix /api/auth (e.g., /api/auth/login)

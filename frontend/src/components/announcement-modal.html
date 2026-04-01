@@ -1,0 +1,15 @@
+<!-- Announcement Detail Modal Component -->
+<!-- Injected once into document.body at app startup by injectSharedComponents() in app.js -->
+<div class="announcement-detail-modal" id="announcement-detail-modal">
+  <div class="modal-overlay" onclick="window.closeAnnouncementModal()"></div>
+  <div class="modal-content">
+    <div class="modal-header">
+      <div>
+        <h2 class="modal-title" id="announcement-modal-title"></h2>
+        <p class="modal-subtitle" id="announcement-modal-meta"></p>
+      </div>
+      <button class="modal-header-close" onclick="window.closeAnnouncementModal()">×</button>
+    </div>
+    <div id="announcement-modal-content"></div>
+  </div>
+</div>

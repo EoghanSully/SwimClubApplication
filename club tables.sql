@@ -40,7 +40,8 @@ CREATE TABLE announcements(
     description TEXT,
     audience VARCHAR(20) NOT NULL CHECK(audience IN ('club', 'team','coach')) DEFAULT 'club',
     -- potentially add option for just comittee/admins
-    admin_id INTEGER REFERENCES users(user_id) 
+    admin_id INTEGER REFERENCES users(user_id),
+    team_id INTEGER REFERENCES teams(team_id) ON DELETE SET NULL
     --check if index for role is accessed when query is run
 );
 

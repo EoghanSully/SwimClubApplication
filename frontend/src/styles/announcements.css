@@ -1,0 +1,121 @@
+/* ============================================
+	 ANNOUNCEMENTS PAGE STYLES
+	 University of Galway Swim Club
+	 ============================================ */
+
+.announcements-container {
+	padding: var(--spacing-8);
+	max-width: 1400px;
+	margin: 0 auto;
+	scroll-margin-top: 112px;
+}
+
+.announcements-header {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	margin-bottom: var(--spacing-8);
+	gap: var(--spacing-4);
+	flex-wrap: wrap;
+	margin-top: 5.5rem;
+}
+
+.announcements-header-row {
+	position: relative;
+	z-index: 1;
+}
+
+.create-announcement-btn {
+	display: flex;
+	align-items: center;
+	gap: var(--spacing-2);
+	background: var(--white);
+	color: var(--maroon-primary);
+	padding: 0.7rem 1.1rem;
+	border-radius: 999px;
+	border: 2px solid var(--maroon-primary);
+	font-weight: 700;
+	text-transform: uppercase;
+	letter-spacing: 0.05em;
+	cursor: pointer;
+	transition: all 0.2s ease;
+	font-size: 0.875rem;
+}
+
+.create-announcement-btn:hover {
+	background: var(--maroon-primary);
+	color: var(--white);
+	box-shadow: var(--shadow-md);
+	transform: translateY(-1px);
+}
+
+.announcements-filters {
+	position: relative;
+	z-index: 1;
+	margin-top: 2rem;
+	margin-bottom: var(--spacing-8);
+	padding: var(--spacing-6);
+	background: var(--white);
+	border-radius: var(--radius-xl);
+	border: 2px solid var(--gray-200);
+	box-shadow: var(--shadow-md);
+}
+
+.announcement-filter-buttons {
+	display: flex;
+	gap: var(--spacing-4);
+	row-gap: var(--spacing-3);
+	flex-wrap: wrap;
+	align-items: center;
+}
+
+.announcement-filter-buttons .filter-btn {
+	padding: 0.7rem 1.1rem;
+	border-radius: 999px;
+	font-weight: 700;
+	font-size: 0.82rem;
+	text-transform: uppercase;
+	letter-spacing: 0.07em;
+	border: 2px solid var(--maroon-primary);
+	background: var(--white);
+	color: var(--maroon-primary);
+	cursor: pointer;
+	box-shadow: 0 8px 18px rgba(168, 0, 80, 0.08);
+	transition: all 0.2s ease;
+}
+
+.announcement-filter-buttons .filter-btn:hover {
+	background: var(--maroon-primary);
+	color: var(--white);
+	transform: translateY(-1px);
+	box-shadow: 0 10px 22px rgba(168, 0, 80, 0.18);
+}
+
+.announcement-filter-buttons .filter-btn.active {
+	background: var(--maroon-primary);
+	color: var(--white);
+	border-color: var(--maroon-primary);
+	box-shadow: 0 12px 24px rgba(168, 0, 80, 0.22);
+}
+
+.announcements-list {
+	display: flex;
+	flex-direction: column;
+	gap: var(--spacing-6);
+}
+
+@media (max-width: 768px) {
+	.announcements-container {
+		padding: var(--spacing-6) var(--spacing-4);
+		scroll-margin-top: 88px;
+	}
+
+	.announcement-filter-buttons {
+		gap: var(--spacing-2);
+	}
+
+	.announcement-filter-buttons .filter-btn {
+		padding: 0.65rem 0.9rem;
+		font-size: 0.74rem;
+	}
+}

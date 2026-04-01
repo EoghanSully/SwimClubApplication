@@ -1,11 +1,12 @@
 import { apiDelete, apiGet, apiPost, apiPut } from '../utils/api.js';
+import { adaptEventRow } from '../utils/adapters.js';
 
 let allEvents = []; 
 
 export async function getAllEvents() {
   try {
     const response = await apiGet('/events');  // Calls backend /api/events and returns response.json
-    return response.data; // Return the events array from the data property
+    return (response.data || []).map(adaptEventRow); // Return the events array from the data property
   } catch (error) {
     console.error('Fetch Reqest failure:', error.stack); // Logs error if API call fails
     throw error;
@@ -15,7 +16,7 @@ export async function getAllEvents() {
 export async function getPastEvents() {
   try {
     const response = await apiGet('/events/past');  // Calls backend /api/events/past and returns response.json
-    return response.data; // Return the past events array from the data property
+    return (response.data || []).map(adaptEventRow); // Return the past events array from the data property
   } catch (error) {
     console.error('Fetch Request failure:', error.stack); // Logs error if API call fails
     throw error;
@@ -25,7 +26,7 @@ export async function getPastEvents() {
 export async function createNewEvent(eventData) {
     try {
         const response = await apiPost('/events/create', eventData); // Calls backend /api/events/create with event data and returns response.json
-        return response.data; // Return the created event from the data property
+        return Array.isArray(response.data) ? response.data.map(adaptEventRow) : adaptEventRow(response.data); // Return the created event from the data property
     } catch (error) {
         console.error('Create Event failure:', error.stack);
         throw error;
@@ -35,7 +36,7 @@ export async function createNewEvent(eventData) {
 export async function updateEvent(eventData) {
     try {
         const response = await apiPut('/events/update', eventData); // Calls backend /api/events/update with event data and returns response.json
-        return response.data; // Return the updated event from the data property
+        return adaptEventRow(response.data); // Return the updated event from the data property
     } catch (error) {
         console.error('Update Event failure:', error.stack);
         throw error;

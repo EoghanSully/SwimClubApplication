@@ -1,2 +1,33 @@
-<div id="profile-container">
-  <div class="loading-spinner"></div>
+<div class="profile-container container">
+  <section class="profile-hero">
+    <div class="profile-hero-banner"></div>
+    <div class="profile-hero-body">
+      <div class="profile-avatar-block">
+        <div class="profile-avatar-large" id="profile-avatar"></div>
+      </div>
+      <div class="profile-hero-identity">
+        <h1 class="profile-header-name" id="profile-header-name"></h1>
+        <p class="profile-header-role" id="profile-header-role"></p>
+      </div>
+      <button type="button" class="profile-edit-btn">Edit Profile</button>
+    </div>
+  </section>
+
+  <div class="profile-layout">
+    <section class="profile-panel profile-panel-primary">
+      <div class="profile-panel-header">
+        <span class="profile-panel-accent"></span>
+        <h2 class="profile-panel-title">Basic Information</h2>
+      </div>
+      <div class="profile-basic-list" id="profile-basic-info"></div>
+    </section>
+
+    <aside class="profile-panel profile-panel-secondary">
+      <div class="profile-panel-header">
+        <span class="profile-panel-accent"></span>
+        <h2 class="profile-panel-title">My Squads</h2>
+      </div>
+      <div class="profile-squads-list" id="profile-squads"></div>
+    </aside>
+  </div>
+</div>

@@ -9,6 +9,17 @@ export function formatDate(dateStr) {
   return date.toLocaleDateString('en-IE', { month: 'short', day: 'numeric', year: 'numeric' });
 }
 
+export function formatDateLong(dateStr) {
+  if (!dateStr) return '';
+  const date = new Date(dateStr);
+  return date.toLocaleDateString('en-IE', {
+    weekday: 'long',
+    month: 'long',
+    day: 'numeric',
+    year: 'numeric'
+  });
+}
+
 export function formatDateTime(dateStr, timeStr) {
   if (!dateStr) return '';
   return `${formatDate(dateStr)} at ${timeStr}`;
@@ -106,6 +117,27 @@ export function eventTypeLabel(type) {
     'SOCIETY': 'Society Event'
   };
   return labels[type] || type;
+}
+
+export function getDaysInMonth(year, month) {
+  return new Date(year, month + 1, 0).getDate();
+}
+
+export function getFirstDayOfMonth(year, month) {
+  return new Date(year, month, 1).getDay();
+}
+
+export function isToday(dateString) {
+  const date = new Date(dateString);
+  const today = new Date();
+  return date.toDateString() === today.toDateString();
+}
+
+export function isFuture(dateString) {
+  const date = new Date(dateString);
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
+  return date >= today;
 }
 
 export function announcementCategoryColor(category) {

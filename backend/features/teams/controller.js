@@ -2,12 +2,17 @@
 import * as TeamModel from './model.js';
 import handleResponse from '../../middleware/responseHandler.js';
 
+function isPrivileged(role) {
+    return role === 'admin' || role === 'coach';
+}
+
 
 export const getTeams = async (req, res,next) => {
     const user_role = req.user.user_role;
     const coach_id = req.user.user_role === "coach" ? req.user.user_id : null; //if the user is a coach, set coach_id to their user ID, otherwise set it to null for admins
+    const user_id = req.user.user_id;
     try{
-        const teams = await TeamModel.getTeams(user_role, coach_id); //calls the getTeams function from the model to retrieve all teams from the database
+        const teams = await TeamModel.getTeams(user_role, coach_id, user_id); //calls the getTeams function from the model to retrieve all teams from the database
         handleResponse(res, 200, "Teams retrieved successfully", teams); //sends a successful response with the retrieved teams
     } 
     catch (err) {
@@ -16,9 +21,20 @@ export const getTeams = async (req, res,next) => {
 };  
 
 export const addMember = async (req, res,next) => {  
+    if (!isPrivileged(req.user.user_role)) {
+        return handleResponse(res, 403, "Only admins and coaches can add members");
+    }
     
     const { team_id, user_id } = req.body; //expects team_id and user_id in the request body
     try{
+        if (req.user.user_role === 'coach') {
+            const coachTeams = await TeamModel.getTeams('coach', req.user.user_id, req.user.user_id);
+            const allowed = coachTeams.some((teamRow) => Number(teamRow.team_id) === Number(team_id));
+            if (!allowed) {
+                return handleResponse(res, 403, "Coaches can only manage members for their own teams");
+            }
+        }
+
         const member = await TeamModel.addMember(team_id, user_id); 
         if (!member) return handleResponse(res, 404, "Member not found"); //sends a 404 response if the member is not found  
         
@@ -30,9 +46,20 @@ export const addMember = async (req, res,next) => {
 };    
 
 export const moveMember = async (req, res,next) => {  
+    if (!isPrivileged(req.user.user_role)) {
+        return handleResponse(res, 403, "Only admins and coaches can move members");
+    }
     
     const { team_id, user_id } = req.body; //expects team_id and user_id in the request body
     try{
+        if (req.user.user_role === 'coach') {
+            const coachTeams = await TeamModel.getTeams('coach', req.user.user_id, req.user.user_id);
+            const allowed = coachTeams.some((teamRow) => Number(teamRow.team_id) === Number(team_id));
+            if (!allowed) {
+                return handleResponse(res, 403, "Coaches can only manage members for their own teams");
+            }
+        }
+
         const member = await TeamModel.moveMember(team_id, user_id); //calls the moveMember function from the model to move the member to a different team
         if (!member) return handleResponse(res, 404, "Member not found"); //sends a 404 response if the member is not found  
         

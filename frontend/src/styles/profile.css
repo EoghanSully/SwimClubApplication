@@ -1,0 +1,306 @@
+/* ============================================
+	 PROFILE STYLES
+	 University of Galway Swim Club
+	 ============================================ */
+
+.profile-container {
+	padding: var(--spacing-8);
+	max-width: 1400px;
+	margin: 0 auto;
+}
+
+.profile-hero {
+	margin-bottom: var(--spacing-8);
+}
+
+.profile-hero-banner {
+	height: 124px;
+	background: linear-gradient(180deg, #9c003f 0%, #a80050 100%);
+	border: 1px solid var(--gray-300);
+	position: relative;
+	overflow: hidden;
+}
+
+.profile-hero-banner::after {
+	content: '';
+	position: absolute;
+	inset: 0;
+	background: radial-gradient(circle at center, rgba(95, 0, 40, 0.18) 0, rgba(95, 0, 40, 0.18) 18px, transparent 18px) center -18px / 140px 140px repeat;
+	opacity: 0.45;
+	pointer-events: none;
+}
+
+.profile-hero-body {
+	display: grid;
+	grid-template-columns: auto 1fr auto;
+	align-items: center;
+	gap: var(--spacing-6);
+	padding: 0 var(--spacing-6);
+	margin-top: -28px;
+	position: relative;
+	z-index: 1;
+}
+
+.profile-avatar-block {
+	padding: 4px;
+	background: var(--white);
+	box-shadow: 0 4px 14px rgba(17, 24, 39, 0.08);
+	border: 1px solid var(--gray-200);
+}
+
+.profile-avatar-large {
+	width: 88px;
+	height: 88px;
+	background: var(--maroon-primary);
+	border: 1px solid rgba(255, 255, 255, 0.45);
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	font-size: 2rem;
+	font-weight: 900;
+	color: var(--white);
+	text-transform: uppercase;
+}
+
+.profile-hero-identity {
+	padding-top: 1.5rem;
+}
+
+.profile-header-name {
+	font-size: 2rem;
+	font-weight: 800;
+	color: var(--gray-900);
+	margin-bottom: 0.15rem;
+}
+
+.profile-header-role {
+	font-size: 1rem;
+	font-weight: 800;
+	color: var(--maroon-primary);
+	text-transform: uppercase;
+	letter-spacing: 0.08em;
+}
+
+.profile-edit-btn {
+	align-self: start;
+	margin-top: 2rem;
+	padding: 0.8rem 1.35rem;
+	background: var(--white);
+	color: var(--gray-900);
+	border: 1px solid var(--gray-200);
+	box-shadow: 0 4px 12px rgba(17, 24, 39, 0.06);
+	font-size: 0.95rem;
+	font-weight: 700;
+	cursor: pointer;
+	transition: all 0.2s ease;
+}
+
+.profile-edit-btn:hover {
+	border-color: var(--gray-300);
+	box-shadow: 0 8px 18px rgba(17, 24, 39, 0.1);
+}
+
+.profile-layout {
+	display: grid;
+	grid-template-columns: minmax(0, 1.7fr) minmax(260px, 0.8fr);
+	gap: var(--spacing-6);
+	align-items: start;
+}
+
+.profile-panel {
+	background: var(--white);
+	border: 1px solid var(--gray-200);
+	box-shadow: 0 8px 24px rgba(17, 24, 39, 0.07);
+	padding: var(--spacing-6);
+}
+
+.profile-panel-secondary {
+	max-width: 320px;
+	justify-self: end;
+	width: 100%;
+}
+
+.profile-panel-header {
+	display: flex;
+	align-items: center;
+	gap: var(--spacing-4);
+	padding-bottom: var(--spacing-5);
+	margin-bottom: var(--spacing-4);
+	border-bottom: 1px solid var(--gray-200);
+}
+
+.profile-panel-accent {
+	width: 6px;
+	height: 24px;
+	background: var(--maroon-primary);
+	display: inline-block;
+}
+
+.profile-panel-title {
+	font-size: 1.75rem;
+	font-weight: 900;
+	text-transform: uppercase;
+	letter-spacing: 0.02em;
+	color: var(--gray-900);
+}
+
+.profile-basic-list {
+	display: flex;
+	flex-direction: column;
+}
+
+.profile-basic-row {
+	padding: 1rem 0 1.35rem;
+	border-bottom: 1px solid var(--gray-100);
+}
+
+.profile-basic-row:last-child {
+	border-bottom: none;
+	padding-bottom: 0;
+}
+
+.profile-basic-label {
+	display: block;
+	font-size: 0.92rem;
+	font-weight: 800;
+	text-transform: uppercase;
+	letter-spacing: 0.05em;
+	color: var(--maroon-primary);
+	margin-bottom: 0.65rem;
+}
+
+.profile-basic-value {
+	font-size: 1.6rem;
+	font-weight: 700;
+	color: var(--gray-900);
+	line-height: 1.25;
+	word-break: break-word;
+}
+
+.profile-squads-list {
+	display: flex;
+	flex-direction: column;
+	gap: var(--spacing-4);
+}
+
+.profile-squad-card {
+	display: grid;
+	grid-template-columns: 52px 1fr;
+	gap: var(--spacing-4);
+	align-items: center;
+	padding-top: var(--spacing-2);
+}
+
+.profile-squad-icon {
+	width: 52px;
+	height: 52px;
+	background: var(--maroon-primary);
+	color: var(--white);
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	font-size: 1rem;
+	font-weight: 900;
+	text-transform: uppercase;
+	box-shadow: 0 6px 14px rgba(168, 0, 80, 0.18);
+}
+
+.profile-squad-name {
+	font-size: 1.35rem;
+	font-weight: 700;
+	color: var(--gray-900);
+	line-height: 1.15;
+	margin-bottom: 0.45rem;
+}
+
+.profile-squad-meta {
+	font-size: 0.9rem;
+	text-transform: uppercase;
+	color: var(--gray-500);
+	letter-spacing: 0.04em;
+	font-weight: 700;
+}
+
+.profile-squad-status {
+	display: inline-flex;
+	align-items: center;
+	gap: 0.35rem;
+	font-size: 0.78rem;
+	font-weight: 700;
+	text-transform: uppercase;
+	letter-spacing: 0.08em;
+	color: var(--gray-500);
+	margin-top: 0.2rem;
+}
+
+.profile-squad-status::before {
+	content: '';
+	width: 7px;
+	height: 7px;
+	border-radius: 999px;
+	background: #22c55e;
+	display: inline-block;
+}
+
+.profile-empty-state {
+	font-size: 1rem;
+	font-weight: 600;
+	color: var(--gray-500);
+	padding-top: var(--spacing-2);
+}
+
+.profile-event-type.competition {
+	background: var(--color-competition);
+}
+
+.profile-event-type.social {
+	background: var(--color-social);
+}
+
+.profile-event-type.society {
+	background: var(--color-society);
+}
+
+/* ============================================
+	 RESPONSIVE
+	 ============================================ */
+@media (max-width: 768px) {
+	.profile-header-content {
+		flex-direction: column;
+		align-items: center;
+		text-align: center;
+		margin-top: -60px;
+		padding: 0 var(--spacing-4) var(--spacing-6);
+	}
+
+	.profile-avatar-large {
+		width: 120px;
+		height: 120px;
+		font-size: 3rem;
+	}
+
+	.profile-header-name {
+		font-size: 2rem;
+	}
+
+	.profile-content-grid {
+		grid-template-columns: 1fr;
+	}
+
+	.profile-teams-grid,
+	.profile-stats-grid {
+		grid-template-columns: 1fr;
+	}
+
+	.profile-event-card {
+		flex-direction: column;
+	}
+
+	.profile-event-date {
+		width: 100%;
+		display: flex;
+		justify-content: center;
+		gap: var(--spacing-3);
+		padding: var(--spacing-3);
+	}
+}

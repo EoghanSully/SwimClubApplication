@@ -8,6 +8,23 @@ import * as announcementModel from '../models/announcementModel.js';
 import * as teamModel from '../models/teamModel.js';
 
 let announcementList = [];
+
+// ============================================
+// MODAL FUNCTIONS (Global)
+// ============================================
+window.openCreateModal = function () {
+  const modal = document.getElementById('create-announcement-modal');
+  if (modal) {
+    modal.style.setProperty('display', 'flex', 'important');
+  }
+};
+
+window.closeCreateModal = function () {
+  const modal = document.getElementById('create-announcement-modal');
+  if (modal) {
+    modal.style.setProperty('display', 'none', 'important');
+  }
+};
 let selectedCategory = 'ALL';
 
 /**
@@ -104,10 +121,14 @@ export async function initAnnouncements() {
 
   try {
     await loadAnnouncements();
+    await setupAnnouncementTargetOptions(user, role);
 
     if (role === 'ADMIN' || role === 'COACH') {
       const createBtn = document.getElementById('create-announcement-btn');
-      if (createBtn) createBtn.classList.remove('hidden');
+      if (createBtn) {
+        createBtn.style.setProperty('display', 'inline-flex', 'important');
+        createBtn.addEventListener('click', window.openCreateModal);
+      }
     }
 
     applyCategoryFilters();
@@ -179,34 +200,60 @@ function setupCreateAnnouncementForm() {
   const form = document.getElementById('create-announcement-form');
   if (!form) return;
 
+  const targetSelect = form.querySelector('select[name="target"]');
+  const teamTargetGroup = document.getElementById('announcement-team-target-group');
+
+  const toggleTeamTarget = () => {
+    const showTeamSelector = targetSelect && targetSelect.value === 'TEAM';
+    if (teamTargetGroup) {
+      teamTargetGroup.style.display = showTeamSelector ? 'block' : 'none';
+    }
+  };
+
+  if (targetSelect) {
+    targetSelect.addEventListener('change', toggleTeamTarget);
+    toggleTeamTarget();
+  }
+
   form.addEventListener('submit', async (event) => {
     event.preventDefault();
 
     const formData = new FormData(form);
+    const target = formData.get('target');
+    const selectedTeamId = formData.get('teamId');
+
+    let audience = 'club';
+    let team_id = null;
+
+    if (target === 'COACHES') {
+      audience = 'coach';
+    } else if (target === 'TEAM') {
+      audience = 'team';
+      team_id = selectedTeamId ? Number(selectedTeamId) : null;
+    }
 
     const announcementData = {
       title: formData.get('title'),
       content: formData.get('content'),
       category: formData.get('category'),
-      target: formData.get('target'),
+      target,
+      audience,
+      team_id,
       eventId: formData.get('eventId') || null
     };
 
     try {
       await createAnnouncement(announcementData);
       await renderAnnouncements();
-      closeCreateModal();
+      window.closeCreateModal();
+      form.reset();
+      toggleTeamTarget();
     } catch (error) {
       console.error('Create announcement failed:', error);
       alert('Unable to create announcement');
     }
   });
 }
-
-window.closeCreateModal = function () {
-  const modal = document.getElementById('create-announcement-modal');
-  if (modal) modal.classList.add('hidden');
-};
 
 /**
  * Get category color class
@@ -268,5 +315,23 @@ export async function deleteAnnouncement(announcementId) {
   } catch (error) {
     console.error('Error deleting announcement:', error.stack);
     throw error;
+  }
+}
+
+async function setupAnnouncementTargetOptions(user, role) {
+  const teamSelect = document.getElementById('announcement-team-target');
+  if (!teamSelect || (role !== 'ADMIN' && role !== 'COACH')) return;
+
+  try {
+    const teams = await teamModel.getAllTeams();
+    const scopedTeams = role === 'ADMIN'
+      ? teams
+      : teams.filter((team) => team.coachIds?.includes(user.id) || user.coachTeamIds?.includes(team.id));
+
+    teamSelect.innerHTML = '<option value="">Select a team</option>' + scopedTeams.map((team) => `
+      <option value="${team.id}">${team.name}</option>
+    `).join('');
+  } catch (error) {
+    console.error('Error loading team target options:', error.stack);
   }
 }

@@ -1,6 +1,9 @@
 <div class="container">
   <div class="schedule-header">
-    <h1>Schedule & Calendar</h1>
+    <div style="display: flex; align-items: center; justify-content: space-between; gap: 1rem; flex-wrap: wrap;">
+      <h1>Schedule & Calendar</h1>
+      <button id="create-event-btn" class="btn btn-primary create-event-cta" style="display: none;" onclick="window.openCreateEventModal()">+ Create Event</button>
+    </div>
   </div>
   
   <!-- Filters -->
@@ -22,21 +25,134 @@
     <div class="day-events-section">
       <div id="day-events" class="empty-state">
         <p>Select a date to view events</p>
+        <button id="create-event-empty-btn" class="btn btn-primary create-event-empty-btn" style="display: none;" onclick="window.openCreateEventModal()">+ Create Event</button>
       </div>
     </div>
   </div>
   
-  <!-- Event Modal -->
-  <div id="event-modal" class="modal hidden"></div>
+  <!-- Event Detail Modal -->
+  <div class="event-detail-modal" id="event-modal" style="display: none;">
+    <div class="modal-overlay" onclick="window.closeEventModal()"></div>
+    <div class="modal-content">
+      <div class="modal-header">
+        <div>
+          <h2 class="modal-title" id="event-modal-title"></h2>
+          <p class="modal-subtitle" id="event-modal-meta"></p>
+        </div>
+        <button class="modal-header-close" onclick="window.closeEventModal()">×</button>
+      </div>
+      <div id="event-modal-content"></div>
+    </div>
+  </div>
+
+  <div id="create-event-modal" class="modal" style="display: none;">
+    <div class="modal-overlay" onclick="window.closeCreateEventModal()"></div>
+    <div class="modal-content">
+      <div class="modal-header bg-maroon">
+        <h2 class="modal-title text-white">Create Event</h2>
+        <button class="modal-close text-white" onclick="window.closeCreateEventModal()">×</button>
+      </div>
+      <form id="create-event-form" style="padding: var(--spacing-8);">
+        <div class="form-row" style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 1rem;">
+          <div class="form-group">
+            <label class="form-label">Title</label>
+            <input type="text" name="title" class="form-input" required>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Category</label>
+            <select name="category" class="form-select form-input" required>
+              <option value="TRAINING">Training</option>
+              <option value="COMPETITION">Competition</option>
+              <option value="SOCIAL">Social</option>
+              <option value="SOCIETY">Society</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="form-row" style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 1rem;">
+          <div class="form-group">
+            <label class="form-label">Date</label>
+            <input type="date" name="eventDate" class="form-input" required>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Start Time</label>
+            <input type="time" name="startTime" class="form-input" required>
+          </div>
+        </div>
+
+        <div class="form-row" style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 1rem;">
+          <div class="form-group">
+            <label class="form-label">Duration (minutes)</label>
+            <input type="number" name="durationMinutes" class="form-input" min="15" step="5" value="60" required>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Audience</label>
+            <select name="audience" id="event-audience" class="form-select form-input" required>
+              <option value="club">All Club</option>
+              <option value="team">Specific Team</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="form-group" id="event-team-group" style="display: none;">
+          <label class="form-label">Team</label>
+          <select name="teamId" id="event-team-select" class="form-select form-input">
+            <option value="">Select team</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">Venue</label>
+          <input type="text" name="venue" class="form-input" required>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">Description</label>
+          <textarea name="description" class="form-textarea"></textarea>
+        </div>
+
+        <div class="form-actions">
+          <button type="button" class="btn btn-secondary" onclick="window.closeCreateEventModal()">Cancel</button>
+          <button type="submit" class="btn btn-primary">Create Event</button>
+        </div>
+      </form>
+    </div>
+  </div>
 </div>
 
 <style>
   .schedule-header {
     margin-bottom: 2rem;
   }
+
+  .create-event-cta,
+  .create-event-empty-btn {
+    box-shadow: 0 10px 20px rgba(168, 0, 80, 0.16);
+  }
+
+  .create-event-empty-btn {
+    margin-top: 1rem;
+  }
   
   .schedule-filters {
     margin-bottom: 2rem;
+  }
+
+  .schedule-team-select {
+    min-width: 220px;
+    width: auto;
+    padding: 0.75rem 1rem;
+    border: 2px solid var(--gray-300);
+    border-radius: 0.75rem;
+    background: var(--white);
+    color: var(--gray-900);
+    font-weight: 700;
+    font-size: 0.95rem;
+  }
+
+  .schedule-team-select:focus {
+    border-color: var(--maroon-primary);
+    box-shadow: 0 0 0 3px rgba(168, 0, 80, 0.14);
   }
   
   .filter-row {
@@ -49,8 +165,92 @@
   
   .filter-buttons {
     display: flex;
-    gap: 0.5rem;
+    gap: 0.6rem;
     flex-wrap: wrap;
+  }
+
+  .filter-buttons .filter-btn {
+    padding: 0.65rem 1rem;
+    font-size: 0.82rem;
+    font-weight: 700;
+    letter-spacing: 0.03em;
+    text-transform: uppercase;
+    border-radius: 0.7rem;
+    border: 2px solid var(--gray-300);
+    background: var(--white);
+    color: var(--gray-700);
+    cursor: pointer;
+    transition: all 0.2s ease;
+  }
+
+  .filter-buttons .filter-btn[data-type="ALL"] {
+    border-color: rgba(168, 0, 80, 0.35);
+    color: var(--maroon-primary);
+    background: rgba(168, 0, 80, 0.06);
+  }
+
+  .filter-buttons .filter-btn[data-type="ALL"]:hover,
+  .filter-buttons .filter-btn[data-type="ALL"].active {
+    border-color: var(--maroon-primary);
+    background: var(--maroon-primary);
+    color: var(--white);
+    box-shadow: 0 6px 14px rgba(168, 0, 80, 0.25);
+  }
+
+  .filter-buttons .filter-btn[data-type="TRAINING"] {
+    border-color: rgba(37, 99, 235, 0.45);
+    color: rgb(37, 99, 235);
+    background: rgba(37, 99, 235, 0.08);
+  }
+
+  .filter-buttons .filter-btn[data-type="TRAINING"]:hover,
+  .filter-buttons .filter-btn[data-type="TRAINING"].active {
+    border-color: rgb(37, 99, 235);
+    background: rgb(37, 99, 235);
+    color: var(--white);
+    box-shadow: 0 6px 14px rgba(37, 99, 235, 0.28);
+  }
+
+  .filter-buttons .filter-btn[data-type="COMPETITION"] {
+    border-color: rgba(220, 38, 38, 0.45);
+    color: rgb(220, 38, 38);
+    background: rgba(220, 38, 38, 0.08);
+  }
+
+  .filter-buttons .filter-btn[data-type="COMPETITION"]:hover,
+  .filter-buttons .filter-btn[data-type="COMPETITION"].active {
+    border-color: rgb(220, 38, 38);
+    background: rgb(220, 38, 38);
+    color: var(--white);
+    box-shadow: 0 6px 14px rgba(220, 38, 38, 0.28);
+  }
+
+  .filter-buttons .filter-btn[data-type="SOCIAL"] {
+    border-color: rgba(22, 163, 74, 0.45);
+    color: rgb(22, 163, 74);
+    background: rgba(22, 163, 74, 0.08);
+  }
+
+  .filter-buttons .filter-btn[data-type="SOCIAL"]:hover,
+  .filter-buttons .filter-btn[data-type="SOCIAL"].active {
+    border-color: rgb(22, 163, 74);
+    background: rgb(22, 163, 74);
+    color: var(--white);
+    box-shadow: 0 6px 14px rgba(22, 163, 74, 0.28);
+  }
+
+  .filter-buttons .filter-btn[data-type="SOCIETY"] {
+    border-color: rgba(217, 119, 6, 0.45);
+    color: rgb(217, 119, 6);
+    background: rgba(217, 119, 6, 0.1);
+  }
+
+  .filter-buttons .filter-btn[data-type="SOCIETY"]:hover,
+  .filter-buttons .filter-btn[data-type="SOCIETY"].active {
+    border-color: rgb(217, 119, 6);
+    background: rgb(217, 119, 6);
+    color: var(--white);
+    box-shadow: 0 6px 14px rgba(217, 119, 6, 0.3);
   }
   
   .schedule-layout {
@@ -145,14 +345,25 @@
   
   .calendar-indicators {
     display: flex;
-    gap: 0.15rem;
-    justify-content: center;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.2rem;
+    width: 100%;
+    margin-top: 0.2rem;
   }
   
   .event-indicator {
-    width: 4px;
-    height: 4px;
-    border-radius: 50%;
+    width: 72%;
+    min-width: 1.25rem;
+    height: 0.32rem;
+    border-radius: 999px;
+    opacity: 0.72;
+    box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.35);
+  }
+
+  .calendar-day.selected .event-indicator {
+    opacity: 0.92;
+    box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.55);
   }
   
   .day-events-section {

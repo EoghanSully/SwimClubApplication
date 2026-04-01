@@ -4,15 +4,17 @@
 // ============================================
 
 import { AppState } from '../app.js';
-import { formatDateLong, formatDateShort } from '../utils/date.js';
+import { formatDateLong } from '../utils/date.js';
 import * as eventModel from '../models/eventsModel.js';
 import * as announcementModel from '../models/announcementModel.js';
-import * as userModel from '../models/userModel.js';
+import { loadComponent, renderTemplate } from '../utils/components.js';
 
 let eventsList = [];
 let announcementsList = [];
-let selectedCategory = 'ALL';
 
+// ============================================
+// MODAL FUNCTIONS (Global)
+// ============================================
 /**
  * Load all dashboard data from backend
  */
@@ -20,11 +22,12 @@ export async function loadDashboardData() {
   try {
     eventsList = await eventModel.getAllEvents();
     announcementsList = await announcementModel.getAllAnnouncements();
-    return { events: eventsList, announcements: announcementsList };
-  } catch (error) {
-    console.error('Error loading dashboard data:', error.stack);
-    throw error;
+  } catch (e) {
+    console.warn('Could not load data:', e.message);
+    eventsList = AppState.events.length ? AppState.events : [];
+    announcementsList = AppState.announcements.length ? AppState.announcements : [];
   }
+  return { events: eventsList, announcements: announcementsList };
 }
 
 /**
@@ -62,22 +65,24 @@ export async function getNextSession(user, role) {
  */
 export function getQuickActionTiles(role) {
   const adminTiles = [
-    { id: 'events', label: 'View Schedule', icon: 'calendar' },
-    { id: 'attendance', label: 'Mark Attendance', icon: 'check-circle' },
-    { id: 'teams', label: 'Manage Teams', icon: 'users' },
-    { id: 'announcements', label: 'Post Announcement', icon: 'message-square' }
+    { id: 'schedule', label: 'View Schedule', icon: '📅' },
+    { id: 'attendance', label: 'Attendance', icon: '◉' },
+    { id: 'teams', label: 'Teams & Members', icon: '👥' },
+    { id: 'sessions', label: 'Session Plans', icon: '📋' }
   ];
   
   const coachTiles = [
-    { id: 'events', label: 'View Schedule', icon: 'calendar' },
-    { id: 'sessionPlans', label: 'Session Plans', icon: 'clipboard-list' },
-    { id: 'attendance', label: 'Mark Attendance', icon: 'check-circle' },
-    { id: 'announcements', label: 'Post Announcement', icon: 'message-square' }
+    { id: 'schedule', label: 'View Schedule', icon: '📅' },
+    { id: 'attendance', label: 'Attendance', icon: '◉' },
+    { id: 'teams', label: 'Teams & Members', icon: '👥' },
+    { id: 'sessions', label: 'Session Plans', icon: '📋' }
   ];
   
   const memberTiles = [
-    { id: 'events', label: 'View Schedule', icon: 'calendar' },
-    { id: 'profile', label: 'My Profile', icon: 'user-circle' }
+    { id: 'schedule', label: 'View Schedule', icon: '📅' },
+    { id: 'dashboard', label: 'Latest Updates', icon: '📢' },
+    { id: 'teams', label: 'My Team', icon: '👥' },
+    { id: 'profile', label: 'My Profile', icon: '👤' }
   ];
   
   switch(role) {
@@ -91,18 +96,18 @@ export function getQuickActionTiles(role) {
 /**
  * Get filtered announcements for dashboard
  */
-export async function getDashboardAnnouncements(user, role, limit = 10) {
+export async function getDashboardAnnouncements(user, role, limit = 5) {
   try {
     const announcements = announcementsList.length ? announcementsList : (await announcementModel.getAllAnnouncements());
     
     return announcements
       .filter(a => {
-        if (a.target === 'ALL') return true;
-        if (a.target === 'COACHES' && (role === 'ADMIN' || role === 'COACH')) return true;
-        if (user.teamIds && user.teamIds.includes(a.target)) return true;
+        if (a.audience === 'club') return true;
+        if (a.audience === 'coach' && (role === 'ADMIN' || role === 'COACH')) return true;
+        if (a.team_id && user.teamIds && user.teamIds.includes(a.team_id)) return true;
         return role === 'ADMIN';
       })
-      .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())
+      .sort((a, b) => new Date(b.created_at || 0).getTime() - new Date(a.created_at || 0).getTime())
       .slice(0, limit);
   } catch (error) {
     console.error('Error getting dashboard announcements:', error.stack);
@@ -155,33 +160,43 @@ export async function initDashboard() {
 
     renderHero(user, role);
     renderQuickActions(role);
-    await renderAnnouncementsSection(user, role);
+    await renderAnnouncements(user, role);
   } catch (error) {
     console.error('Dashboard init failed:', error);
   }
 }
 
 function renderHero(user, role) {
-  const heroBanner = document.getElementById('hero-banner');
-  if (!heroBanner) return;
+  const heroContent = document.getElementById('hero-content');
+  if (!heroContent) return;
 
-  const nextSessionPromise = getNextSession(user, role);
-
-  nextSessionPromise.then(nextSession => {
+  getNextSession(user, role).then(nextSession => {
     if (nextSession) {
-      heroBanner.innerHTML = `
-        <div class="hero-content">
-          <h1 class="hero-title">Next Training Session</h1>
-          <p class="hero-subtitle">${formatDateLong(nextSession.date)} • ${nextSession.startTime}</p>
-          <p class="hero-subtitle">${nextSession.title || ''}</p>
-          <a href="#schedule" class="hero-btn">View Schedule</a>
+      heroContent.innerHTML = `
+        <div class="hero-next-session">
+          <div class="hero-info">
+            <div class="hero-icon">📅</div>
+            <div>
+              <h2 class="hero-title">Next Training Session</h2>
+              <p class="hero-subtitle">
+                ${formatDateLong(nextSession.date)} · ${nextSession.startTime}
+              </p>
+            </div>
+          </div>
+          <a href="#schedule" class="hero-btn">View In Schedule</a>
         </div>
       `;
     } else {
-      heroBanner.innerHTML = `
-        <div class="hero-content">
-          <h1 class="hero-title">Welcome back, ${user.name?.split(' ')[0] || 'Swimmer'}!</h1>
-          <p class="hero-subtitle">University of Galway Swim Club</p>
+      heroContent.innerHTML = `
+        <div class="hero-welcome">
+          <div class="hero-info">
+            <div class="hero-icon">📅</div>
+            <div>
+              <h1 class="hero-welcome-title">Welcome, ${user.name || 'Swimmer'}</h1>
+              <p class="hero-welcome-subtitle">No upcoming training sessions scheduled</p>
+            </div>
+          </div>
+          <a href="#schedule" class="hero-btn">View In Schedule</a>
         </div>
       `;
     }
@@ -189,68 +204,55 @@ function renderHero(user, role) {
 }
 
 function renderQuickActions(role) {
-  const grid = document.getElementById('tiles-container');
+  const grid = document.getElementById('quick-actions-grid');
   if (!grid) return;
 
-  const tiles = getQuickActionTiles(role);
+  const actions = getQuickActionTiles(role).map((tile) => ({
+    ...tile,
+    link: `#${tile.id}`
+  }));
 
-  grid.innerHTML = tiles.map(tile => `
-    <a href="#${tile.id}" class="quick-action-tile">
-      <div class="tile-icon">${tile.icon}</div>
-      <h4 class="tile-label">${tile.label}</h4>
+  grid.innerHTML = actions.map(action => `
+    <a href="${action.link}" class="quick-action-tile">
+      <div class="tile-icon">${action.icon}</div>
+      <div class="tile-label">${action.label}</div>
     </a>
   `).join('');
 }
 
-async function renderAnnouncementsSection(user, role) {
-  const filters = document.getElementById('announcement-filters');
-  const feed = document.getElementById('announcements-feed');
-  if (!feed || !filters) return;
+async function renderAnnouncements(user, role) {
+  const container = document.getElementById('dashboard-announcements-list');
+  if (!container) return;
 
-  const categories = AnnouncementsVM.getCategories();
-
-  filters.innerHTML = categories.map(cat => `
-    <button class="filter-btn ${selectedCategory === cat ? 'active' : ''}" data-category="${cat}">${cat}</button>
-  `).join('');
-
-  filters.querySelectorAll('.filter-btn').forEach(btn => {
-    btn.addEventListener('click', async (e) => {
-      selectedCategory = e.target.dataset.category;
-      await renderAnnouncementsSection(user, role);
-    });
-  });
-
-  let announcements = await getDashboardAnnouncements(user, role, 6);
-  if (selectedCategory !== 'ALL') {
-    announcements = announcements.filter(a => a.category === selectedCategory);
-  }
-
+  const announcements = await getDashboardAnnouncements(user, role);
   if (announcements.length === 0) {
-    feed.innerHTML = '<div class="no-announcements">No announcements to display</div>';
+    container.innerHTML = '<div class="announcements-sidebar-empty">No announcements</div>';
     return;
   }
 
-  const announcementsWithLabel = await Promise.all(announcements.map(async ann => ({
-    ...ann,
-    targetLabel: await AnnouncementsVM.getTargetLabel(ann.target)
-  })));
+  const categoryColors = {
+    GENERAL: '#6B7280',
+    TRAINING: '#2563EB',
+    COMPETITION: '#DC2626',
+    SOCIAL: '#9333EA',
+    FUNDRAISER: '#F59E0B',
+    SOCIETY: '#EC4899'
+  };
 
-  feed.innerHTML = announcementsWithLabel.map(ann => `
-    <div class="announcement-card">
-      <div class="announcement-header">
-        <span class="announcement-badge ${AnnouncementsVM.getCategoryColor(ann.category)}">${ann.category}</span>
-        <span class="announcement-target">${ann.targetLabel}</span>
-      </div>
-      <div class="announcement-body">
-        <h3 class="announcement-title">${ann.title}</h3>
-        <p class="announcement-content">${ann.content}</p>
-      </div>
-      <div class="announcement-footer">
-        <div class="announcement-author">👤 ${ann.author || 'Admin'}</div>
-        <span class="announcement-date">${formatDateShort(ann.date)}</span>
-      </div>
-      ${ann.eventId ? `<a href="#schedule" class="announcement-event-link">View Related Event →</a>` : ''}
-    </div>
-  `).join('');
+  const cardTemplate = await loadComponent('announcement-card');
+  container.innerHTML = announcements.map((announcement, index) => renderTemplate(cardTemplate, {
+    index,
+    categoryColor: categoryColors[announcement.category] || '#6B7280',
+    category: announcement.category || 'GENERAL',
+    date: announcement.created_at ? new Date(announcement.created_at).toLocaleDateString('en-US', { month: 'short', day: 'numeric' }) : '',
+    title: announcement.title,
+    author: announcement.author_name || 'Admin'
+  })).join('');
+
+  container.querySelectorAll('[data-announcement-index]').forEach((card) => {
+    card.addEventListener('click', () => {
+      const index = Number(card.getAttribute('data-announcement-index'));
+      window.openAnnouncementModal(announcements[index]);
+    });
+  });
 }
-

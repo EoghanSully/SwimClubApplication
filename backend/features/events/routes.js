@@ -6,7 +6,9 @@ const router = express.Router();
 
 router.get("/events", authenticateJWT, eventsController.getEvents); 
 router.get("/events/past", authenticateJWT, eventsController.getPreviousEvents);
+router.get("/events/:id/attendance", authenticateJWT, eventsController.getEventAttendance);
 router.post("/events/create", authenticateJWT, eventsController.createEvent);
+router.post("/events/:id/attendance", authenticateJWT, eventsController.upsertEventAttendance);
 router.put("/events/update", authenticateJWT, eventsController.updateEventInfo);
 router.delete("/events/delete/:id", authenticateJWT, eventsController.deleteEvent); 
 
