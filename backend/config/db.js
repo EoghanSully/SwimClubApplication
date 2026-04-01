@@ -9,7 +9,7 @@ const pool = new Pool({ //pool of connection, to be used when we connect to data
   password: process.env.DB_PASSWORD, 
   database: process.env.DATABASE,
   port: process.env.DB_PORT,
- 
+  ssl: process.env.DB_SSL === 'true' ? { rejectUnauthorized: false } : false,
 })
 
 pool.on("connect", () => {
