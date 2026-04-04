@@ -58,7 +58,7 @@ CREATE TABLE announcements (
     title VARCHAR(60),
     description TEXT,
     audience VARCHAR(20) NOT NULL CHECK (audience IN ('club', 'team', 'coach')) DEFAULT 'club',
-    admin_id INTEGER REFERENCES users(user_id)
+    admin_id INTEGER REFERENCES users(user_id) ON DELETE SET NULL
 );
 
 
