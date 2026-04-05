@@ -3,10 +3,12 @@
       "password": "Bangerang", 
 
       "email": "chris.brown16@club.ie",
-    "phone": "+353 1 215",
-    "password": "Thoughts1",
-  
-          "first_name": "Grace",
+      "phone": "+353 1 215",
+      "password": "Thoughts1",
+
+
+
+      "first_name": "Grace",
       "last_name": "Dameson",
       "email": "grace.wilson2@club.ie",
       "phone": "+353 1 327",
@@ -36,4 +38,9 @@
       "coach_note": "Focus on technique",
       "created_by": 8,
       "created_at": "2026-02-16T18:02:09.541Z"
+
+      
+
+
+
     }

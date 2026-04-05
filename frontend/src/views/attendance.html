@@ -1,4 +1,6 @@
+<!-- // ATTENDANCE PAGE ROOT WRAPPER FOR HERO, FILTERS, SESSION LIST, AND ROSTER. -->
 <div class="attendance-page">
+  <!-- // TOP HERO BAND WITH PAGE TITLE AND QUICK JUMP BUTTON. -->
   <section class="attendance-hero">
     <div>
       <h1 class="attendance-hero-title">ATTENDANCE</h1>
@@ -7,6 +9,7 @@
     <button type="button" class="attendance-hero-btn" id="attendance-history-btn">PREVIOUS SESSIONS</button>
   </section>
 
+  <!-- // HEADER CARD WITH CONTEXT TEXT AND TEAM FILTER CONTROL. -->
   <section class="attendance-header-card">
     <div>
       <h2 class="attendance-header-title">Attendance Review</h2>
@@ -19,7 +22,9 @@
     </div>
   </section>
 
+  <!-- // MAIN TWO-PANEL LAYOUT: SESSION CARDS ON LEFT, ROSTER DETAILS ON RIGHT. -->
   <section class="attendance-layout" id="attendance-container">
+    <!-- // LEFT PANEL SHOWING AVAILABLE TRAINING SESSIONS FOR ATTENDANCE REVIEW. -->
     <aside class="attendance-sessions-panel">
       <div class="attendance-sessions-header">
         <h3>TRAINING SESSIONS</h3>
@@ -28,6 +33,7 @@
       <div id="attendance-session-list" class="attendance-session-list"></div>
     </aside>
 
+    <!-- // RIGHT PANEL SHOWING MEMBER ROSTER AND SAVE ACTION FOR SELECTED SESSION. -->
     <section class="attendance-roster-panel">
       <div class="attendance-roster-header">
         <div>

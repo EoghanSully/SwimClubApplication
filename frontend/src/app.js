@@ -39,9 +39,9 @@ async function loadAppData() {
     AppState.announcements = announcementsResult.status === 'fulfilled' ? (announcementsResult.value?.data || []).map(adaptAnnouncementRow) : [];
     AppState.sessionPlans = plansResult.status === 'fulfilled' ? (plansResult.value?.data || []).map(adaptPlanRow) : [];
 
-    console.log('✅ App data loaded');
+    console.log('App data loaded');
   } catch (error) {
-    console.warn('⚠️ Could not pre-fetch app data:', error);
+    console.warn('Could not pre-fetch app data:', error);
   }
 }
 
@@ -72,6 +72,7 @@ async function router(page) {
   };
 
   const mainContent = document.getElementById('main-content');
+  const topNav = document.getElementById('top-nav');
 
   const protectedRoutes = ['dashboard', 'schedule', 'teams', 'attendance', 'sessions', 'profile'];
   if (protectedRoutes.includes(normalizedPage) && !AppState.isAuthenticated) {
@@ -100,6 +101,7 @@ async function router(page) {
 
     switch (normalizedPage) {
       case 'login': {
+        if (topNav) topNav.innerHTML = '';
         const { initLogin } = await import('./viewmodels/authVM.js');
         await initLogin();
         break;
@@ -138,6 +140,15 @@ async function router(page) {
         mainContent.innerHTML = '<p>Page not found</p>';
     }
 
+    // Failsafe: ensure eligible routes always end up with the shared sidebar wrapper.
+    if (layout.shouldInjectSidebarWrapper(normalizedPage) && !document.getElementById('persistent-announcements-list')) {
+      mainContent.innerHTML = layout.wrapPageWithPersistentSidebar(mainContent.innerHTML, normalizedPage);
+    }
+
+    if (normalizedPage !== 'login' && AppState.isAuthenticated) {
+      renderNav(AppState);
+    }
+
     layout.bindSidebarCreateAnnouncementButtons();
     if (layout.shouldUsePersistentSidebar(normalizedPage)) {
       await layout.renderPersistentAnnouncementsSidebar();
@@ -150,7 +161,7 @@ async function router(page) {
 
 // App startup flow: inject shared components -> restore auth -> preload data -> route.
 async function initApp() {
-  console.log('🚀 Initializing Swim Club Application...');
+  console.log('Initializing Swim Club Application...');
 
   await layout.injectSharedComponents();
 

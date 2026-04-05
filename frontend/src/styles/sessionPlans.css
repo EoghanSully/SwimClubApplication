@@ -1,615 +1,229 @@
-/* ============================================
-   SESSION PLANS STYLES
-   University of Galway Swim Club
-   ============================================ */
+/* THIS FILE STYLES THE SESSION PLANS PAGE. */
 
-/* Two-column layout with announcements sidebar */
+/* SESSION PLANS PAGE CONTAINER */
 .session-plans-container {
-  padding: 0;
-  max-width: none;
-  margin: 0;
+	padding: var(--spacing-8);
+	max-width: 1400px;
+	margin: 0 auto;
 }
 
-.plans-hero-section {
-  margin-top: 5.5rem;
-  background: var(--maroon-primary);
-  padding: 1rem 1.5rem;
-  min-height: 96px;
-  display: flex;
-  align-items: center;
-  gap: 1rem;
+/* HEADER ROW WITH PAGE TITLE AND CREATE PLAN BUTTON. */
+.session-plans-header {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	margin-bottom: var(--spacing-8);
 }
 
-.plans-hero-icon {
-  width: 54px;
-  height: 54px;
-  background: var(--white);
-  color: var(--maroon-primary);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  box-shadow: 0 10px 24px rgba(0, 0, 0, 0.08);
-  flex-shrink: 0;
-}
-
-.plans-hero-icon svg {
-  width: 24px;
-  height: 24px;
-}
-
-.plans-hero-copy {
-  display: flex;
-  flex-direction: column;
-  gap: 0.22rem;
-}
-
-.plans-hero-label {
-  font-size: 0.82rem;
-  line-height: 1;
-  font-weight: 800;
-  text-transform: uppercase;
-  letter-spacing: 0.04em;
-  color: rgba(255, 255, 255, 0.86);
-}
-
-.plans-hero-title {
-  margin: 0;
-  font-size: 2rem;
-  line-height: 1;
-  font-weight: 900;
-  color: var(--white);
-}
-
-.plans-description {
-  margin: 1rem 0 1.65rem;
-  padding: 1rem 1rem 1rem 1.15rem;
-  border-left: 4px solid var(--maroon-primary);
-  background: var(--white);
-  box-shadow: 0 10px 28px rgba(15, 23, 42, 0.04);
-}
-
-.plans-description p {
-  margin: 0;
-  font-size: 0.98rem;
-  line-height: 1.5;
-  font-weight: 600;
-  color: #586173;
-}
-
-.plans-toolbar {
-  margin-bottom: 1.7rem;
-  padding-top: 1.55rem;
-  border-top: 1px solid #e9ecf2;
-}
-
-.plans-filter-wrap {
-  position: relative;
-  display: inline-flex;
-  align-items: center;
-  min-width: 205px;
-}
-
-.plans-filter-icon {
-  position: absolute;
-  left: 0.95rem;
-  top: 50%;
-  transform: translateY(-50%);
-  width: 18px;
-  height: 18px;
-  color: #cf63d2;
-  pointer-events: none;
-  z-index: 1;
-}
-
-.plans-filter-icon svg {
-  width: 100%;
-  height: 100%;
-}
-
-.plans-filter-pill {
-  width: 100%;
-  height: 42px;
-  padding: 0 2.7rem 0 2.55rem;
-  border: 1px solid #ead8f4;
-  border-radius: 999px;
-  background: #fff;
-  box-shadow: 0 8px 18px rgba(207, 99, 210, 0.16);
-  color: #4b5565;
-  font-size: 0.95rem;
-  font-weight: 700;
-  appearance: none;
-  -webkit-appearance: none;
-  background-image: url('data:image/svg+xml;charset=UTF-8,<svg xmlns="http://www.w3.org/2000/svg" width="12" height="8" viewBox="0 0 12 8" fill="none"><path d="M1 1L6 6L11 1" stroke="%23B89AC2" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>');
-  background-repeat: no-repeat;
-  background-position: right 1rem center;
-  cursor: pointer;
-}
-
-.plans-section-header {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 1rem;
-  margin-bottom: 1.6rem;
-}
-
-.plans-section-actions {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.75rem;
-}
-
-.plans-section-title {
-  margin: 0;
-  display: flex;
-  align-items: center;
-  gap: 0.75rem;
-  font-size: 1.25rem;
-  line-height: 1;
-  font-weight: 900;
-  letter-spacing: 0.01em;
-  text-transform: uppercase;
-  color: #111827;
-}
-
-.plans-section-title::before {
-  content: '';
-  width: 5px;
-  height: 30px;
-  border-radius: 999px;
-  background: #7c3aed;
-}
-
-.plans-count-badge {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  min-height: 42px;
-  padding: 0 1.2rem;
-  border: 2px solid #d8e6f7;
-  border-radius: 999px;
-  background: #fbfdff;
-  color: #2563eb;
-  box-shadow: 0 8px 20px rgba(37, 99, 235, 0.08);
-  font-size: 0.88rem;
-  font-weight: 800;
-  letter-spacing: 0.04em;
-  text-transform: uppercase;
-}
-
+/* PRIMARY ACTION BUTTON FOR CREATING NEW SESSION PLANS. */
 .create-plan-btn {
-  display: flex;
-  align-items: center;
-  gap: var(--spacing-2);
-  background: var(--white);
-  color: var(--maroon-primary);
-  padding: 0.7rem 1.1rem;
-  border-radius: 999px;
-  border: 2px solid var(--maroon-primary);
-  font-weight: 700;
-  text-transform: uppercase;
-  letter-spacing: 0.05em;
-  cursor: pointer;
-  transition: all 0.2s ease;
-  font-size: 0.875rem;
+	display: flex;
+	align-items: center;
+	gap: var(--spacing-2);
+	background-color: var(--maroon-primary);
+	color: var(--white);
+	padding: var(--spacing-3) var(--spacing-6);
+	border-radius: var(--radius-lg);
+	border: none;
+	font-weight: 700;
+	text-transform: uppercase;
+	letter-spacing: 0.05em;
+	cursor: pointer;
+	transition: all 0.2s ease;
+	font-size: 0.875rem;
 }
 
+/* HOVER FEEDBACK FOR THE CREATE PLAN BUTTON. */
 .create-plan-btn:hover {
-  background: var(--maroon-primary);
-  color: var(--white);
-  box-shadow: var(--shadow-md);
-  transform: translateY(-1px);
+	background-color: var(--maroon-dark);
+	box-shadow: var(--shadow-lg);
+	transform: translateY(-2px);
 }
 
-.create-plan-empty-btn {
-  margin-top: 1rem;
-  box-shadow: 0 10px 20px rgba(168, 0, 80, 0.16);
+/* FILTER PANEL CONTAINING SEARCH AND DROPDOWN CONTROLS. */
+.plans-filters {
+	margin-bottom: var(--spacing-8);
+	padding: var(--spacing-6);
+	background-color: var(--white);
+	border-radius: var(--radius-xl);
+	border: 2px solid var(--gray-200);
+	box-shadow: var(--shadow-md);
+	display: flex;
+	gap: var(--spacing-6);
+	flex-wrap: wrap;
 }
 
-.create-plan-actions {
-  display: flex;
-  justify-content: flex-end;
-  gap: 1rem;
-  position: sticky;
-  bottom: 0;
-  background: linear-gradient(to top, #ffffff 75%, rgba(255, 255, 255, 0));
-  padding-top: 1rem;
-  margin-top: 1rem;
-  z-index: 2;
-}
-
-.create-plan-submit-btn {
-  min-width: 300px;
-  min-height: 46px;
-  font-weight: 900;
-  letter-spacing: 0.03em;
-  box-shadow: 0 12px 26px rgba(168, 0, 80, 0.28);
-  border: 2px solid rgba(255, 255, 255, 0.2);
-}
-
-.create-plan-submit-top {
-  min-width: 300px;
-  min-height: 46px;
-  font-weight: 900;
-  letter-spacing: 0.03em;
-  box-shadow: 0 12px 26px rgba(168, 0, 80, 0.28);
-}
-.create-plan-submit-top:hover,
-.create-plan-submit-btn:hover {
-  transform: translateY(-1px);
-  box-shadow: 0 14px 30px rgba(168, 0, 80, 0.34);
-}
-.create-plan-submit-top:focus-visible,
-.create-plan-submit-btn:focus-visible {
-  outline: 3px solid rgba(168, 0, 80, 0.35);
-  outline-offset: 2px;
-}
-
+/* GRID LAYOUT FOR DISPLAYING SESSION PLAN CARDS. */
 .session-plans-grid {
-  display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: 1.2rem;
-  align-items: stretch;
+	display: grid;
+	grid-template-columns: 1fr 1fr 1fr;
+	gap: var(--spacing-6);
 }
 
+/* INDIVIDUAL SESSION PLAN CARD STYLE. */
 .session-plan-card {
-  background: #ffffff;
-  border: 1px solid #edd3e3;
-  border-radius: 14px;
-  overflow: hidden;
-  box-shadow: 0 10px 22px rgba(168, 0, 80, 0.08);
-  min-height: 336px;
-  display: flex;
-  flex-direction: column;
-  cursor: pointer;
-  transition: transform 0.2s ease, box-shadow 0.2s ease;
+	background-color: var(--white);
+	border: 2px solid var(--gray-200);
+	border-radius: var(--radius-xl);
+	padding: var(--spacing-6);
+	cursor: pointer;
+	transition: all 0.3s ease;
+	box-shadow: var(--shadow-md);
 }
 
+/* HOVER STATE THAT HIGHLIGHTS SESSION PLAN CARDS. */
 .session-plan-card:hover {
-  transform: translateY(-3px);
-  box-shadow: 0 14px 32px rgba(168, 0, 80, 0.12);
+	border-color: var(--maroon-primary);
+	box-shadow: var(--shadow-lg);
+	transform: translateY(-4px);
 }
 
+/* CARD HEADER SECTION FOR TITLE AND PRIMARY PLAN IDENTIFIERS. */
 .plan-card-header {
-  min-height: 82px;
-  padding: 1rem 1.2rem 0.95rem;
-  background: linear-gradient(180deg, #c10067 0%, #b10060 100%);
-  display: flex;
-  align-items: flex-start;
+	margin-bottom: var(--spacing-4);
+	padding-bottom: var(--spacing-4);
+	border-bottom: 2px solid var(--gray-100);
 }
 
+/* SESSION PLAN TITLE TEXT STYLE. */
 .plan-card-title {
-  margin: 0;
-  color: #fff;
-  font-size: 1.03rem;
-  line-height: 1.25;
-  font-weight: 900;
-  letter-spacing: -0.01em;
+	font-size: 1.25rem;
+	font-weight: 900;
+	color: var(--gray-900);
+	margin-bottom: var(--spacing-2);
+	text-transform: uppercase;
+	letter-spacing: 0.05em;
 }
 
-.plan-card-content {
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-  gap: 0.95rem;
-  padding: 1rem 1.2rem 0;
-}
-
-.plan-card-icons {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  gap: 1rem;
-}
-
-.plan-card-icon {
-  width: 52px;
-  height: 52px;
-  border-radius: 13px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background: #faf5ff;
-  color: var(--maroon-primary);
-  border: 1px solid #ead8f4;
-  box-shadow: 0 8px 16px rgba(176, 0, 96, 0.12);
-  flex-shrink: 0;
-}
-
-.plan-card-icon svg {
-  width: 23px;
-  height: 23px;
-  stroke: currentColor;
-}
-
-.plan-card-icon--ghost {
-  background: #ffffff;
-  color: #c5cad6;
-  border-color: #eceef4;
-  box-shadow: none;
-}
-
-.plan-card-icon--ghost:hover {
-  color: var(--maroon-primary);
-  border-color: #e4bfd5;
-  background: #fff7fc;
-}
-
-.plan-card-meta {
-  display: flex;
-  align-items: center;
-  gap: 0.55rem;
-  font-size: 0.9rem;
-  line-height: 1.2;
-  font-weight: 700;
-  color: #5d6677;
-}
-
-.plan-card-meta svg {
-  width: 20px;
-  height: 20px;
-  stroke: #a855f7;
-  flex-shrink: 0;
-}
-
-.plan-card-team-section {
-  margin-top: auto;
-  background: #f5ecff;
-  border-top: 1px solid #ead8f4;
-  padding: 0.85rem 1.1rem;
-  display: flex;
-  align-items: center;
-  gap: 0.7rem;
-  color: #404c61;
-  font-size: 0.9rem;
-  font-weight: 800;
-  text-transform: uppercase;
-  letter-spacing: 0.03em;
-}
-
-.plan-card-team-section svg {
-  width: 20px;
-  height: 20px;
-  stroke: var(--maroon-primary);
-  flex-shrink: 0;
-}
-
+/* TEAM BADGE SHOWN ON EACH SESSION PLAN CARD. */
 .plan-card-team {
-  line-height: 1.2;
+	display: inline-block;
+	padding: var(--spacing-1) var(--spacing-3);
+	background-color: var(--gray-100);
+	border-radius: var(--radius-md);
+	font-size: 0.75rem;
+	font-weight: 700;
+	text-transform: uppercase;
+	color: var(--gray-700);
 }
 
-.plan-card-creator,
+/* META INFO STACK CONTAINER (DATE, CREATOR, ETC.). */
+.plan-card-meta {
+	display: flex;
+	flex-direction: column;
+	gap: var(--spacing-2);
+	margin-bottom: var(--spacing-3);
+}
+
+/* SHARED STYLE FOR DATE/CREATOR META TEXT LINES. */
+.plan-card-date,
+.plan-card-creator {
+	font-size: 0.875rem;
+	color: var(--gray-600);
+	font-weight: 600;
+}
+
+/* CATEGORY BADGE FOR SESSION PLAN TYPE. */
 .plan-card-category {
-  display: none;
+	display: inline-block;
+	padding: var(--spacing-2) var(--spacing-3);
+	background-color: var(--maroon-primary);
+	color: var(--white);
+	border-radius: var(--radius-md);
+	font-size: 0.75rem;
+	font-weight: 700;
+	text-transform: uppercase;
+	letter-spacing: 0.05em;
 }
 
+/* MAIN CONTENT WRAPPER FOR FULL PLAN DETAIL VIEW. */
 .plan-view-content {
-  padding: 2rem;
+	padding: var(--spacing-8);
 }
 
+/* SUMMARY META PANEL AT TOP OF PLAN DETAIL VIEW. */
+.plan-view-meta {
+	background-color: var(--gray-50);
+	padding: var(--spacing-6);
+	border-radius: var(--radius-lg);
+	margin-bottom: var(--spacing-6);
+	display: grid;
+	grid-template-columns: 1fr 1fr;
+	gap: var(--spacing-4);
+}
+
+/* SINGLE META ITEM STYLE IN THE PLAN DETAIL META PANEL. */
+.plan-view-meta-item {
+	font-size: 0.875rem;
+	color: var(--gray-700);
+}
+
+/* EMPHASISED LABEL PART INSIDE META ITEM LINES. */
+.plan-view-meta-item strong {
+	font-weight: 700;
+	color: var(--gray-900);
+	margin-right: var(--spacing-2);
+}
+
+/* BLOCK SECTION FOR EACH PLAN PART (WARMUP, MAIN SET, ETC.). */
 .plan-section {
-  margin-bottom: 1.5rem;
-  background: var(--white);
-  border: 2px solid var(--gray-200);
-  border-radius: 16px;
-  overflow: hidden;
+	margin-bottom: var(--spacing-6);
+	background-color: var(--white);
+	border: 2px solid var(--gray-200);
+	border-radius: var(--radius-lg);
+	overflow: hidden;
 }
 
+/* COLOURED TITLE BAR FOR EACH PLAN SECTION. */
 .plan-section-title {
-  padding: 1rem 1.25rem;
-  background: var(--maroon-primary);
-  color: var(--white);
-  font-size: 1rem;
-  font-weight: 900;
-  text-transform: uppercase;
-  letter-spacing: 0.05em;
+	padding: var(--spacing-4) var(--spacing-6);
+	background-color: var(--maroon-primary);
+	color: var(--white);
+	font-size: 1.125rem;
+	font-weight: 900;
+	text-transform: uppercase;
+	letter-spacing: 0.05em;
 }
 
+/* TEXT BODY OF A PLAN SECTION, PRESERVING FORMATTED LINE BREAKS. */
 .plan-section-content {
-  padding: 1.25rem;
-  font-size: 1rem;
-  line-height: 1.8;
-  color: var(--gray-800);
-  white-space: pre-wrap;
+	padding: var(--spacing-6);
+	font-size: 1rem;
+	line-height: 1.8;
+	color: var(--gray-800);
+	white-space: pre-wrap;
+	font-family: 'Courier New', monospace;
 }
 
+/* EMPTY STATE MESSAGE WHEN THERE ARE NO SESSION PLANS TO SHOW. */
 .no-plans {
-  grid-column: 1 / -1;
-  padding: 3rem 1rem;
-  text-align: center;
-  color: var(--gray-500);
-  font-weight: 700;
-  background: #fff;
-  border-radius: 18px;
-  border: 1px solid #edf0f5;
+	text-align: center;
+	padding: var(--spacing-12);
+	color: var(--gray-500);
+	font-weight: 700;
+	grid-column: 1 / -1;
 }
 
-.modal {
-  position: fixed;
-  inset: 0;
-  display: none;
-  align-items: center;
-  justify-content: center;
-  z-index: 9999;
-  padding: 1rem;
-}
-
-.modal-overlay {
-  position: absolute;
-  inset: 0;
-  background: rgba(15, 23, 42, 0.5);
-  backdrop-filter: blur(4px);
-  cursor: pointer;
-}
-
-.modal-content {
-  position: relative;
-  width: 100%;
-  max-width: 800px;
-  max-height: 85vh;
-  overflow-y: auto;
-  background: var(--white);
-  border-radius: 18px;
-  box-shadow: 0 24px 60px rgba(15, 23, 42, 0.25);
-}
-
-.modal-large {
-  max-width: 800px;
-}
-
-.modal-header {
-  padding: 2rem 2.5rem;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 2rem;
-  background: var(--maroon-primary);
-}
-
-.modal-title {
-  margin: 0;
-  font-size: 1.75rem;
-  line-height: 1.2;
-  font-weight: 800;
-  color: var(--white);
-}
-
-.modal-subtitle {
-  margin-top: 0.5rem;
-  font-size: 0.9rem;
-  font-weight: 600;
-  color: rgba(255, 255, 255, 0.92);
-}
-
-.modal-close {
-  width: 44px;
-  height: 44px;
-  border: 1px solid rgba(255, 255, 255, 0.3);
-  background: rgba(255, 255, 255, 0.14);
-  color: var(--white);
-  font-size: 1.5rem;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  flex-shrink: 0;
-}
-
-.modal-close:hover {
-  background: rgba(255, 255, 255, 0.24);
-}
-
-.text-white {
-  color: var(--white);
-}
-
-.create-plan-submit-strip {
-  padding: 0.85rem 2rem;
-  background: #fff;
-  border-bottom: 1px solid #eceff4;
-  display: flex;
-  justify-content: flex-end;
-  position: sticky;
-  top: 0;
-  z-index: 3;
-}
-
-.create-plan-submit-top {
-  min-width: 240px;
-  font-weight: 800;
-  letter-spacing: 0.02em;
-  box-shadow: 0 10px 20px rgba(168, 0, 80, 0.22);
-}
-
-#create-plan-form .form-input,
-#create-plan-form .form-textarea,
-#create-plan-form .form-select {
-  width: 100%;
-  padding: 0.75rem 0.9rem;
-  border: 1px solid #cfd4dc;
-  border-radius: 0.45rem;
-  background: #ffffff;
-  color: #111827;
-  font-size: 1rem;
-}
-
-#create-plan-form .form-textarea {
-  min-height: 78px;
-  resize: vertical;
-}
-
-#create-plan-form .form-label {
-  font-size: 0.96rem;
-  font-weight: 700;
-  color: #374151;
-  margin-bottom: 0.45rem;
-  display: block;
-}
-
-@media (max-width: 1100px) {
-  .session-plans-grid {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-  }
+@media (max-width: 1024px) {
+	/* REDUCE SESSION PLAN GRID TO TWO COLUMNS ON TABLET WIDTHS. */
+	.session-plans-grid {
+		grid-template-columns: 1fr 1fr;
+	}
 }
 
 @media (max-width: 768px) {
-  .session-plans-container {
-    padding: 1rem;
-  }
+	/* STACK SESSION PLAN CARDS INTO ONE COLUMN ON MOBILE. */
+	.session-plans-grid {
+		grid-template-columns: 1fr;
+	}
 
-  .plans-hero-section {
-    margin-top: 5rem;
-    padding: 1rem;
-  }
+	/* STACK META PANEL INTO ONE COLUMN ON MOBILE. */
+	.plan-view-meta {
+		grid-template-columns: 1fr;
+	}
 
-  .plans-hero-title {
-    font-size: 1.55rem;
-  }
-
-  .plans-section-header {
-    flex-direction: column;
-    align-items: flex-start;
-  }
-
-  .plans-section-actions {
-    width: 100%;
-    flex-direction: column;
-    align-items: stretch;
-  }
-
-  .plans-section-actions .create-plan-btn {
-    width: 100%;
-    justify-content: center;
-  }
-
-  .create-plan-actions {
-    flex-direction: column-reverse;
-  }
-
-  .create-plan-submit-btn {
-    width: 100%;
-    min-width: 0;
-  }
-
-  .session-plans-grid {
-    grid-template-columns: 1fr;
-  }
-
-  .modal-header {
-    padding: 1.5rem;
-  }
-
-  .create-plan-submit-strip {
-    padding: 0.75rem 1rem;
-    justify-content: stretch;
-  }
-
-  .create-plan-submit-top {
-    width: 100%;
-    min-width: 0;
-  }
-
-  .plan-view-content {
-    padding: 1.25rem;
-  }
+	/* STACK FILTER CONTROLS VERTICALLY ON MOBILE. */
+	.plans-filters {
+		flex-direction: column;
+	}
 }

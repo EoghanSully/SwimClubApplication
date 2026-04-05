@@ -1,53 +1,50 @@
-<!-- Teams Management View -->
+<!-- // TEAMS MANAGEMENT PAGE ROOT WRAPPER FOR FILTERS, LISTS, AND MODAL. -->
 <div class="teams-container container">
-  <div class="teams-header announcements-header-row">
+  <!-- // PAGE HEADER WITH TITLE FOR TEAMS AREA. -->
+  <div class="teams-header">
     <h1 class="page-title">Teams Management</h1>
   </div>
 
-  <div class="teams-filters" style="margin-bottom: 1.5rem;">
+  <!-- // FILTER BAR WITH TEAM SELECTOR, SEARCH INPUT, AND ROLE FILTER. -->
+  <div class="teams-filters">
     <div class="filter-group">
       <label class="filter-label">Select Team</label>
-      <select id="team-select" class="filter-select form-input" style="max-width: 320px;">
+      <select id="team-select" class="filter-select form-input">
         <option value="">Choose a team...</option>
+      </select>
+    </div>
+    <div class="search-input-group">
+      <label class="filter-label">Search</label>
+      <input type="text" id="member-search" class="search-input form-input" placeholder="Search members by name or email..." oninput="filterMembers()">
+    </div>
+    <div class="filter-group">
+      <label class="filter-label">Role</label>
+      <select id="role-filter" onchange="filterMembers()" class="filter-select form-input" aria-label="Filter role">
+        <option value="ALL">All Roles</option>
+        <option value="MEMBER">Members</option>
+        <option value="COACH">Coaches</option>
+        <option value="ADMIN">Admins</option>
       </select>
     </div>
   </div>
 
+  <!-- // TEAM DETAIL AREA SHOWN AFTER A TEAM IS SELECTED. -->
   <div class="team-details-section" id="team-details-section" style="display: none;">
-    <div class="team-header-card profile-section-card" style="margin-bottom: 1.5rem;">
-      <div class="team-header-content">
-        <h2 class="team-name" id="team-name"></h2>
-        <div class="team-coaches" id="team-coaches"></div>
-      </div>
-      <div class="team-stats">
-        <div class="team-stat">
-          <div class="stat-value" id="team-member-count">0</div>
-          <div class="stat-label">Members</div>
-        </div>
-      </div>
+    <!-- // TEAM SUMMARY CARD WITH NAME, COACHES, AND MEMBER COUNT. -->
+    <div class="team-summary-card">
+      <h2 class="team-name" id="team-name"></h2>
+      <div class="team-coaches" id="team-coaches"></div>
+      <p class="team-member-total"><strong id="team-member-count">0</strong> members</p>
     </div>
 
-    <div class="members-search-section profile-section-card" style="margin-bottom: 1.5rem; display: flex; gap: 1rem; flex-wrap: wrap; align-items: center;">
-      <div class="search-input-group">
-        <input type="text" id="member-search" class="search-input form-input" placeholder="Search members..." oninput="filterMembers()">
-      </div>
-      <div class="filter-group">
-        <label class="filter-label">Role</label>
-        <select id="role-filter" onchange="filterMembers()" class="filter-select form-input">
-          <option value="ALL">All Roles</option>
-          <option value="MEMBER">Members</option>
-          <option value="COACH">Coaches</option>
-          <option value="ADMIN">Admins</option>
-        </select>
-      </div>
-    </div>
-
+    <!-- // MEMBERS LIST SECTION FOR CARDS RENDERED FROM FILTERED TEAM MEMBERS. -->
     <div class="members-list-section">
-      <h3 class="section-subtitle" style="margin-bottom: 1rem;">Team Members</h3>
+      <h3 class="section-subtitle">Team Members</h3>
       <div class="members-list" id="members-list"></div>
     </div>
   </div>
 
+  <!-- // EMPTY STATE SHOWN BEFORE TEAM SELECTION OR WHEN NO DATA IS AVAILABLE. -->
   <div class="empty-state" id="empty-state">
     <div class="empty-state-icon">👥</div>
     <h3 class="empty-state-title">Select a Team</h3>
@@ -55,6 +52,7 @@
   </div>
 </div>
 
+<!-- // MEMBER PROFILE MODAL FOR DETAILED PERSONAL AND ATTENDANCE INFORMATION. -->
 <div class="modal" id="member-profile-modal" style="display: none;">
   <div class="modal-overlay" onclick="closeMemberProfileModal()"></div>
   <div class="modal-content modal-large" style="max-width: 900px;">

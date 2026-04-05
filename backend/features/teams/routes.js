@@ -4,6 +4,7 @@ import { authenticateJWT } from "../../middleware/authMiddleware.js"; //middlewa
 const router = express.Router(); //creating a new router object to define routes for the teams feature
 
 router.get('/teams', authenticateJWT, teamsController.getTeams); 
+router.get('/teams/attendance', authenticateJWT, teamsController.getAttendanceTeams);
 router.post('/teams/add-member', authenticateJWT, teamsController.addMember);
 router.put('/teams/move-member', authenticateJWT, teamsController.moveMember);
 

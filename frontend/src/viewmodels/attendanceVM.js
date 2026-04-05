@@ -1,15 +1,24 @@
 import { AppState } from '../app.js';
-import { apiGet, apiPost } from '../utils/api.js';
-import { adaptEventRow } from '../utils/adapters.js';
+import * as attendanceModel from '../models/attendanceModel.js';
 import { loadComponent, renderTemplate } from '../utils/components.js';
 
+// LOCAL VIEW STATE FOR ATTENDANCE PAGE DATA, FILTERS, AND SELECTIONS.
 let allEvents = [];
 let filteredEvents = [];
 let selectedEvent = null;
 let currentAttendees = [];
-const pendingChanges = new Map();
-const eventAttendanceStats = new Map();
+let attendanceTeams = [];
 
+// TRACK UNSAVED TOGGLE CHANGES AND SAVED PRESENCE VALUES BY EVENT/USER KEY.
+const pendingChanges = new Map();
+const savedAttendance = new Map();
+
+// BUILD A STABLE MAP KEY FOR ONE EVENT/MEMBER ATTENDANCE ENTRY.
+function attendanceKey(eventId, userId) {
+  return `${Number(eventId)}:${Number(userId)}`;
+}
+
+// COUNT PRESENT VERSUS ABSENT VALUES FROM AN ATTENDEE ARRAY.
 function toAttendanceStats(attendees) {
   let present = 0;
   let absent = 0;
@@ -22,21 +31,12 @@ function toAttendanceStats(attendees) {
   return { present, absent };
 }
 
-async function preloadAttendanceStats(events) {
-  const requests = events.map(async (event) => {
-    try {
-      const response = await apiGet(`/events/${event.id}/attendance`);
-      const attendees = Array.isArray(response?.data) ? response.data : [];
-      eventAttendanceStats.set(Number(event.id), toAttendanceStats(attendees));
-    } catch (error) {
-      console.warn(`Could not preload attendance stats for event ${event.id}:`, error.message);
-      eventAttendanceStats.set(Number(event.id), { present: 0, absent: 0 });
-    }
-  });
-
-  await Promise.allSettled(requests);
+// FIND A TEAM OBJECT BY ID FROM THE LOADED ATTENDANCE TEAMS LIST.
+function findTeam(teamId) {
+  return attendanceTeams.find((team) => Number(team.id) === Number(teamId));
 }
 
+// FORMAT ISO DATE TEXT FOR CARD DISPLAY.
 function formatDisplayDate(isoDate) {
   const date = new Date(isoDate);
   if (Number.isNaN(date.getTime())) return 'Unknown Date';
@@ -47,39 +47,25 @@ function formatDisplayDate(isoDate) {
   });
 }
 
+// FORMAT SESSION START/END INTO A SINGLE TIME RANGE LABEL.
 function formatDisplayTimeRange(event) {
   if (!event?.startTime || !event?.endTime) return 'Time TBC';
   return `${event.startTime} - ${event.endTime}`;
 }
 
+// RESOLVE TEAM NAME FOR A SESSION, WITH SAFE FALLBACK LABELS.
 function resolveTeamName(teamId) {
   if (!teamId) return 'Club Session';
-  return AppState.teams.find((team) => Number(team.id) === Number(teamId))?.name || 'Team Session';
+  return findTeam(teamId)?.name || 'Team Session';
 }
 
-function getCoachTeamScope(user) {
-  if (Array.isArray(user?.coachTeamIds) && user.coachTeamIds.length) {
-    return user.coachTeamIds.map(Number);
-  }
-  if (Array.isArray(user?.teamIds) && user.teamIds.length) {
-    return user.teamIds.map(Number);
-  }
-  return [];
-}
-
-function getAccessiblePastEvents(events, user, role) {
+// KEEP ONLY PAST EVENTS FOR ATTENDANCE MARKING HISTORY.
+function getPastEvents(events) {
   const now = new Date();
-  const pastEvents = events.filter((event) => new Date(event.date) < now);
-
-  if (role === 'ADMIN') return pastEvents;
-
-  const scopedTeamIds = getCoachTeamScope(user);
-  return pastEvents.filter((event) => {
-    if (!event.teamId) return true;
-    return scopedTeamIds.includes(Number(event.teamId));
-  });
+  return events.filter((event) => new Date(event.date) < now);
 }
 
+// APPLY TEAM FILTER TO THE EVENTS LIST USED BY THE LEFT PANEL.
 function applyTeamFilter(teamFilterValue) {
   if (teamFilterValue === 'ALL') {
     filteredEvents = [...allEvents];
@@ -88,15 +74,12 @@ function applyTeamFilter(teamFilterValue) {
   filteredEvents = allEvents.filter((event) => Number(event.teamId || 0) === Number(teamFilterValue));
 }
 
-function renderTeamFilterOptions(user, role) {
+// RENDER TEAM FILTER OPTIONS AND WIRE CHANGE HANDLER.
+function renderTeamFilterOptions() {
   const teamFilter = document.getElementById('attendance-team-filter');
   if (!teamFilter) return;
 
-  let availableTeams = AppState.teams;
-  if (role === 'COACH') {
-    const scoped = getCoachTeamScope(user);
-    availableTeams = AppState.teams.filter((team) => scoped.includes(Number(team.id)));
-  }
+  const availableTeams = attendanceTeams;
 
   teamFilter.innerHTML = '<option value="ALL">All Teams</option>' + availableTeams.map((team) => `
     <option value="${team.id}">${team.name}</option>
@@ -115,11 +98,21 @@ function renderTeamFilterOptions(user, role) {
   });
 }
 
+// CALCULATE PRESENT/ABSENT COUNTS FOR ONE SESSION CARD.
 function getEventAttendanceStats(eventId) {
-  const fallbackStats = eventAttendanceStats.get(Number(eventId)) || { present: 0, absent: 0 };
-
+  const event = filteredEvents.find((item) => Number(item.id) === Number(eventId));
+  const members = Array.isArray(findTeam(event?.teamId)?.members) ? findTeam(event.teamId).members : [];
   if (!selectedEvent || Number(selectedEvent.id) !== Number(eventId)) {
-    return fallbackStats;
+    let present = 0;
+    let absent = 0;
+
+    members.forEach((member) => {
+      const value = savedAttendance.get(attendanceKey(eventId, member.id)) || false;
+      if (value) present += 1;
+      else absent += 1;
+    });
+
+    return { present, absent };
   }
 
   let present = 0;
@@ -134,6 +127,7 @@ function getEventAttendanceStats(eventId) {
   return { present, absent };
 }
 
+// RENDER THE LEFT-HAND SESSION CARD LIST.
 async function renderSessionList() {
   const list = document.getElementById('attendance-session-list');
   const count = document.getElementById('attendance-session-count');
@@ -170,12 +164,14 @@ async function renderSessionList() {
   });
 }
 
+// ENABLE SAVE ONLY WHEN A SESSION IS SELECTED AND THERE ARE PENDING CHANGES.
 function updateSaveButtonState() {
   const saveBtn = document.getElementById('attendance-save-btn');
   if (!saveBtn) return;
   saveBtn.disabled = !selectedEvent || pendingChanges.size === 0;
 }
 
+// RENDER THE RIGHT-HAND ROSTER PANEL FOR THE SELECTED SESSION.
 async function renderRosterPanel() {
   const title = document.getElementById('attendance-roster-title');
   const subtitle = document.getElementById('attendance-roster-subtitle');
@@ -234,6 +230,7 @@ async function renderRosterPanel() {
   updateSaveButtonState();
 }
 
+// SELECT A SESSION, LOAD MEMBERS, AND APPLY SAVED PRESENCE VALUES.
 async function selectEvent(eventId) {
   const event = filteredEvents.find((item) => Number(item.id) === Number(eventId));
   if (!event) return;
@@ -241,20 +238,18 @@ async function selectEvent(eventId) {
   selectedEvent = event;
   pendingChanges.clear();
 
-  try {
-    const response = await apiGet(`/events/${eventId}/attendance`);
-    currentAttendees = Array.isArray(response?.data) ? response.data : [];
-    eventAttendanceStats.set(Number(eventId), toAttendanceStats(currentAttendees));
-  } catch (error) {
-    console.error('Error loading attendance:', error);
-    currentAttendees = [];
-    eventAttendanceStats.set(Number(eventId), { present: 0, absent: 0 });
-  }
+  const team = findTeam(event.teamId);
+  const members = Array.isArray(team?.members) ? team.members : [];
+  currentAttendees = members.map((member) => ({
+    ...member,
+    present: savedAttendance.get(attendanceKey(event.id, member.id)) || false
+  }));
 
   await renderSessionList();
   await renderRosterPanel();
 }
 
+// SAVE ONLY CHANGED ATTENDANCE VALUES, THEN REFRESH UI STATE.
 async function saveAttendanceChanges() {
   if (!selectedEvent || pendingChanges.size === 0) return;
 
@@ -267,17 +262,20 @@ async function saveAttendanceChanges() {
 
   try {
     const updates = Array.from(pendingChanges.entries()).map(([userId, present]) =>
-      apiPost(`/events/${selectedEvent.id}/attendance`, { userId, present })
+      attendanceModel.saveAttendance(selectedEvent.id, userId, present)
     );
 
     await Promise.all(updates);
+
+    for (const [userId, present] of pendingChanges.entries()) {
+      savedAttendance.set(attendanceKey(selectedEvent.id, userId), present);
+    }
 
     currentAttendees = currentAttendees.map((attendee) => {
       const pending = pendingChanges.get(Number(attendee.id));
       if (pending === undefined) return attendee;
       return { ...attendee, present: pending };
     });
-    eventAttendanceStats.set(Number(selectedEvent.id), toAttendanceStats(currentAttendees));
     pendingChanges.clear();
 
     await renderRosterPanel();
@@ -293,6 +291,7 @@ async function saveAttendanceChanges() {
   }
 }
 
+// INITIALISE ATTENDANCE PAGE FOR COACH/ADMIN USERS.
 export async function initAttendance() {
   console.log('✅ Initializing Attendance...');
   
@@ -306,20 +305,17 @@ export async function initAttendance() {
   }
   
   try {
-    const events = AppState.events.length
-      ? AppState.events
-      : (((await apiGet('/events'))?.data || []).map(adaptEventRow));
+    attendanceTeams = await attendanceModel.getAttendanceTeams();
+    const events = AppState.events.length ? AppState.events : await attendanceModel.getEvents();
 
-    allEvents = getAccessiblePastEvents(events, user, role);
+    allEvents = getPastEvents(events);
     filteredEvents = [...allEvents];
     selectedEvent = null;
     currentAttendees = [];
     pendingChanges.clear();
-    eventAttendanceStats.clear();
+    savedAttendance.clear();
 
-    await preloadAttendanceStats(allEvents);
-
-    renderTeamFilterOptions(user, role);
+    renderTeamFilterOptions();
     await renderSessionList();
     await renderRosterPanel();
 

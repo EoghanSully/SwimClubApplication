@@ -6,45 +6,33 @@ import handleResponse from '../../middleware/responseHandler.js';
 
 export const loginVerify = async (req, res,next) => {  
     try{
-        const loginData = req.body;
-        const response = await authModel.getLoginCredentials(loginData); //calls the getLoginCredentials function from the model to verify user login
+        const user = req.body;
+        const response = await authModel.getLoginCredentials(user); //calls the getLoginCredentials function from the model to verify user login
         if (!response || response.length === 0) return handleResponse(res, 401, "Invalid email or password"); //sends a 401 response if the login credentials are invalid
         
         
-        // create JWT token payload with user ID, role, and team ID
-        const user = response[0];
-        const payload = {
-            user_id: user.user_id,
-            user_role: user.user_role,
-            team_id: user.team_ids?.[0] ?? null,
-            team_ids: user.team_ids || [],
-            coach_team_ids: user.coach_team_ids || []
-        };
-        const token = jwToken.generateToken(payload); // generates a JWT token for the authenticated user
-        res.cookie('jwt', token, {
-            httpOnly: true,
+        //create JWT token payload with user ID, role, and team ID
+        const payload = { user_id: response[0].user_id, user_role: response[0].user_role, team_id: response[0].team_id };
+        const token = jwToken.generateToken(payload); //generates a JWT token for the authenticated user
+        res.cookie('jwt', token, { 
+            httpOnly: true, 
             secure: process.env.NODE_ENV === 'production',
-            sameSite: 'Strict',
-            maxAge: 60 * 60 * 1000, // 1 hour
-            path: "/" // send cookie on all paths
-        }); // sets the JWT token in a cookie
+            sameSite: 'Strict', // Safe: 127.0.0.1:5500 and 127.0.0.1:8080 are same-site (ports ignored in same-site check)
+            maxAge: 60 * 60 * 1000, // 1 hour in milliseconds
+            path : "/" //sends cookie on all paths starting with / (all of them) 
+            //should be secure in production to ensure it's only sent over HTTPS, but can be http in development for testing purposes. Adjust as needed based on your deployment environment.
+           
+        }); //sets the JWT token in a cookie
 
-        // Data sent for frontend usage (user info + token)
         handleResponse(res, 200, "Login successful", {
-            user: {
-                id: user.user_id,
-                name: `${user.first_name} ${user.last_name}`,
-                firstName: user.first_name,
-                lastName: user.last_name,
-                email: user.email,
-                role: user.user_role,
-                teamId: user.team_ids?.[0] ?? null,
-                teamIds: user.team_ids || [],
-                coachTeamIds: user.coach_team_ids || []
-            },
+            user_id: response[0].user_id,
+            user_role: response[0].user_role,
+            team_id: response[0].team_id,
+            first_name: response[0].first_name,
+            last_name: response[0].last_name,
+            email: response[0].email,
             token
         });
-        //successful response with token for Thunder Client testing REMOVE TOKEN RETURNING IN PRODUCTION
     } 
     catch (err) {
         next(err); //passes any errors to the error handling middleware

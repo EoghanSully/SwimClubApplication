@@ -1,11 +1,6 @@
-/* ============================================
-	 LOGIN STYLES
-	 University of Galway Swim Club
-	 ============================================ */
+/* THIS FILE STYLES THE LOGIN PAGE. */
 
-/* ============================================
-	 LOGIN CONTAINER
-	 ============================================ */
+/* LOGIN PAGE CONTAINER */
 .login-container {
 	min-height: 100vh;
 	display: flex;
@@ -17,6 +12,7 @@
 	overflow: hidden;
 }
 
+/* DECORATIVE BACKGROUND SHAPE ANIMATED BEHIND THE LOGIN CARD. */
 .login-container::before {
 	content: '';
 	position: absolute;
@@ -28,6 +24,7 @@
 	animation: pulse 15s ease-in-out infinite;
 }
 
+/* PULSE ANIMATION FOR BACKGROUND DECORATION. */
 @keyframes pulse {
 	0%, 100% {
 		transform: scale(1);
@@ -39,11 +36,9 @@
 	}
 }
 
-/* ============================================
-	 LOGIN CARD
-	 ============================================ */
+/* LOGIN CARD */
 .login-card {
-	background: var(--white);
+	background-color: var(--white);
 	border-radius: var(--radius-xl);
 	padding: var(--spacing-8);
 	box-shadow: var(--shadow-2xl);
@@ -55,6 +50,7 @@
 	animation: slideInUp 0.5s ease;
 }
 
+/* ENTRANCE ANIMATION FOR THE LOGIN CARD. */
 @keyframes slideInUp {
 	from {
 		opacity: 0;
@@ -66,18 +62,17 @@
 	}
 }
 
-/* ============================================
-	 LOGIN HEADER
-	 ============================================ */
+/* LOGIN HEADER */
 .login-header {
 	text-align: center;
 	margin-bottom: var(--spacing-8);
 }
 
+/* LOGO MARK BOX DISPLAYED ABOVE THE LOGIN TITLE. */
 .login-logo {
 	width: 80px;
 	height: 80px;
-	background: var(--maroon-primary);
+	background-color: var(--maroon-primary);
 	color: var(--white);
 	display: flex;
 	align-items: center;
@@ -90,6 +85,7 @@
 	border: 3px solid var(--maroon-dark);
 }
 
+/* MAIN LOGIN PAGE TITLE TEXT. */
 .login-title {
 	font-size: 1.875rem;
 	font-weight: 900;
@@ -99,6 +95,7 @@
 	margin-bottom: var(--spacing-1);
 }
 
+/* SUBTITLE TEXT BELOW THE MAIN LOGIN TITLE. */
 .login-subtitle {
 	font-size: 1.25rem;
 	font-weight: 700;
@@ -114,10 +111,11 @@
 	margin-bottom: var(--spacing-8);
 }
 
+/* PRIMARY LOGIN SUBMIT BUTTON STYLE. */
 .login-btn {
 	width: 100%;
 	padding: var(--spacing-4);
-	background: var(--maroon-primary);
+	background-color: var(--maroon-primary);
 	color: var(--white);
 	border: none;
 	border-radius: var(--radius-lg);
@@ -130,12 +128,14 @@
 	margin-top: var(--spacing-6);
 }
 
+/* HOVER STATE FOR LOGIN BUTTON TO IMPROVE FEEDBACK. */
 .login-btn:hover {
-	background: var(--maroon-dark);
+	background-color: var(--maroon-dark);
 	box-shadow: var(--shadow-lg);
 	transform: translateY(-2px);
 }
 
+/* PRESSED STATE FOR LOGIN BUTTON ON CLICK. */
 .login-btn:active {
 	transform: translateY(0);
 }
@@ -148,6 +148,7 @@
 	border-top: 2px solid var(--gray-200);
 }
 
+/* LABEL TEXT INTRODUCING DEMO ACCOUNT BUTTONS. */
 .demo-label {
 	text-align: center;
 	font-size: 0.875rem;
@@ -158,16 +159,18 @@
 	margin-bottom: var(--spacing-4);
 }
 
+/* STACK CONTAINER FOR DEMO ACCOUNT QUICK-LOGIN BUTTONS. */
 .demo-buttons {
 	display: flex;
 	flex-direction: column;
 	gap: var(--spacing-3);
 }
 
+/* INDIVIDUAL DEMO ACCOUNT BUTTON STYLE. */
 .demo-btn {
 	width: 100%;
 	padding: var(--spacing-3);
-	background: var(--gray-100);
+	background-color: var(--gray-100);
 	color: var(--gray-700);
 	border: 2px solid var(--gray-300);
 	border-radius: var(--radius-lg);
@@ -179,8 +182,9 @@
 	transition: all 0.2s ease;
 }
 
+/* HOVER STATE FOR DEMO ACCOUNT BUTTONS. */
 .demo-btn:hover {
-	background: var(--white);
+	background-color: var(--white);
 	border-color: var(--maroon-primary);
 	color: var(--maroon-primary);
 	box-shadow: var(--shadow-sm);
@@ -190,18 +194,22 @@
 	 RESPONSIVE
 	 ============================================ */
 @media (max-width: 768px) {
+	/* REMOVE GLOBAL TOP PADDING ON LOGIN SCREEN FOR MOBILE FIT. */
 	body {
 		padding-top: 0;
 	}
 
+	/* TIGHTEN CARD PADDING ON SMALLER SCREENS. */
 	.login-card {
 		padding: var(--spacing-6);
 	}
 
+	/* REDUCE TITLE SIZE FOR MOBILE READABILITY. */
 	.login-title {
 		font-size: 1.5rem;
 	}
 
+	/* REDUCE SUBTITLE SIZE FOR MOBILE LAYOUT BALANCE. */
 	.login-subtitle {
 		font-size: 1rem;
 	}

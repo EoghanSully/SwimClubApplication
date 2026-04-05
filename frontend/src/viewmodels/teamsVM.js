@@ -1,6 +1,6 @@
 // ============================================
 // TEAMS VIEW MODEL
-// University of Galway Swim Club
+// UNIVERSITY OF GALWAY SWIM CLUB
 // ============================================
 
 import { AppState } from '../app.js';
@@ -11,9 +11,7 @@ import { loadComponent, renderTemplate } from '../utils/components.js';
 let teamsList = [];
 let currentMembers = [];
 
-/**
- * Load all teams from backend
- */
+// LOAD ALL TEAMS FROM BACKEND.
 export async function loadTeams() {
   try {
     teamsList = await teamModel.getAllTeams();
@@ -28,9 +26,7 @@ export async function loadTeams() {
   }
 }
 
-/**
- * Get teams user can access
- */
+// GET TEAMS CURRENT USER CAN ACCESS.
 export async function getAccessibleTeams(user, role) {
   try {
     const teams = teamsList.length ? teamsList : (await loadTeams());
@@ -40,11 +36,13 @@ export async function getAccessibleTeams(user, role) {
     }
 
     if (role === 'COACH') {
-      return teams.filter(team => team.coachIds?.includes(user.id));
+      // BACKEND ALREADY SCOPES /TEAMS FOR COACHES, SO RETURN PROVIDED LIST.
+      return teams;
     }
 
     if (role === 'MEMBER') {
-      return teams.filter(team => user.teamIds?.includes(team.id));
+      const memberTeamIds = (user.teamIds || []).map(id => String(id));
+      return teams.filter(team => memberTeamIds.includes(String(team.id)));
     }
 
     return [];
@@ -54,9 +52,7 @@ export async function getAccessibleTeams(user, role) {
   }
 }
 
-/**
- * Get team members
- */
+// GET MEMBERS FOR ONE TEAM.
 export async function getTeamMembers(teamId) {
   try {
     const teams = teamsList.length ? teamsList : (await loadTeams());
@@ -68,9 +64,7 @@ export async function getTeamMembers(teamId) {
   }
 }
 
-/**
- * Get team coaches
- */
+// GET COACHES FOR ONE TEAM.
 export async function getTeamCoaches(teamId) {
   try {
     const teams = teamsList.length ? teamsList : (await loadTeams());
@@ -84,13 +78,11 @@ export async function getTeamCoaches(teamId) {
   }
 }
 
-/**
- * Get team details with members and coaches
- */
+// GET TEAM DETAILS INCLUDING MEMBERS AND COACHES.
 export async function getTeamDetails(teamId) {
   try {
     const teams = teamsList.length ? teamsList : (await loadTeams());
-    const team = teams.find(t => t.id === teamId);
+    const team = teams.find(t => String(t.id) === String(teamId));
     
     if (!team) return null;
     
@@ -105,17 +97,18 @@ export async function getTeamDetails(teamId) {
   }
 }
 
-/**
- * Filter members by search term
- */
+// FILTER MEMBERS BY SEARCH TERM AND ROLE FILTER.
 export function filterMembers(members, searchTerm, roleFilter = 'ALL') {
   return members.filter(member => {
-    // Search filter
-    if (searchTerm && !member.name.toLowerCase().includes(searchTerm.toLowerCase())) {
+    // SEARCH FILTER.
+    const name = String(member.name || '').toLowerCase();
+    const email = String(member.email || '').toLowerCase();
+    const query = String(searchTerm || '').toLowerCase();
+    if (query && !name.includes(query) && !email.includes(query)) {
       return false;
     }
     
-    // Role filter
+    // ROLE FILTER.
     if (roleFilter !== 'ALL' && member.role !== roleFilter) {
       return false;
     }
@@ -124,6 +117,7 @@ export function filterMembers(members, searchTerm, roleFilter = 'ALL') {
   });
 }
 
+// RENDER MEMBER CARDS OR EMPTY STATE FOR CURRENT FILTER RESULT.
 async function renderMemberList(members) {
   const membersContainer = document.getElementById('members-list');
   if (!membersContainer) return;
@@ -136,14 +130,15 @@ async function renderMemberList(members) {
   const cardTemplate = await loadComponent('team-card');
   membersContainer.innerHTML = members.map(member => renderTemplate(cardTemplate, {
     id: member.id,
-    initial: member.name.charAt(0),
-    name: member.name,
-    email: member.email,
-    roleLower: member.role.toLowerCase(),
-    role: member.role
+    initial: (member.name || 'U').charAt(0),
+    name: member.name || 'Unknown Member',
+    email: member.email || 'No email on file',
+    roleLower: (member.role || 'MEMBER').toLowerCase(),
+    role: member.role || 'MEMBER'
   })).join('');
 }
 
+// GLOBAL FILTER HANDLER USED BY FILTER INPUTS.
 window.filterMembers = function () {
   const searchTerm = document.getElementById('member-search')?.value.toLowerCase() || '';
   const roleFilter = document.getElementById('role-filter')?.value || 'ALL';
@@ -152,6 +147,7 @@ window.filterMembers = function () {
   renderMemberList(filtered);
 };
 
+// OPEN MEMBER PROFILE MODAL AND RENDER DETAIL BLOCKS.
 window.viewMemberProfile = async function (memberId) {
   const member = currentMembers.find(u => String(u.id) === String(memberId));
   if (!member) return;
@@ -195,16 +191,15 @@ window.viewMemberProfile = async function (memberId) {
   document.getElementById('member-profile-modal').style.display = 'flex';
 };
 
+// CLOSE MEMBER PROFILE MODAL.
 window.closeMemberProfileModal = function () {
   const modal = document.getElementById('member-profile-modal');
   if (modal) modal.style.display = 'none';
 };
 
-/**
- * Get member stats (placeholder - would need attendance data)
- */
+// GET MEMBER STATS (PLACEHOLDER - WOULD NEED ATTENDANCE DATA).
 export async function getMemberStats(userId) {
-  // Mock implementation - would require attendance model
+  // MOCK IMPLEMENTATION - WOULD REQUIRE ATTENDANCE MODEL.
   return {
     attended: 0,
     absent: 0,
@@ -213,6 +208,7 @@ export async function getMemberStats(userId) {
   };
 }
 
+// INITIALISE TEAM SELECTOR, TEAM DETAILS PANEL, AND MEMBER FILTER FLOW.
 export async function initTeams() {
   console.log('👥 Initializing Teams...');
   const user = AppState.currentUser;
@@ -237,7 +233,11 @@ export async function initTeams() {
 
     const details = await getTeamDetails(selectedTeamId);
 
-    if (!details) return;
+    if (!details) {
+      document.getElementById('team-details-section').style.display = 'none';
+      document.getElementById('empty-state').style.display = 'block';
+      return;
+    }
 
     document.getElementById('team-details-section').style.display = 'block';
     document.getElementById('empty-state').style.display = 'none';

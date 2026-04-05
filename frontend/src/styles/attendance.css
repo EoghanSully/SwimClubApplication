@@ -1,11 +1,13 @@
-/* Attendance Page */
+/* THIS FILE STYLES THE ATTENDANCE PAGE LAYOUT AND STATES. */
+/* MAIN PAGE WRAPPER CARD THAT HOLDS THE FULL ATTENDANCE SCREEN. */
 .attendance-page {
-  background: #f4f5f7;
+  background-color: #f4f5f7;
   border: 1px solid #e6e7eb;
   border-radius: 0.75rem;
   overflow: hidden;
 }
 
+/* TOP HERO BANNER WITH TITLE, SUBTITLE, AND ACTION BUTTON. */
 .attendance-hero {
   background: linear-gradient(90deg, var(--maroon-primary), var(--maroon-dark));
   color: #fff;
@@ -16,6 +18,7 @@
   gap: 1rem;
 }
 
+/* LARGE MAIN TITLE TEXT SHOWN IN THE HERO AREA. */
 .attendance-hero-title {
   font-size: 2.4rem;
   font-weight: 900;
@@ -24,6 +27,7 @@
   font-style: italic;
 }
 
+/* SMALLER SUPPORTING SUBTITLE UNDER THE HERO TITLE. */
 .attendance-hero-subtitle {
   margin-top: 0.4rem;
   font-size: 0.95rem;
@@ -31,8 +35,9 @@
   letter-spacing: 0.06em;
 }
 
+/* HERO BUTTON STYLE FOR TOP-RIGHT ACTIONS. */
 .attendance-hero-btn {
-  background: transparent;
+  background-color: transparent;
   border: 2px solid rgba(255, 255, 255, 0.45);
   color: #fff;
   padding: 0.75rem 1.2rem;
@@ -42,8 +47,9 @@
   cursor: pointer;
 }
 
+/* HEADER AREA BELOW HERO THAT INTRODUCES THE SESSION LIST. */
 .attendance-header-card {
-  background: #f7f7f8;
+  background-color: #f7f7f8;
   border-top: 1px solid rgba(0, 0, 0, 0.08);
   border-bottom: 1px solid rgba(0, 0, 0, 0.1);
   padding: 1rem 1.5rem;
@@ -53,42 +59,49 @@
   gap: 1rem;
 }
 
+/* MAIN HEADER TITLE FOR THE ATTENDANCE CONTENT SECTION. */
 .attendance-header-title {
   font-size: 2rem;
   line-height: 1;
   margin-bottom: 0.35rem;
 }
 
+/* SECONDARY HEADER DESCRIPTION TEXT. */
 .attendance-header-text {
   color: #6a6d75;
   font-weight: 600;
 }
 
+/* WRAPPER FOR THE TEAM FILTER DROPDOWN TO ENFORCE MIN WIDTH. */
 .attendance-filter-wrap {
   min-width: 260px;
 }
 
+/* TEAM FILTER SELECT INPUT STYLING. */
 .attendance-team-filter {
   width: 100%;
   border: 2px solid #d9dce2;
   border-radius: 0.8rem;
-  background: #fff;
+  background-color: #fff;
   padding: 0.8rem 1rem;
   font-weight: 700;
   font-size: 1rem;
 }
 
+/* TWO-COLUMN MAIN LAYOUT: SESSIONS ON LEFT, ROSTER ON RIGHT. */
 .attendance-layout {
   display: grid;
   grid-template-columns: 270px minmax(0, 1fr);
   min-height: 480px;
 }
 
+/* LEFT PANEL THAT HOLDS THE LIST OF SESSION CARDS. */
 .attendance-sessions-panel {
   border-right: 1px solid #d8dae0;
   padding: 1rem;
 }
 
+/* ROW AT TOP OF SESSIONS PANEL FOR TITLE AND COUNT BADGE. */
 .attendance-sessions-header {
   display: flex;
   align-items: center;
@@ -96,12 +109,14 @@
   margin-bottom: 0.9rem;
 }
 
+/* STYLING FOR THE H3 TITLE INSIDE THE SESSIONS HEADER. */
 .attendance-sessions-header h3 {
   font-size: 1rem;
   letter-spacing: 0.08em;
   color: #9a9dac;
 }
 
+/* ROUND BADGE THAT SHOWS HOW MANY SESSIONS ARE AVAILABLE. */
 .attendance-count-pill {
   min-width: 1.9rem;
   height: 1.9rem;
@@ -109,35 +124,39 @@
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  background: #f0d8e3;
+  background-color: #f0d8e3;
   color: #8b2a57;
   font-weight: 800;
   font-size: 0.85rem;
 }
 
+/* VERTICAL STACK CONTAINER FOR SESSION CARDS. */
 .attendance-session-list {
   display: flex;
   flex-direction: column;
   gap: 0.9rem;
 }
 
+/* INDIVIDUAL SESSION CARD IN THE LEFT PANEL. */
 .attendance-session-item {
   border-radius: 1rem;
   border: 1px solid #e0e2e8;
-  background: #fff;
+  background-color: #fff;
   padding: 1rem;
   cursor: pointer;
   box-shadow: 0 2px 6px rgba(15, 23, 42, 0.06);
 }
 
+/* VISUAL HIGHLIGHT FOR THE CURRENTLY SELECTED SESSION CARD. */
 .attendance-session-item.active {
   border: 2px solid var(--maroon-primary);
   box-shadow: 0 0 0 3px rgba(168, 0, 80, 0.14);
 }
 
+/* SMALL LABEL CHIP ON EACH SESSION CARD (E.G. TEAM/TYPE). */
 .attendance-session-tag {
   display: inline-block;
-  background: #eef0f6;
+  background-color: #eef0f6;
   color: #394150;
   border: 1px solid #d5d9e2;
   border-radius: 0.75rem;
@@ -147,18 +166,21 @@
   margin-bottom: 0.6rem;
 }
 
+/* LARGE DATE NUMBER/TEXT INSIDE A SESSION CARD. */
 .attendance-session-date {
   font-size: 1.75rem;
   line-height: 1;
   margin-bottom: 0.5rem;
 }
 
+/* SESSION TIME TEXT INSIDE A SESSION CARD. */
 .attendance-session-time {
   color: #6b7280;
   font-weight: 700;
   margin-bottom: 0.75rem;
 }
 
+/* PRESENT/ABSENT OR OTHER SUMMARY METRICS ROW INSIDE SESSION CARD. */
 .attendance-session-metrics {
   display: flex;
   gap: 1.2rem;
@@ -166,13 +188,15 @@
   font-weight: 800;
 }
 
+/* RIGHT PANEL BACKGROUND AREA WHERE THE ATTENDANCE ROSTER IS SHOWN. */
 .attendance-roster-panel {
-  background: #f5f6f8;
+  background-color: #f5f6f8;
   padding: 1rem;
 }
 
+/* ROSTER PANEL HEADER CONTAINING TITLE/SUBTEXT AND SAVE BUTTON. */
 .attendance-roster-header {
-  background: #fff;
+  background-color: #fff;
   border: 1px solid #e1e4ea;
   border-radius: 0.95rem 0.95rem 0 0;
   padding: 1rem 1.3rem;
@@ -182,21 +206,24 @@
   gap: 1rem;
 }
 
+/* LARGE TITLE INSIDE THE ROSTER HEADER. */
 .attendance-roster-header h3 {
   font-size: 2rem;
   line-height: 1;
 }
 
+/* SUPPORTING DESCRIPTION TEXT INSIDE THE ROSTER HEADER. */
 .attendance-roster-header p {
   color: #6b7280;
   font-weight: 600;
   margin-top: 0.35rem;
 }
 
+/* PRIMARY BUTTON USED TO SAVE ATTENDANCE CHANGES. */
 .attendance-save-btn {
   border: none;
   border-radius: 0.9rem;
-  background: var(--maroon-primary);
+  background-color: var(--maroon-primary);
   color: #fff;
   font-weight: 900;
   font-size: 0.95rem;
@@ -204,19 +231,22 @@
   cursor: pointer;
 }
 
+/* DISABLED STATE FOR SAVE BUTTON WHEN THERE IS NOTHING TO SAVE. */
 .attendance-save-btn:disabled {
   opacity: 0.45;
   cursor: not-allowed;
 }
 
+/* LIST WRAPPER THAT CONTAINS ALL ATTENDANCE MEMBER ROWS. */
 .attendance-roster-list {
-  background: #fff;
+  background-color: #fff;
   border: 1px solid #e1e4ea;
   border-top: none;
   border-radius: 0 0 0.95rem 0.95rem;
   min-height: 280px;
 }
 
+/* SINGLE MEMBER ROW SHOWING NAME AND PRESENT/ABSENT TOGGLES. */
 .attendance-roster-row {
   display: flex;
   align-items: center;
@@ -226,34 +256,40 @@
   border-top: 1px solid #eceef3;
 }
 
+/* REMOVE TOP BORDER FROM FIRST ROW TO AVOID DOUBLE BORDER WITH WRAPPER. */
 .attendance-roster-row:first-child {
   border-top: none;
 }
 
+/* MEMBER NAME TEXT STYLE IN EACH ROSTER ROW. */
 .attendance-member-name {
   font-size: 1.45rem;
   line-height: 1;
   font-weight: 900;
 }
 
+/* GREEN STATE FOR MEMBER MARKED AS PRESENT. */
 .attendance-member-name.present {
   color: #06a44f;
 }
 
+/* RED STATE FOR MEMBER MARKED AS ABSENT. */
 .attendance-member-name.absent {
   color: #d90c20;
 }
 
+/* HORIZONTAL GROUP THAT HOLDS THE PRESENT/ABSENT BUTTONS. */
 .attendance-toggle-group {
   display: inline-flex;
   align-items: center;
   gap: 0.65rem;
 }
 
+/* BASE STYLE FOR ATTENDANCE TOGGLE BUTTONS. */
 .attendance-toggle-btn {
   border-radius: 1rem;
   border: 2px solid #dde1e8;
-  background: #fff;
+  background-color: #fff;
   color: #6b7280;
   font-size: 0.95rem;
   font-weight: 900;
@@ -261,29 +297,35 @@
   cursor: pointer;
 }
 
+/* ACTIVE PRESENT BUTTON STATE. */
 .attendance-toggle-btn.active.present {
   border-color: #06a44f;
-  background: #06a44f;
+  background-color: #06a44f;
   color: #fff;
 }
 
+/* ACTIVE ABSENT BUTTON STATE. */
 .attendance-toggle-btn.active.absent {
   border-color: #e0001b;
-  background: #e0001b;
+  background-color: #e0001b;
   color: #fff;
 }
 
+/* EMPTY-STATE MESSAGE WHEN NO SESSION OR MEMBERS ARE AVAILABLE. */
 .attendance-empty-state {
   color: #6b7280;
   font-weight: 700;
   padding: 2rem 1.3rem;
 }
 
+/* RESPONSIVE RULES FOR TABLET AND SMALLER SCREENS. */
 @media (max-width: 1024px) {
+  /* STACK THE TWO COLUMNS INTO A SINGLE COLUMN ON SMALLER WIDTHS. */
   .attendance-layout {
     grid-template-columns: 1fr;
   }
 
+  /* MOVE DIVIDER TO BOTTOM WHEN LEFT PANEL BECOMES TOP PANEL. */
   .attendance-sessions-panel {
     border-right: none;
     border-bottom: 1px solid #d8dae0;

@@ -1,56 +1,34 @@
 import { apiDelete, apiGet, apiPost, apiPut } from '../utils/api.js';
 import { adaptEventRow } from '../utils/adapters.js';
 
-let allEvents = []; 
-
+// FETCH ALL EVENTS AND NORMALISE THEM.
 export async function getAllEvents() {
-  try {
-    const response = await apiGet('/events');  // Calls backend /api/events and returns response.json
-    return (response.data || []).map(adaptEventRow); // Return the events array from the data property
-  } catch (error) {
-    console.error('Fetch Reqest failure:', error.stack); // Logs error if API call fails
-    throw error;
-  }
+  const response = await apiGet('/events');
+  return (response.data || []).map(adaptEventRow);
 }
 
+// FETCH PAST EVENTS AND NORMALISE THEM.
 export async function getPastEvents() {
-  try {
-    const response = await apiGet('/events/past');  // Calls backend /api/events/past and returns response.json
-    return (response.data || []).map(adaptEventRow); // Return the past events array from the data property
-  } catch (error) {
-    console.error('Fetch Request failure:', error.stack); // Logs error if API call fails
-    throw error;
-  }
+  const response = await apiGet('/events/past');
+  return (response.data || []).map(adaptEventRow);
 }
 
+// CREATE A NEW EVENT AND RETURN NORMALISED DATA.
 export async function createNewEvent(eventData) {
-    try {
-        const response = await apiPost('/events/create', eventData); // Calls backend /api/events/create with event data and returns response.json
-        return Array.isArray(response.data) ? response.data.map(adaptEventRow) : adaptEventRow(response.data); // Return the created event from the data property
-    } catch (error) {
-        console.error('Create Event failure:', error.stack);
-        throw error;
-    }
+  const response = await apiPost('/events/create', eventData);
+  return Array.isArray(response.data) ? response.data.map(adaptEventRow) : adaptEventRow(response.data);
 }
 
+// UPDATE AN EVENT AND RETURN THE UPDATED NORMALISED ITEM.
 export async function updateEvent(eventData) {
-    try {
-        const response = await apiPut('/events/update', eventData); // Calls backend /api/events/update with event data and returns response.json
-        return adaptEventRow(response.data); // Return the updated event from the data property
-    } catch (error) {
-        console.error('Update Event failure:', error.stack);
-        throw error;
-    }
-}    
+  const response = await apiPut('/events/update', eventData);
+  return adaptEventRow(response.data);
+}
 
+// DELETE AN EVENT BY ID.
 export async function deleteEvent(eventId) {
-    try {       
-        const response = await apiDelete(`/events/delete/${eventId}`); // Calls backend /api/events/delete/:id with event ID and returns response.json
-        return response; // Return delete status
-    } catch (error) {
-        console.error('Delete Event failure:', error.stack);
-        throw error;
-    }
+  const response = await apiDelete(`/events/delete/${eventId}`);
+  return response;
 }
 
 

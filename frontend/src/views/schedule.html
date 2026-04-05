@@ -1,4 +1,6 @@
+<!-- // SCHEDULE PAGE ROOT WRAPPER FOR FILTERS, CALENDAR, SIDEBAR, AND MODALS. -->
 <div class="container">
+  <!-- // HEADER ROW WITH PAGE TITLE AND ROLE-GATED CREATE EVENT ACTION. -->
   <div class="schedule-header">
     <div style="display: flex; align-items: center; justify-content: space-between; gap: 1rem; flex-wrap: wrap;">
       <h1>Schedule & Calendar</h1>
@@ -6,11 +8,12 @@
     </div>
   </div>
   
-  <!-- Filters -->
+  <!-- // FILTER CONTAINER POPULATED AT RUNTIME WITH TEAM AND TYPE FILTER CONTROLS. -->
   <div id="schedule-filters" class="schedule-filters"></div>
   
-  <!-- Calendar -->
+  <!-- // MAIN TWO-COLUMN LAYOUT: CALENDAR ON LEFT, DAY EVENTS ON RIGHT. -->
   <div class="schedule-layout">
+    <!-- // CALENDAR PANEL SHOWING MONTH NAVIGATION AND DAY GRID. -->
     <div class="calendar-section">
       <div class="calendar-nav">
         <button id="calendar-prev" class="nav-arrow">← Previous</button>
@@ -21,7 +24,7 @@
       <div id="calendar-grid" class="calendar-grid"></div>
     </div>
     
-    <!-- Day Events Sidebar -->
+    <!-- // DAY EVENTS SIDEBAR SHOWING EVENTS FOR THE SELECTED DATE. -->
     <div class="day-events-section">
       <div id="day-events" class="empty-state">
         <p>Select a date to view events</p>
@@ -30,7 +33,7 @@
     </div>
   </div>
   
-  <!-- Event Detail Modal -->
+  <!-- // EVENT DETAIL MODAL FOR READ-ONLY EVENT INFORMATION. -->
   <div class="event-detail-modal" id="event-modal" style="display: none;">
     <div class="modal-overlay" onclick="window.closeEventModal()"></div>
     <div class="modal-content">
@@ -45,6 +48,7 @@
     </div>
   </div>
 
+  <!-- // CREATE EVENT MODAL FORM USED BY AUTHORISED USERS. -->
   <div id="create-event-modal" class="modal" style="display: none;">
     <div class="modal-overlay" onclick="window.closeCreateEventModal()"></div>
     <div class="modal-content">
@@ -53,6 +57,7 @@
         <button class="modal-close text-white" onclick="window.closeCreateEventModal()">×</button>
       </div>
       <form id="create-event-form" style="padding: var(--spacing-8);">
+        <!-- // CORE EVENT DETAILS ROW: TITLE AND CATEGORY. -->
         <div class="form-row" style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 1rem;">
           <div class="form-group">
             <label class="form-label">Title</label>
@@ -69,6 +74,7 @@
           </div>
         </div>
 
+        <!-- // DATE AND START TIME ROW FOR EVENT TIMING. -->
         <div class="form-row" style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 1rem;">
           <div class="form-group">
             <label class="form-label">Date</label>
@@ -80,6 +86,7 @@
           </div>
         </div>
 
+        <!-- // DURATION AND AUDIENCE ROW FOR SCOPING THE EVENT. -->
         <div class="form-row" style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 1rem;">
           <div class="form-group">
             <label class="form-label">Duration (minutes)</label>
@@ -94,6 +101,7 @@
           </div>
         </div>
 
+        <!-- // TEAM SELECTOR SHOWN ONLY WHEN AUDIENCE IS TEAM-SPECIFIC. -->
         <div class="form-group" id="event-team-group" style="display: none;">
           <label class="form-label">Team</label>
           <select name="teamId" id="event-team-select" class="form-select form-input">
@@ -101,16 +109,19 @@
           </select>
         </div>
 
+        <!-- // VENUE INPUT FOR EVENT LOCATION DETAILS. -->
         <div class="form-group">
           <label class="form-label">Venue</label>
           <input type="text" name="venue" class="form-input" required>
         </div>
 
+        <!-- // DESCRIPTION FIELD FOR OPTIONAL EVENT NOTES. -->
         <div class="form-group">
           <label class="form-label">Description</label>
           <textarea name="description" class="form-textarea"></textarea>
         </div>
 
+        <!-- // FORM ACTIONS FOR CANCEL AND CREATE SUBMIT. -->
         <div class="form-actions">
           <button type="button" class="btn btn-secondary" onclick="window.closeCreateEventModal()">Cancel</button>
           <button type="submit" class="btn btn-primary">Create Event</button>
@@ -121,23 +132,28 @@
 </div>
 
 <style>
+  /* // SCHEDULE HEADER SPACING ABOVE FILTERS/CALENDAR. */
   .schedule-header {
     margin-bottom: 2rem;
   }
 
+  /* // SHARED SHADOW EMPHASIS FOR CREATE-EVENT BUTTON VARIANTS. */
   .create-event-cta,
   .create-event-empty-btn {
     box-shadow: 0 10px 20px rgba(168, 0, 80, 0.16);
   }
 
+  /* // ADD TOP SPACE FOR EMPTY-STATE CREATE CTA IN SIDEBAR. */
   .create-event-empty-btn {
     margin-top: 1rem;
   }
   
+  /* // FILTER BAR OUTER SPACING FROM HEADER AND CALENDAR. */
   .schedule-filters {
     margin-bottom: 2rem;
   }
 
+  /* // TEAM FILTER SELECT STYLING. */
   .schedule-team-select {
     min-width: 220px;
     width: auto;
@@ -150,11 +166,13 @@
     font-size: 0.95rem;
   }
 
+  /* // FOCUS STATE FOR TEAM FILTER CONTROL. */
   .schedule-team-select:focus {
     border-color: var(--maroon-primary);
     box-shadow: 0 0 0 3px rgba(168, 0, 80, 0.14);
   }
   
+  /* // FILTER ROW LAYOUT FOR SELECT AND TYPE BUTTONS. */
   .filter-row {
     display: flex;
     gap: 1rem;
@@ -163,12 +181,14 @@
     margin-bottom: 2rem;
   }
   
+  /* // WRAPPER FOR EVENT TYPE BUTTON CHIP GROUP. */
   .filter-buttons {
     display: flex;
     gap: 0.6rem;
     flex-wrap: wrap;
   }
 
+  /* // BASE BUTTON STYLE FOR FILTER CHIPS. */
   .filter-buttons .filter-btn {
     padding: 0.65rem 1rem;
     font-size: 0.82rem;
@@ -183,6 +203,7 @@
     transition: all 0.2s ease;
   }
 
+  /* // ALL-TYPE FILTER COLOUR VARIANT AND STATES. */
   .filter-buttons .filter-btn[data-type="ALL"] {
     border-color: rgba(168, 0, 80, 0.35);
     color: var(--maroon-primary);
@@ -197,6 +218,7 @@
     box-shadow: 0 6px 14px rgba(168, 0, 80, 0.25);
   }
 
+  /* // TRAINING FILTER COLOUR VARIANT AND STATES. */
   .filter-buttons .filter-btn[data-type="TRAINING"] {
     border-color: rgba(37, 99, 235, 0.45);
     color: rgb(37, 99, 235);
@@ -211,6 +233,7 @@
     box-shadow: 0 6px 14px rgba(37, 99, 235, 0.28);
   }
 
+  /* // COMPETITION FILTER COLOUR VARIANT AND STATES. */
   .filter-buttons .filter-btn[data-type="COMPETITION"] {
     border-color: rgba(220, 38, 38, 0.45);
     color: rgb(220, 38, 38);
@@ -225,6 +248,7 @@
     box-shadow: 0 6px 14px rgba(220, 38, 38, 0.28);
   }
 
+  /* // SOCIAL FILTER COLOUR VARIANT AND STATES. */
   .filter-buttons .filter-btn[data-type="SOCIAL"] {
     border-color: rgba(22, 163, 74, 0.45);
     color: rgb(22, 163, 74);
@@ -239,6 +263,7 @@
     box-shadow: 0 6px 14px rgba(22, 163, 74, 0.28);
   }
 
+  /* // SOCIETY FILTER COLOUR VARIANT AND STATES. */
   .filter-buttons .filter-btn[data-type="SOCIETY"] {
     border-color: rgba(217, 119, 6, 0.45);
     color: rgb(217, 119, 6);
@@ -253,6 +278,7 @@
     box-shadow: 0 6px 14px rgba(217, 119, 6, 0.3);
   }
   
+  /* // PRIMARY PAGE GRID: CALENDAR AREA AND EVENTS SIDEBAR. */
   .schedule-layout {
     display: grid;
     grid-template-columns: 2fr 1fr;
@@ -260,6 +286,7 @@
     margin-bottom: 2rem;
   }
   
+  /* // CALENDAR CARD CONTAINER. */
   .calendar-section {
     background-color: white;
     border: 2px solid var(--gray-200);
@@ -267,6 +294,7 @@
     padding: 2rem;
   }
   
+  /* // CALENDAR MONTH NAVIGATION BAR. */
   .calendar-nav {
     display: flex;
     align-items: center;
@@ -274,6 +302,7 @@
     margin-bottom: 2rem;
   }
   
+  /* // PREVIOUS/NEXT MONTH BUTTONS. */
   .nav-arrow {
     background-color: var(--maroon-primary);
     color: white;
@@ -285,16 +314,19 @@
     transition: background-color 0.3s;
   }
   
+  /* // HOVER STATE FOR MONTH NAVIGATION BUTTONS. */
   .nav-arrow:hover {
     background-color: var(--maroon-dark);
   }
   
+  /* // SEVEN-COLUMN CALENDAR GRID. */
   .calendar-grid {
     display: grid;
     grid-template-columns: repeat(7, 1fr);
     gap: 0.75rem;
   }
   
+  /* // WEEKDAY LABEL CELLS IN CALENDAR HEADER ROW. */
   .calendar-day-label {
     text-align: center;
     font-weight: 700;
@@ -304,6 +336,7 @@
     padding: 0.5rem;
   }
   
+  /* // INDIVIDUAL CALENDAR DAY BUTTON CELL. */
   .calendar-day {
     aspect-ratio: 1;
     border: 2px solid var(--gray-200);
@@ -318,31 +351,37 @@
     gap: 0.25rem;
   }
   
+  /* // HOVER FEEDBACK FOR CALENDAR DAY CELLS. */
   .calendar-day:hover {
     border-color: var(--gray-300);
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
   }
   
+  /* // TODAY HIGHLIGHT STATE. */
   .calendar-day.today {
     background-color: rgb(219, 234, 254);
     border-color: rgb(59, 130, 246);
   }
   
+  /* // SELECTED-DAY HIGHLIGHT STATE. */
   .calendar-day.selected {
     background-color: var(--maroon-primary);
     color: white;
     border-color: var(--maroon-primary);
   }
   
+  /* // PLACEHOLDER CELLS FOR LEADING/TRAILING EMPTY DAYS. */
   .calendar-empty {
     display: none;
   }
   
+  /* // NUMERIC DAY LABEL INSIDE EACH CALENDAR CELL. */
   .calendar-day-num {
     font-weight: 700;
     font-size: 0.875rem;
   }
   
+  /* // STACK OF SMALL EVENT INDICATOR BARS IN DAY CELLS. */
   .calendar-indicators {
     display: flex;
     flex-direction: column;
@@ -352,6 +391,7 @@
     margin-top: 0.2rem;
   }
   
+  /* // SINGLE EVENT INDICATOR BAR COLOURED BY EVENT TYPE. */
   .event-indicator {
     width: 72%;
     min-width: 1.25rem;
@@ -361,11 +401,13 @@
     box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.35);
   }
 
+  /* // STRONGER INDICATOR CONTRAST WHEN DAY IS SELECTED. */
   .calendar-day.selected .event-indicator {
     opacity: 0.92;
     box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.55);
   }
   
+  /* // RIGHT-HAND EVENT LIST CONTAINER FOR SELECTED DATE. */
   .day-events-section {
     background-color: white;
     border: 2px solid var(--gray-200);
@@ -375,6 +417,7 @@
     overflow-y: auto;
   }
   
+  /* // CLICKABLE EVENT CARD IN DAY EVENTS SIDEBAR. */
   .event-list-item {
     width: 100%;
     padding: 1rem;
@@ -387,10 +430,12 @@
     transition: all 0.3s;
   }
   
+  /* // HOVER STATE FOR DAY EVENT CARDS. */
   .event-list-item:hover {
     background-color: var(--gray-100);
   }
   
+  /* // HEADER ROW INSIDE EVENT CARD FOR BADGE AND TITLE. */
   .event-item-header {
     display: flex;
     align-items: center;
@@ -398,6 +443,7 @@
     margin-bottom: 0.5rem;
   }
   
+  /* // TYPE BADGE STYLE FOR EVENT CATEGORY LABELS. */
   .event-type-badge {
     color: white;
     padding: 0.25rem 0.5rem;
@@ -407,11 +453,13 @@
     white-space: nowrap;
   }
   
+  /* // EVENT TITLE TEXT IN SIDEBAR CARD. */
   .event-item-header h4 {
     font-size: 1rem;
     color: var(--gray-900);
   }
   
+  /* // SUPPORTING META LINES FOR TIME, LOCATION, AND TEAM. */
   .event-item-time,
   .event-item-location,
   .event-item-team {
@@ -420,6 +468,7 @@
     margin: 0.25rem 0;
   }
   
+  /* // DETAIL ROW STYLE USED INSIDE MODAL CONTENT BLOCKS. */
   .event-detail-section {
     display: flex;
     gap: 1rem;
@@ -429,11 +478,13 @@
     border-radius: 0.75rem;
   }
   
+  /* // ICON HOLDER IN EVENT DETAIL ROWS. */
   .detail-icon {
     font-size: 1.5rem;
     flex-shrink: 0;
   }
   
+  /* // SMALL UPPERCASE LABEL STYLE FOR DETAIL FIELDS. */
   .detail-label {
     font-size: 0.75rem;
     font-weight: 700;
@@ -442,10 +493,12 @@
     margin-bottom: 0.25rem;
   }
   
+  /* // SHARED CLASS TO FORCE HIDDEN STATE WHEN REQUIRED. */
   .hidden {
     display: none !important;
   }
   
+  /* // RESPONSIVE LAYOUT: STACK CALENDAR AND SIDEBAR ON NARROWER SCREENS. */
   @media (max-width: 1024px) {
     .schedule-layout {
       grid-template-columns: 1fr;

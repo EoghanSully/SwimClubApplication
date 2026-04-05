@@ -1,5 +1,6 @@
 // Shared layout behavior: announcement modals, sidebar cards, and shared component injection.
 
+// THIS CONTROLLER HANDLES SHARED LAYOUT FEATURES (SIDEBAR + MODALS).
 export function createLayoutController({
   AppState,
   apiGet,
@@ -10,8 +11,10 @@ export function createLayoutController({
   renderTemplate,
   reroute
 }) {
+  // PREVENT BINDING THE SAME FORM EVENTS MORE THAN ONCE.
   let isSidebarCreateFormBound = false;
 
+  // ESCAPE HTML TO AVOID INJECTING RAW USER CONTENT INTO THE DOM.
   function escapeHtml(value) {
     return String(value ?? '')
       .replace(/&/g, '&amp;')
@@ -21,11 +24,43 @@ export function createLayoutController({
       .replace(/'/g, '&#39;');
   }
 
-  // ------------------------------
-  // Announcement visibility + data
-  // ------------------------------
+  // BUILD A FRIENDLY AUTHOR LABEL FROM ADMIN ID + KNOWN USER DATA.
+  function getAnnouncementAuthorLabel(announcement) {
+    const rawId = announcement?.admin_id ?? announcement?.adminId ?? announcement?.raw?.admin_id;
+    const adminId = Number(rawId);
+    const currentUser = AppState.currentUser || null;
+    const teams = Array.isArray(AppState.teams) ? AppState.teams : [];
+
+    if (currentUser && Number(currentUser.id) === adminId) {
+      const role = String(currentUser.role || 'ADMIN').toLowerCase();
+      return currentUser.name ? `${currentUser.name} (${role})` : `Admin ${rawId}`;
+    }
+
+    for (const team of teams) {
+      const members = Array.isArray(team.members) ? team.members : [];
+      const matched = members.find((member) => Number(member.id) === adminId);
+      if (matched) {
+        const name = matched.name || `${matched.firstName || ''} ${matched.lastName || ''}`.trim();
+        const role = String(matched.role || 'ADMIN').toLowerCase();
+        return name ? `${name} (${role})` : `Admin ${rawId}`;
+      }
+    }
+
+    return `Admin ${rawId}`;
+  }
+
+  // MAP TEAM ID TO TEAM NAME, WITH A SIMPLE FALLBACK LABEL.
+  function getTeamLabel(teamId) {
+    const numericTeamId = Number(teamId);
+    const teams = Array.isArray(AppState.teams) ? AppState.teams : [];
+    const matchedTeam = teams.find((team) => Number(team.id) === numericTeamId);
+    return matchedTeam?.name || `Team ${teamId}`;
+  }
+
+  // CHECK IF THE CURRENT USER IS ALLOWED TO SEE THIS ANNOUNCEMENT.
   function isAnnouncementVisibleToUser(announcement, role, user) {
     if (!announcement) return false;
+    if (role === 'ADMIN') return true;
 
     const audience = announcement.audience || (announcement.target === 'COACHES' ? 'coach' : 'club');
     if (audience === 'club') return true;
@@ -39,6 +74,7 @@ export function createLayoutController({
     return role === 'ADMIN';
   }
 
+  // LOAD ANNOUNCEMENTS (IF NEEDED), FILTER THEM, SORT NEWEST FIRST, LIMIT LIST SIZE.
   async function getSidebarAnnouncements(limit = 5) {
     const user = AppState.currentUser || { teamIds: [] };
     const role = user.role || 'MEMBER';
@@ -54,13 +90,19 @@ export function createLayoutController({
 
     return (AppState.announcements || [])
       .filter((announcement) => isAnnouncementVisibleToUser(announcement, role, user))
-      .sort((a, b) => new Date(b.created_at || 0).getTime() - new Date(a.created_at || 0).getTime())
+      .sort((a, b) => {
+        const timeDiff = new Date(b.created_at || b.date || 0).getTime() - new Date(a.created_at || a.date || 0).getTime();
+        if (timeDiff !== 0) return timeDiff;
+
+        // IF DATES MATCH, USE ID AS A SIMPLE NEWEST-FIRST TIEBREAKER.
+        const aId = Number(a.announcementId ?? a.id ?? 0);
+        const bId = Number(b.announcementId ?? b.id ?? 0);
+        return bId - aId;
+      })
       .slice(0, limit);
   }
 
-  // ------------------------------
-  // Announcement modals
-  // ------------------------------
+  // FILL AND OPEN THE ANNOUNCEMENT DETAIL MODAL.
   function renderAnnouncementModal(announcement) {
     const modal = document.getElementById('announcement-detail-modal');
     const title = document.getElementById('announcement-modal-title');
@@ -80,7 +122,7 @@ export function createLayoutController({
       minute: '2-digit'
     });
 
-    const authorName = announcement.author_name || announcement.author || 'Admin';
+    const authorName = getAnnouncementAuthorLabel(announcement);
     const initials = authorName
       .split(' ')
       .map((word) => word[0])
@@ -90,8 +132,9 @@ export function createLayoutController({
 
     const category = (announcement.category || 'GENERAL').toUpperCase();
     const audience = announcement.audience || (announcement.target === 'COACHES' ? 'coach' : 'club');
+    const teamId = announcement.team_id ?? announcement.teamId;
     const audienceLabel = audience === 'team'
-      ? `Team ${announcement.team_id ?? announcement.teamId ?? ''}`.trim()
+      ? getTeamLabel(teamId)
       : audience === 'coach'
         ? 'Coaches'
         : 'All Club';
@@ -129,6 +172,7 @@ export function createLayoutController({
     modal.style.setProperty('display', 'flex', 'important');
   }
 
+  // EXPOSE GLOBAL FUNCTIONS FOR OPEN/CLOSE ACTIONS USED BY HTML HANDLERS.
   window.openAnnouncementModal = function (announcement) {
     renderAnnouncementModal(announcement);
   };
@@ -140,14 +184,13 @@ export function createLayoutController({
     }
   };
 
+  // ONLY ADMINS CAN CREATE ANNOUNCEMENTS IN THIS APP.
   function canCreateAnnouncements() {
     const role = AppState.currentUser?.role || 'MEMBER';
-    return role === 'ADMIN' || role === 'COACH';
+    return role === 'ADMIN';
   }
 
-  // ------------------------------
-  // Create announcement modal flow
-  // ------------------------------
+  // LOAD TEAM OPTIONS INTO THE CREATE-ANNOUNCEMENT TEAM DROPDOWN.
   async function populateSidebarAnnouncementTeams() {
     const teamSelect = document.getElementById('sidebar-announcement-team-select');
     if (!teamSelect) return;
@@ -159,6 +202,7 @@ export function createLayoutController({
       .join('');
   }
 
+  // BIND CREATE FORM EVENTS ONCE AND HANDLE SUBMIT LOGIC.
   function setupSidebarCreateAnnouncementForm() {
     const form = document.getElementById('sidebar-create-announcement-form');
     const targetSelect = document.getElementById('sidebar-announcement-target');
@@ -166,6 +210,7 @@ export function createLayoutController({
 
     if (!form || !targetSelect || !teamGroup || isSidebarCreateFormBound) return;
 
+    // SHOW TEAM SELECT ONLY WHEN TARGET IS SPECIFIC TEAM.
     const toggleTeamTarget = () => {
       teamGroup.style.display = targetSelect.value === 'TEAM' ? 'block' : 'none';
     };
@@ -180,6 +225,7 @@ export function createLayoutController({
       const target = formData.get('target');
       const selectedTeamId = formData.get('teamId');
 
+      // CONVERT UI TARGET VALUES INTO API PAYLOAD VALUES.
       let audience = 'club';
       let team_id = null;
 
@@ -192,23 +238,33 @@ export function createLayoutController({
 
       const announcementData = {
         title: formData.get('title'),
-        content: formData.get('content'),
+        description: formData.get('content'),
         category: formData.get('category'),
-        target,
         audience,
         team_id,
-        eventId: formData.get('eventId') || null
+        admin_id: AppState.currentUser?.id ?? null
       };
 
       try {
-        await apiPost('/announcements/create', announcementData);
-        AppState.announcements = [];
+        const response = await apiPost('/announcements/create', announcementData);
+        console.log('✅ Announcement created successfully:', response);
+        
+        // PUSH NEW ANNOUNCEMENT INTO LOCAL STATE FOR INSTANT UI UPDATE.
+        const newAnnouncement = response?.data?.[0] || response?.data;
+        if (newAnnouncement) {
+          AppState.announcements.push(adaptAnnouncementRow(newAnnouncement));
+        } else {
+          // IF RESPONSE HAS NO ITEM, CLEAR CACHE SO NEXT RENDER REFETCHES.
+          AppState.announcements = [];
+        }
+        
         window.closeSidebarCreateAnnouncementModal();
         form.reset();
-        const currentPage = window.location.hash.slice(1) || 'dashboard';
-        await reroute(currentPage);
+        
+        // RE-RENDER SIDEBAR SO USER SEES THE NEW ITEM RIGHT AWAY.
+        await renderPersistentAnnouncementsSidebar();
       } catch (error) {
-        console.error('Create announcement failed:', error);
+        console.error('❌ Create announcement failed:', error);
         alert(error.message || 'Unable to create announcement');
       }
     });
@@ -216,6 +272,7 @@ export function createLayoutController({
     isSidebarCreateFormBound = true;
   }
 
+  // GLOBAL OPEN/CLOSE FUNCTIONS FOR CREATE-ANNOUNCEMENT MODAL.
   window.openSidebarCreateAnnouncementModal = async function () {
     if (!canCreateAnnouncements()) return;
     setupSidebarCreateAnnouncementForm();
@@ -235,6 +292,7 @@ export function createLayoutController({
     }
   };
 
+  // FIND CREATE BUTTONS IN PAGE WRAPPERS AND BIND CLICK HANDLERS.
   function bindSidebarCreateAnnouncementButtons() {
     const canCreate = canCreateAnnouncements();
     const buttons = document.querySelectorAll('[data-sidebar-create-announcement]');
@@ -246,13 +304,12 @@ export function createLayoutController({
     });
   }
 
-  // ------------------------------
-  // Persistent sidebar rendering
-  // ------------------------------
+  // RENDER THE PERSISTENT ANNOUNCEMENTS SIDEBAR LIST.
   async function renderPersistentAnnouncementsSidebar() {
     const list = document.getElementById('persistent-announcements-list');
     if (!list) return;
 
+    // BASIC COLOR MAP PER ANNOUNCEMENT CATEGORY.
     const categoryColors = {
       GENERAL: '#6B7280',
       TRAINING: '#2563EB',
@@ -273,9 +330,11 @@ export function createLayoutController({
       index,
       categoryColor: categoryColors[announcement.category] || '#6B7280',
       category: announcement.category || 'GENERAL',
-      date: announcement.created_at ? new Date(announcement.created_at).toLocaleDateString('en-US', { month: 'short', day: 'numeric' }) : '',
+      date: (announcement.created_at || announcement.date)
+        ? new Date(announcement.created_at || announcement.date).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })
+        : '',
       title: announcement.title || 'Untitled announcement',
-      author: announcement.author_name || announcement.author || 'Admin'
+      author: getAnnouncementAuthorLabel(announcement)
     })).join('');
 
     const cards = list.querySelectorAll('[data-announcement-index]');
@@ -290,14 +349,18 @@ export function createLayoutController({
     });
   }
 
+  // ONLY THESE PAGES USE THE PERSISTENT RIGHT SIDEBAR.
   function shouldUsePersistentSidebar(page) {
-    return page !== 'login' && page !== 'schedule' && page !== 'dashboard';
+    return page !== 'login' && page !== 'schedule';
   }
 
+  // SESSIONS PAGE ALREADY HAS ITS OWN LAYOUT, SO SKIP WRAPPING THERE.
   function shouldInjectSidebarWrapper(page) {
-    return shouldUsePersistentSidebar(page) && page !== 'sessions';
+    if (page === 'sessions') return false;
+    return shouldUsePersistentSidebar(page);
   }
 
+  // WRAP A PAGE VIEW WITH THE SHARED ANNOUNCEMENTS SIDEBAR TEMPLATE.
   function wrapPageWithPersistentSidebar(viewHTML, pageName) {
     return `
       <div class="page-with-announcements page-with-announcements--${pageName}">
@@ -313,9 +376,7 @@ export function createLayoutController({
     `;
   }
 
-  // ------------------------------
-  // Shared component injection
-  // ------------------------------
+  // INJECT SHARED MODAL COMPONENTS INTO DOCUMENT BODY IF MISSING.
   async function injectSharedComponents() {
     const components = [
       { name: 'announcement-modal', id: 'announcement-detail-modal' },
@@ -335,6 +396,7 @@ export function createLayoutController({
     }
   }
 
+  // EXPOSE CONTROLLER FUNCTIONS USED BY THE APP ROUTER.
   return {
     bindSidebarCreateAnnouncementButtons,
     injectSharedComponents,

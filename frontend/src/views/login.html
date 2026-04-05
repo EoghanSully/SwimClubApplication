@@ -1,15 +1,20 @@
-<!-- Login View -->
+<!-- // LOGIN PAGE ROOT WRAPPER FOR AUTHENTICATION FLOW. -->
 <div class="login-container">
+  <!-- // LOGIN CARD HOLDING BRANDING, FORM FIELDS, AND SUBMIT ACTION. -->
   <div class="login-card">
+    <!-- // BRAND HEADER AREA SHOWN ABOVE THE LOGIN FORM. -->
     <div class="login-header">
       <div class="login-logo">UG</div>
       <h1 class="login-title">University of Galway</h1>
       <h2 class="login-subtitle">Swim Club Portal</h2>
     </div>
 
+    <!-- // LOGIN FORM WITH VALIDATION AND ERROR DISPLAY TARGET. -->
     <form id="login-form" class="login-form">
+      <!-- // INLINE ERROR REGION SHOWN WHEN AUTHENTICATION FAILS. -->
       <div id="login-error" class="error-message hidden" style="margin-bottom: 1rem;"></div>
 
+      <!-- // EMAIL INPUT GROUP FOR USERNAME CREDENTIAL ENTRY. -->
       <div class="form-group">
         <label class="form-label">Email Address</label>
         <input
@@ -22,6 +27,7 @@
         >
       </div>
 
+      <!-- // PASSWORD INPUT GROUP FOR SECRET CREDENTIAL ENTRY. -->
       <div class="form-group">
         <label class="form-label">Password</label>
         <input
@@ -34,6 +40,7 @@
         >
       </div>
 
+      <!-- // PRIMARY SUBMIT ACTION TO START LOGIN REQUEST. -->
       <button type="submit" class="login-btn">Sign In</button>
     </form>
   </div>

@@ -1,9 +1,7 @@
 import { AppState } from '../app.js';
 import { formatDateLong } from '../utils/date.js';
 
-/**
- * Get user profile data
- */
+// GET USER PROFILE DATA FROM CURRENT APP STATE.
 export async function getProfile(userId) {
   try {
     const user = AppState.currentUser && AppState.currentUser.id === userId ? AppState.currentUser : null;
@@ -27,6 +25,7 @@ export async function getProfile(userId) {
   }
 }
 
+// FORMAT JOINED DATE INTO MONTH/YEAR WITH A SAFE DEFAULT.
 function formatJoinedDate(joinedDate) {
   if (!joinedDate) return 'January 2023';
 
@@ -36,11 +35,13 @@ function formatJoinedDate(joinedDate) {
   return parsed.toLocaleDateString('en-IE', { month: 'long', year: 'numeric' });
 }
 
+// BUILD AVATAR INITIAL FROM DISPLAY NAME.
 function getAvatarText(name = 'User') {
   const trimmed = String(name).trim();
   return trimmed ? trimmed.charAt(0).toUpperCase() : 'U';
 }
 
+// BUILD A SHORT TEAM BADGE TOKEN FROM TEAM NAME WORD INITIALS.
 function getTeamBadge(teamName = '') {
   return teamName
     .split(' ')
@@ -50,6 +51,7 @@ function getTeamBadge(teamName = '') {
     .join('') || 'SQ';
 }
 
+// INITIALISE PROFILE HEADER, BASICS, AND TEAM/SQUAD DISPLAY.
 export async function initProfile() {
   console.log('👤 Initializing Profile...');
   const user = AppState.currentUser;

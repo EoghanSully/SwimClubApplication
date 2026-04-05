@@ -1,23 +1,19 @@
-/* ============================================
-	 NAVIGATION STYLES
-	 University of Galway Swim Club
-	 ============================================ */
+/* THIS FILE STYLES THE TOP NAVIGATION BAR. */
 
-/* ============================================
-	 TOP NAVIGATION BAR
-	 ============================================ */
+/* TOP NAVIGATION BAR */
 .top-nav {
 	position: fixed;
 	top: 0;
 	left: 0;
 	width: 100%;
 	height: 80px;
-	background: var(--maroon-primary);
+	background-color: var(--maroon-primary);
 	border-bottom: 4px solid var(--maroon-dark);
 	box-shadow: var(--shadow-xl);
 	z-index: 100;
 }
 
+/* INNER NAV WRAPPER THAT CONTROLS HORIZONTAL SPACING AND ALIGNMENT. */
 .nav-container {
 	max-width: 1600px;
 	margin: 0 auto;
@@ -29,9 +25,7 @@
 	gap: var(--spacing-6);
 }
 
-/* ============================================
-	 LOGO
-	 ============================================ */
+/* LOGO AREA */
 .nav-logo {
 	flex-shrink: 0;
 	display: flex;
@@ -39,10 +33,11 @@
 	gap: 1.2rem;
 }
 
+/* CLICKABLE LOGO SQUARE WITH INITIAL/ICON. */
 .logo-box {
 	width: 56px;
 	height: 56px;
-	background: var(--white);
+	background-color: var(--white);
 	border: 3px solid var(--white);
 	border-radius: var(--radius-md);
 	display: flex;
@@ -56,17 +51,20 @@
 	cursor: pointer;
 }
 
+/* HOVER EFFECT FOR THE LOGO BOX. */
 .logo-box:hover {
 	transform: scale(1.08);
 	box-shadow: var(--shadow-xl);
 }
 
+/* TEXT STACK NEXT TO LOGO BOX (BRAND + SUBTITLE). */
 .logo-text {
 	display: flex;
 	flex-direction: column;
 	gap: 0;
 }
 
+/* MAIN BRAND NAME IN THE NAV LOGO AREA. */
 .logo-brand {
 	font-size: 1.1rem;
 	font-weight: 900;
@@ -76,6 +74,7 @@
 	line-height: 1;
 }
 
+/* SECONDARY BRAND SUBTITLE UNDER THE MAIN BRAND NAME. */
 .logo-subtitle {
 	font-size: 0.65rem;
 	font-weight: 700;
@@ -95,6 +94,7 @@
 	justify-content: center;
 }
 
+/* INDIVIDUAL NAVIGATION LINK ITEM STYLE. */
 .nav-item {
 	display: flex;
 	align-items: center;
@@ -102,7 +102,7 @@
 	margin: 0;
 	border-radius: 999px;
 	border: 1px solid transparent;
-	background: transparent;
+	background-color: transparent;
 	box-shadow: none;
 	font-size: 0.875rem;
 	font-weight: 700;
@@ -114,20 +114,23 @@
 	position: relative;
 }
 
+/* HOVER STATE FOR NAVIGATION LINKS. */
 .nav-item:hover {
 	color: var(--white);
-	background: rgba(255, 255, 255, 0.08);
+	background-color: rgba(255, 255, 255, 0.08);
 	transform: translateY(-1px);
 }
 
+/* ACTIVE ROUTE STATE FOR THE CURRENT PAGE LINK. */
 .nav-item.active {
-	background: var(--white);
+	background-color: var(--white);
 	color: var(--maroon-primary);
 	border-color: var(--white);
 	border-radius: 999px;
 	box-shadow: 0 10px 20px rgba(0, 0, 0, 0.16);
 }
 
+/* ICON HOLDER INSIDE EACH NAV ITEM. */
 .nav-icon {
 	width: 20px;
 	height: 20px;
@@ -136,6 +139,7 @@
 	justify-content: center;
 }
 
+/* LABEL TEXT INSIDE NAV ITEMS. */
 .nav-label {
 	white-space: nowrap;
 }
@@ -151,6 +155,7 @@
 	flex-shrink: 0;
 }
 
+/* CURRENT USER DISPLAY NAME IN TOP NAV. */
 .user-name {
 	font-size: 1rem;
 	font-weight: 900;
@@ -159,6 +164,7 @@
 	letter-spacing: 0.05em;
 }
 
+/* CURRENT USER ROLE LABEL IN TOP NAV. */
 .user-role {
 	font-size: 0.75rem;
 	font-weight: 700;
@@ -167,10 +173,11 @@
 	letter-spacing: 0.1em;
 }
 
+/* LOGOUT ACTION BUTTON IN USER AREA. */
 .logout-btn {
 	margin-top: var(--spacing-1);
 	padding: var(--spacing-1) var(--spacing-3);
-	background: rgba(255, 255, 255, 0.2);
+	background-color: rgba(255, 255, 255, 0.2);
 	color: var(--white);
 	border: 1px solid rgba(255, 255, 255, 0.3);
 	border-radius: var(--radius-sm);
@@ -181,8 +188,9 @@
 	transition: all 0.2s ease;
 }
 
+/* HOVER FEEDBACK FOR LOGOUT BUTTON. */
 .logout-btn:hover {
-	background: rgba(255, 255, 255, 0.3);
+	background-color: rgba(255, 255, 255, 0.3);
 	border-color: rgba(255, 255, 255, 0.5);
 }
 
@@ -190,20 +198,24 @@
 	 RESPONSIVE
 	 ============================================ */
 @media (max-width: 1200px) {
+	/* REDUCE SPACE BETWEEN NAV ITEMS ON MEDIUM SCREENS. */
 	.nav-items {
 		gap: 1.5rem;
 	}
 
+	/* SHRINK NAV ITEM PADDING AND TEXT SIZE FOR BETTER FIT. */
 	.nav-item {
 		padding: var(--spacing-2) var(--spacing-4);
 		font-size: 0.75rem;
 		border-radius: var(--radius-sm);
 	}
 
+	/* HIDE TEXT LABELS AND KEEP ICON-ONLY NAV ON MID-WIDTH SCREENS. */
 	.nav-label {
 		display: none;
 	}
 
+	/* INCREASE ICON SIZE WHEN LABELS ARE HIDDEN. */
 	.nav-icon {
 		width: 24px;
 		height: 24px;
@@ -212,33 +224,40 @@
 }
 
 @media (max-width: 768px) {
+	/* REDUCE NAV BAR HEIGHT FOR MOBILE. */
 	.top-nav {
 		height: 64px;
 	}
 
+	/* TIGHTEN HORIZONTAL PADDING ON MOBILE NAV CONTAINER. */
 	.nav-container {
 		padding: 0 var(--spacing-4);
 	}
 
+	/* SCALE LOGO BOX DOWN ON MOBILE. */
 	.logo-box {
 		width: 40px;
 		height: 40px;
 		font-size: 1rem;
 	}
 
+	/* REDUCE GAP BETWEEN MOBILE NAV ITEMS. */
 	.nav-items {
 		gap: var(--spacing-1);
 	}
 
+	/* COMPACT NAV ITEM BUTTON SHAPE ON MOBILE. */
 	.nav-item {
 		padding: var(--spacing-2);
 		border-radius: var(--radius-sm);
 	}
 
+	/* REDUCE USER NAME SIZE TO PREVENT CROWDING. */
 	.user-name {
 		font-size: 0.875rem;
 	}
 
+	/* HIDE ROLE AND LOGOUT CONTROLS TO SAVE SPACE ON MOBILE. */
 	.user-role,
 	.logout-btn {
 		display: none;

@@ -1,18 +1,18 @@
-/* ============================================
-	 PROFILE STYLES
-	 University of Galway Swim Club
-	 ============================================ */
+/* THIS FILE STYLES THE PROFILE PAGE. */
 
+/* PROFILE PAGE CONTAINER */
 .profile-container {
 	padding: var(--spacing-8);
 	max-width: 1400px;
 	margin: 0 auto;
 }
 
+/* TOP HERO AREA CONTAINING BANNER AND IDENTITY SUMMARY. */
 .profile-hero {
 	margin-bottom: var(--spacing-8);
 }
 
+/* DECORATIVE BANNER STRIP AT THE TOP OF THE PROFILE PAGE. */
 .profile-hero-banner {
 	height: 124px;
 	background: linear-gradient(180deg, #9c003f 0%, #a80050 100%);
@@ -21,15 +21,20 @@
 	overflow: hidden;
 }
 
+/* PATTERN OVERLAY ON THE HERO BANNER FOR VISUAL TEXTURE. */
 .profile-hero-banner::after {
 	content: '';
 	position: absolute;
-	inset: 0;
+	top: 0;
+	right: 0;
+	bottom: 0;
+	left: 0;
 	background: radial-gradient(circle at center, rgba(95, 0, 40, 0.18) 0, rgba(95, 0, 40, 0.18) 18px, transparent 18px) center -18px / 140px 140px repeat;
 	opacity: 0.45;
 	pointer-events: none;
 }
 
+/* MAIN HERO CONTENT ROW: AVATAR, IDENTITY, AND EDIT BUTTON. */
 .profile-hero-body {
 	display: grid;
 	grid-template-columns: auto 1fr auto;
@@ -41,17 +46,19 @@
 	z-index: 1;
 }
 
+/* WHITE FRAME BLOCK SURROUNDING THE LARGE AVATAR. */
 .profile-avatar-block {
 	padding: 4px;
-	background: var(--white);
+	background-color: var(--white);
 	box-shadow: 0 4px 14px rgba(17, 24, 39, 0.08);
 	border: 1px solid var(--gray-200);
 }
 
+/* LARGE INITIAL/AVATAR TILE SHOWN IN HERO AREA. */
 .profile-avatar-large {
 	width: 88px;
 	height: 88px;
-	background: var(--maroon-primary);
+	background-color: var(--maroon-primary);
 	border: 1px solid rgba(255, 255, 255, 0.45);
 	display: flex;
 	align-items: center;
@@ -62,10 +69,12 @@
 	text-transform: uppercase;
 }
 
+/* TEXT COLUMN FOR NAME AND ROLE NEXT TO AVATAR. */
 .profile-hero-identity {
 	padding-top: 1.5rem;
 }
 
+/* PRIMARY PROFILE NAME HEADING. */
 .profile-header-name {
 	font-size: 2rem;
 	font-weight: 800;
@@ -73,6 +82,7 @@
 	margin-bottom: 0.15rem;
 }
 
+/* ROLE LABEL STYLE UNDER THE PROFILE NAME. */
 .profile-header-role {
 	font-size: 1rem;
 	font-weight: 800;
@@ -81,11 +91,12 @@
 	letter-spacing: 0.08em;
 }
 
+/* EDIT BUTTON STYLE IN THE HERO AREA. */
 .profile-edit-btn {
 	align-self: start;
 	margin-top: 2rem;
 	padding: 0.8rem 1.35rem;
-	background: var(--white);
+	background-color: var(--white);
 	color: var(--gray-900);
 	border: 1px solid var(--gray-200);
 	box-shadow: 0 4px 12px rgba(17, 24, 39, 0.06);
@@ -95,11 +106,13 @@
 	transition: all 0.2s ease;
 }
 
+/* HOVER EFFECT FOR PROFILE EDIT BUTTON. */
 .profile-edit-btn:hover {
 	border-color: var(--gray-300);
 	box-shadow: 0 8px 18px rgba(17, 24, 39, 0.1);
 }
 
+/* TWO-COLUMN CONTENT LAYOUT FOR MAIN PROFILE PANELS. */
 .profile-layout {
 	display: grid;
 	grid-template-columns: minmax(0, 1.7fr) minmax(260px, 0.8fr);
@@ -107,19 +120,22 @@
 	align-items: start;
 }
 
+/* BASE PANEL CARD STYLE USED FOR PROFILE CONTENT BLOCKS. */
 .profile-panel {
-	background: var(--white);
+	background-color: var(--white);
 	border: 1px solid var(--gray-200);
 	box-shadow: 0 8px 24px rgba(17, 24, 39, 0.07);
 	padding: var(--spacing-6);
 }
 
+/* RIGHT-SIDE SECONDARY PANEL WIDTH LIMITS. */
 .profile-panel-secondary {
 	max-width: 320px;
 	justify-self: end;
 	width: 100%;
 }
 
+/* PANEL HEADER ROW WITH ACCENT BAR AND TITLE. */
 .profile-panel-header {
 	display: flex;
 	align-items: center;
@@ -129,13 +145,15 @@
 	border-bottom: 1px solid var(--gray-200);
 }
 
+/* VERTICAL COLOUR ACCENT BAR IN PANEL HEADERS. */
 .profile-panel-accent {
 	width: 6px;
 	height: 24px;
-	background: var(--maroon-primary);
+	background-color: var(--maroon-primary);
 	display: inline-block;
 }
 
+/* TITLE TEXT STYLE FOR PROFILE PANELS. */
 .profile-panel-title {
 	font-size: 1.75rem;
 	font-weight: 900;
@@ -144,21 +162,25 @@
 	color: var(--gray-900);
 }
 
+/* STACK OF BASIC PROFILE INFO ROWS (EMAIL, ROLE, ETC.). */
 .profile-basic-list {
 	display: flex;
 	flex-direction: column;
 }
 
+/* INDIVIDUAL BASIC INFO ROW WITH SEPARATOR. */
 .profile-basic-row {
 	padding: 1rem 0 1.35rem;
 	border-bottom: 1px solid var(--gray-100);
 }
 
+/* REMOVE BORDER/PADDING ADJUSTMENT FOR THE FINAL INFO ROW. */
 .profile-basic-row:last-child {
 	border-bottom: none;
 	padding-bottom: 0;
 }
 
+/* LABEL STYLE FOR BASIC PROFILE FIELDS. */
 .profile-basic-label {
 	display: block;
 	font-size: 0.92rem;
@@ -169,6 +191,7 @@
 	margin-bottom: 0.65rem;
 }
 
+/* VALUE STYLE FOR BASIC PROFILE FIELDS. */
 .profile-basic-value {
 	font-size: 1.6rem;
 	font-weight: 700;
@@ -177,12 +200,14 @@
 	word-break: break-word;
 }
 
+/* VERTICAL LIST OF TEAM/SQUAD CARDS. */
 .profile-squads-list {
 	display: flex;
 	flex-direction: column;
 	gap: var(--spacing-4);
 }
 
+/* INDIVIDUAL SQUAD SUMMARY CARD LAYOUT. */
 .profile-squad-card {
 	display: grid;
 	grid-template-columns: 52px 1fr;
@@ -191,10 +216,11 @@
 	padding-top: var(--spacing-2);
 }
 
+/* ICON BLOCK FOR SQUAD CARD INITIALS/IDENTIFIER. */
 .profile-squad-icon {
 	width: 52px;
 	height: 52px;
-	background: var(--maroon-primary);
+	background-color: var(--maroon-primary);
 	color: var(--white);
 	display: flex;
 	align-items: center;
@@ -205,6 +231,7 @@
 	box-shadow: 0 6px 14px rgba(168, 0, 80, 0.18);
 }
 
+/* SQUAD NAME TEXT STYLE. */
 .profile-squad-name {
 	font-size: 1.35rem;
 	font-weight: 700;
@@ -213,6 +240,7 @@
 	margin-bottom: 0.45rem;
 }
 
+/* SQUAD META TEXT (EXTRA DETAILS UNDER NAME). */
 .profile-squad-meta {
 	font-size: 0.9rem;
 	text-transform: uppercase;
@@ -221,6 +249,7 @@
 	font-weight: 700;
 }
 
+/* STATUS LABEL ROW FOR SQUAD MEMBERSHIP STATE. */
 .profile-squad-status {
 	display: inline-flex;
 	align-items: center;
@@ -233,15 +262,17 @@
 	margin-top: 0.2rem;
 }
 
+/* GREEN STATUS DOT PREPENDED BEFORE SQUAD STATUS TEXT. */
 .profile-squad-status::before {
 	content: '';
 	width: 7px;
 	height: 7px;
 	border-radius: 999px;
-	background: #22c55e;
+	background-color: #22c55e;
 	display: inline-block;
 }
 
+/* EMPTY-STATE TEXT WHEN USER HAS NO SQUADS OR DATA. */
 .profile-empty-state {
 	font-size: 1rem;
 	font-weight: 600;
@@ -249,22 +280,26 @@
 	padding-top: var(--spacing-2);
 }
 
+/* COLOUR VARIANT FOR COMPETITION EVENT TYPE TAGS. */
 .profile-event-type.competition {
-	background: var(--color-competition);
+	background-color: var(--color-competition);
 }
 
+/* COLOUR VARIANT FOR SOCIAL EVENT TYPE TAGS. */
 .profile-event-type.social {
-	background: var(--color-social);
+	background-color: var(--color-social);
 }
 
+/* COLOUR VARIANT FOR SOCIETY EVENT TYPE TAGS. */
 .profile-event-type.society {
-	background: var(--color-society);
+	background-color: var(--color-society);
 }
 
 /* ============================================
 	 RESPONSIVE
 	 ============================================ */
 @media (max-width: 768px) {
+	/* STACK HERO HEADER CONTENT VERTICALLY ON MOBILE. */
 	.profile-header-content {
 		flex-direction: column;
 		align-items: center;
@@ -273,29 +308,35 @@
 		padding: 0 var(--spacing-4) var(--spacing-6);
 	}
 
+	/* ENLARGE AVATAR IN MOBILE HEADER LAYOUT. */
 	.profile-avatar-large {
 		width: 120px;
 		height: 120px;
 		font-size: 3rem;
 	}
 
+	/* REDUCE HEADER NAME SIZE FOR MOBILE BALANCE. */
 	.profile-header-name {
 		font-size: 2rem;
 	}
 
+	/* SINGLE-COLUMN PROFILE CONTENT ON MOBILE. */
 	.profile-content-grid {
 		grid-template-columns: 1fr;
 	}
 
+	/* STACK TEAMS AND STATS CARDS IN ONE COLUMN ON MOBILE. */
 	.profile-teams-grid,
 	.profile-stats-grid {
 		grid-template-columns: 1fr;
 	}
 
+	/* STACK EVENT CARD INTERNAL LAYOUT VERTICALLY ON MOBILE. */
 	.profile-event-card {
 		flex-direction: column;
 	}
 
+	/* FULL-WIDTH EVENT DATE STRIP ON MOBILE EVENT CARDS. */
 	.profile-event-date {
 		width: 100%;
 		display: flex;

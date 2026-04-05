@@ -1,14 +1,16 @@
 /**
- * Date Utilities for Swim Club Application
- * Handles date formatting, comparisons, and calendar logic
+ * DATE UTILITIES FOR SWIM CLUB APPLICATION
+ * HANDLES DATE FORMATTING, COMPARISONS, AND CALENDAR LOGIC
  */
 
+// FORMAT A DATE STRING INTO A SHORT HUMAN-READABLE FORM.
 export function formatDate(dateStr) {
   if (!dateStr) return '';
   const date = new Date(dateStr);
   return date.toLocaleDateString('en-IE', { month: 'short', day: 'numeric', year: 'numeric' });
 }
 
+// FORMAT A DATE STRING INTO A LONG HUMAN-READABLE FORM.
 export function formatDateLong(dateStr) {
   if (!dateStr) return '';
   const date = new Date(dateStr);
@@ -20,29 +22,34 @@ export function formatDateLong(dateStr) {
   });
 }
 
+// COMBINE A DATE AND TIME STRING INTO ONE DISPLAY STRING.
 export function formatDateTime(dateStr, timeStr) {
   if (!dateStr) return '';
   return `${formatDate(dateStr)} at ${timeStr}`;
 }
 
+// NORMALISE TIME STRING DISPLAY TO HH:MM.
 export function formatTime(timeStr) {
   if (!timeStr) return '';
   const [hours, minutes] = timeStr.split(':');
   return `${hours}:${minutes}`;
 }
 
+// CHECK WHETHER A SESSION IS STILL IN THE FUTURE.
 export function isSessionUpcoming(dateStr, timeStr) {
   const now = new Date();
   const eventDateTime = new Date(`${dateStr}T${timeStr}`);
   return eventDateTime > now;
 }
 
+// CHECK WHETHER A SESSION HAS ALREADY PASSED.
 export function isSessionPast(dateStr, timeStr) {
   const now = new Date();
   const eventDateTime = new Date(`${dateStr}T${timeStr}`);
   return eventDateTime <= now;
 }
 
+// FIND THE NEXT UPCOMING TRAINING SESSION FROM AN EVENTS LIST.
 export function getNextUpcomingSession(events) {
   if (!events || events.length === 0) return null;
   
@@ -64,6 +71,7 @@ export function getNextUpcomingSession(events) {
   return upcomingSessions[0];
 }
 
+// RETURN HOW MANY DAYS REMAIN UNTIL A SESSION STARTS.
 export function daysUntilSession(dateStr, timeStr) {
   const now = new Date();
   const eventDateTime = new Date(`${dateStr}T${timeStr}`);
@@ -72,6 +80,7 @@ export function daysUntilSession(dateStr, timeStr) {
   return diffDays;
 }
 
+// BUILD A CALENDAR GRID ARRAY (NULLS + DATE OBJECTS) FOR A MONTH VIEW.
 export function getCalendarDays(year, month) {
   const firstDay = new Date(year, month, 1);
   const lastDay = new Date(year, month + 1, 0);
@@ -80,12 +89,12 @@ export function getCalendarDays(year, month) {
   
   const days = [];
   
-  // Add empty cells for days before month starts
+  // ADD EMPTY CELLS FOR DAYS BEFORE MONTH STARTS
   for (let i = 0; i < startingDayOfWeek; i++) {
     days.push(null);
   }
   
-  // Add days of the month
+  // ADD DAYS OF THE MONTH
   for (let day = 1; day <= daysInMonth; day++) {
     days.push(new Date(year, month, day));
   }
@@ -93,22 +102,25 @@ export function getCalendarDays(year, month) {
   return days;
 }
 
+// CHECK IF TWO DATE OBJECTS FALL ON THE EXACT SAME CALENDAR DAY.
 export function isSameDay(date1, date2) {
   return date1.getFullYear() === date2.getFullYear() &&
          date1.getMonth() === date2.getMonth() &&
          date1.getDate() === date2.getDate();
 }
 
+// MAP EVENT TYPE TO ITS DISPLAY COLOUR VALUE.
 export function eventTypeToColor(type) {
   const colors = {
-    'TRAINING': 'rgb(37, 99, 235)',      // Blue
-    'COMPETITION': 'rgb(220, 38, 38)',    // Red
-    'SOCIAL': 'rgb(22, 163, 74)',         // Green
-    'SOCIETY': 'rgb(217, 119, 6)'         // Amber
+    'TRAINING': 'rgb(37, 99, 235)',      // BLUE
+    'COMPETITION': 'rgb(220, 38, 38)',    // RED
+    'SOCIAL': 'rgb(22, 163, 74)',         // GREEN
+    'SOCIETY': 'rgb(217, 119, 6)'         // AMBER
   };
   return colors[type] || '#6b7280';
 }
 
+// MAP EVENT TYPE TO A HUMAN-READABLE LABEL.
 export function eventTypeLabel(type) {
   const labels = {
     'TRAINING': 'Training Session',
@@ -119,20 +131,24 @@ export function eventTypeLabel(type) {
   return labels[type] || type;
 }
 
+// GET THE NUMBER OF DAYS IN A GIVEN MONTH.
 export function getDaysInMonth(year, month) {
   return new Date(year, month + 1, 0).getDate();
 }
 
+// GET WEEKDAY INDEX OF THE FIRST DAY IN A GIVEN MONTH.
 export function getFirstDayOfMonth(year, month) {
   return new Date(year, month, 1).getDay();
 }
 
+// CHECK IF A DATE STRING MATCHES TODAY'S DATE.
 export function isToday(dateString) {
   const date = new Date(dateString);
   const today = new Date();
   return date.toDateString() === today.toDateString();
 }
 
+// CHECK IF A DATE STRING IS TODAY OR IN THE FUTURE.
 export function isFuture(dateString) {
   const date = new Date(dateString);
   const today = new Date();
@@ -140,6 +156,7 @@ export function isFuture(dateString) {
   return date >= today;
 }
 
+// MAP ANNOUNCEMENT CATEGORY TO ITS BADGE COLOUR NAME.
 export function announcementCategoryColor(category) {
   const colors = {
     'TRAINING': 'blue',

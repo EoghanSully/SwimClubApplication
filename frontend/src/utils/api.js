@@ -1,150 +1,43 @@
-const API_HOST = typeof window !== 'undefined' && window.location?.hostname
-  ? window.location.hostname
-  : 'localhost';
-const API_BASE_URL = `http://${API_HOST}:8080/api`; // Match frontend host (localhost or 127.0.0.1)
+// THIS FILE HOLDS SHARED HTTP HELPERS FOR TALKING TO THE BACKEND API.
 
+// BUILD BASE URL FROM THE CURRENT HOSTNAME SO LOCAL/LAN TESTING STILL WORKS.
+const API_HOST = window.location?.hostname || 'localhost';
+const API_BASE_URL = `http://${API_HOST}:8080/api`;
+
+// CLEAR STORED AUTH STATE AND RETURN USER TO LOGIN WHEN TOKEN IS INVALID.
 function handleUnauthorized() {
-  try {
-    localStorage.removeItem('currentUser');
-    localStorage.removeItem('currentUserId');
-    localStorage.removeItem('token');
-  } catch (_) {
-    // Ignore storage errors (e.g., non-browser contexts)
-  }
-
-  if (typeof window !== 'undefined' && window.location.hash !== '#login') {
-    window.location.hash = 'login';
-  }
+  localStorage.removeItem('currentUser');
+  localStorage.removeItem('currentUserId');
+  localStorage.removeItem('token');
+  if (window.location.hash !== '#login') window.location.hash = 'login';
 }
 
-export async function apiGet(endpoint) {
-  const response = await fetch(`${API_BASE_URL}${endpoint}`, { //
-    method: 'GET',
-            //Sends JWT cookie automatically
-    credentials: 'include',        
-    headers: {
-      'Accept': 'application/json' //Ensures server returns JSON responses
-    }
-  });
-  
-  if (!response.ok) {
-    const error = await response.json().catch(() => ({})); //Tries to parse error message from response, defaults to empty object if parsing fails
-    if (response.status === 401) {
-      handleUnauthorized();
-    }
-    throw new Error(error.message || `HTTP ${response.status}`); //Throws error with message from server or generic HTTP status if no message provided
+// SHARED REQUEST WRAPPER FOR ALL HTTP METHODS USED BY THE APP.
+async function request(method, url, data) {
+  const opts = {
+    method,
+    credentials: 'include',
+    headers: { 'Accept': 'application/json' }
+  };
+  if (data !== undefined) {
+    opts.headers['Content-Type'] = 'application/json';
+    opts.body = JSON.stringify(data);
   }
-  
-  return response.json(); //Parses and returns JSON response body from server
-}
-
-
-export async function apiPost(endpoint, data) {
-  const response = await fetch(`${API_BASE_URL}${endpoint}`, {
-    method: 'POST',
-    credentials: 'include',           //Sends JWT cookie automatically
-    headers: {
-      'Content-Type': 'application/json',
-      'Accept': 'application/json'
-    },
-    body: JSON.stringify(data) //Converts data object to JSON string for request body
-  });
-  
+  const response = await fetch(url, opts);
   if (!response.ok) {
     const error = await response.json().catch(() => ({}));
-    if (response.status === 401) {
-      handleUnauthorized();
-    }
+    if (response.status === 401) handleUnauthorized();
     throw new Error(error.message || error.error || `HTTP ${response.status}`);
   }
-  
-  return response.json();
-}
-export async function apiPostLogin(endpoint, data) {
-  const response = await fetch(`${API_BASE_URL}${endpoint}`, {
-    method: 'POST',
-    credentials: 'include',           //Sends JWT cookie automatically
-    headers: {
-      'Content-Type': 'application/json',
-      'Accept': 'application/json'
-    },
-    body: JSON.stringify(data) //Converts data object to JSON string for request body
-  });
-  
-  if (!response.ok) {
-    const error = await response.json().catch(() => ({}));
-    throw new Error(error.message || `HTTP ${response.status}`);
-  }
-  
-  return response.json();
-}
-//QUESTION
-//check if this is always better to call apiPut instead of apiPatch for updating events, since we are sending the whole event object with all fields in the request body, not just specific fields that need to be updated.
-export async function apiPatch(endpoint, data) { //updating specific fields of a resource
-  const response = await fetch(`${API_BASE_URL}${endpoint}`, {
-    method: 'PATCH',
-    credentials: 'include',           //Sends JWT cookie automatically
-    headers: {
-      'Content-Type': 'application/json',
-      'Accept': 'application/json'
-    },
-    body: JSON.stringify(data)
-  });
-  
-  if (!response.ok) {
-    const error = await response.json().catch(() => ({}));
-    if (response.status === 401) {
-      handleUnauthorized();
-    }
-    throw new Error(error.message || `HTTP ${response.status}`);
-  }
-  
+  if (method === 'DELETE') return response.ok;
   return response.json();
 }
 
-
-export async function apiPut(endpoint, data) { 
-  const response = await fetch(`${API_BASE_URL}${endpoint}`, {
-    method: 'PUT',
-    credentials: 'include',           //Sends JWT cookie automatically
-    headers: {
-      'Content-Type': 'application/json',
-      'Accept': 'application/json'
-    },
-    body: JSON.stringify(data)
-  });
-  
-  if (!response.ok) {
-    const error = await response.json().catch(() => ({}));
-    if (response.status === 401) {
-      handleUnauthorized();
-    }
-    throw new Error(error.message || `HTTP ${response.status}`);
-  }
-  
-  return response.json(); //Returns updated resource from server after successful PUT request 
-}
-
-
-export async function apiDelete(endpoint, id) { //data parameter is optional, can be used to send additional info if needed (e.g., for soft deletes)
-  const response = await fetch(`${API_BASE_URL}${endpoint}/${id ? id : ''}`, {
-    method: 'DELETE',
-    credentials: 'include',           //Sends JWT cookie automatically
-    headers: {
-      'Content-Type': 'application/json',
-      'Accept': 'application/json'
-    }
-  });
-  
-  if (!response.ok) {
-    const error = await response.json().catch(() => ({}));
-    if (response.status === 401) {
-      handleUnauthorized();
-    }
-    throw new Error(error.message || `HTTP ${response.status}`);
-  }
-  
-  return response.ok;  // DELETE usually returns no body
-}
+// CONVENIENCE HELPERS FOR STANDARD HTTP VERBS.
+export const apiGet    = (endpoint)       => request('GET',    `${API_BASE_URL}${endpoint}`);
+export const apiPost   = (endpoint, data) => request('POST',   `${API_BASE_URL}${endpoint}`, data);
+export const apiPatch  = (endpoint, data) => request('PATCH',  `${API_BASE_URL}${endpoint}`, data);
+export const apiPut    = (endpoint, data) => request('PUT',    `${API_BASE_URL}${endpoint}`, data);
+export const apiDelete = (endpoint, id)   => request('DELETE', `${API_BASE_URL}${endpoint}/${id || ''}`);
 
 

@@ -1,7 +1,6 @@
-/**
- * Schedule ViewModel  
- * Manages calendar view, event filtering, and event modal
- */
+ //SCHEDULE VIEWMODEL
+ //MANAGES CALENDAR VIEW, EVENT FILTERING, AND EVENT MODAL.
+ 
 
 import { AppState } from '../app.js';
 import * as eventModel from '../models/eventsModel.js';
@@ -9,6 +8,7 @@ import * as teamModel from '../models/teamModel.js';
 import { getCalendarDays, isSameDay, formatDateLong, formatTime, eventTypeLabel, eventTypeToColor } from '../utils/date.js';
 import { loadComponent, renderTemplate } from '../utils/components.js';
 
+// ESCAPE USER-CONTROLLED TEXT BEFORE INSERTING INTO HTML STRINGS.
 function escapeHtml(value) {
   return String(value ?? '')
     .replace(/&/g, '&amp;')
@@ -18,6 +18,7 @@ function escapeHtml(value) {
     .replace(/'/g, '&#39;');
 }
 
+  // MAP EVENT AUDIENCE DATA INTO A HUMAN-READABLE LABEL.
 function getEventAudienceLabel(event) {
   if (event.teamId) {
     return AppState.teams.find((team) => Number(team.id) === Number(event.teamId))?.name || 'Team Event';
@@ -28,9 +29,8 @@ function getEventAudienceLabel(event) {
   return 'All Club';
 }
 
-// ============================================
-// MODAL FUNCTIONS (Global)
-// ============================================
+
+// MODAL FUNCTIONS (GLOBAL)
 window.openCreateEventModal = function () {
   const modal = document.getElementById('create-event-modal');
   if (modal) {
@@ -52,6 +52,7 @@ let selectedDay = null;
 let filterTeamId = null;
 let filterEventType = 'ALL';
 
+// INITIALISE SCHEDULE DATA, FILTERS, LISTENERS, AND CREATE-EVENT FLOW.
 export async function initSchedule() {
   console.log('📅 Initializing Schedule...');
   
@@ -59,15 +60,13 @@ export async function initSchedule() {
   const role = user?.role || 'MEMBER';
   
   try {
-  let events = AppState.events;
-  if (!events.length) {
-    try {
-      events = await eventModel.getAllEvents();
-      AppState.events = events;
-    } catch (e) {
-      console.warn('Could not load events for schedule:', e.message);
-      events = [];
-    }
+  let events = [];
+  try {
+    events = await eventModel.getAllEvents();
+    AppState.events = events;
+  } catch (e) {
+    console.warn('Could not load events for schedule:', e.message);
+    events = AppState.events || [];
   }
 
   let teams = AppState.teams.length ? AppState.teams : [];
@@ -81,7 +80,7 @@ export async function initSchedule() {
     }
   }
 
-  // Always render the calendar grid (even if empty)
+  // ALWAYS RENDER THE CALENDAR GRID, EVEN WHEN EVENT LIST IS EMPTY.
   renderCalendar(events, user, role);
   renderTeamFilter(teams, user, role);
   attachScheduleListeners(events, user, role);
@@ -91,6 +90,7 @@ export async function initSchedule() {
   }
 }
 
+// SET UP CREATE-EVENT MODAL INPUTS, ROLE RULES, AND FORM SUBMIT HANDLING.
 function setupCreateEvent(events, teams, user, role) {
   const createBtn = document.getElementById('create-event-btn');
   const emptyCreateBtn = document.getElementById('create-event-empty-btn');
@@ -154,6 +154,7 @@ function setupCreateEvent(events, teams, user, role) {
       ? Number(rawTeamId)
       : null;
 
+    // TEAM-SCOPED EVENTS REQUIRE A VALID TEAM SELECTION.
     if (audience === 'team' && (!parsedTeamId || Number.isNaN(parsedTeamId))) {
       alert('Please select a team for a team-specific event.');
       return;
@@ -191,15 +192,17 @@ function setupCreateEvent(events, teams, user, role) {
   });
 }
 
+// CONVERT MINUTES INTO BACKEND INTERVAL FORMAT HH:MM:SS.
 function minutesToInterval(minutes) {
   const hrs = Math.floor(minutes / 60);
   const mins = minutes % 60;
   return `${String(hrs).padStart(2, '0')}:${String(mins).padStart(2, '0')}:00`;
 }
 
+// APPLY ROLE-BASED ACCESS RULES PLUS ACTIVE TEAM/TYPE FILTERS.
 function getFilteredEvents(allEvents, user, role) {
   return allEvents.filter(event => {
-    // Role-based visibility
+    // ROLE-BASED VISIBILITY RULES.
     if (role === 'MEMBER') {
       if (!event.teamId || event.teamId === 'CLUB') return true;
       return user.teamIds?.includes(event.teamId);
@@ -211,18 +214,19 @@ function getFilteredEvents(allEvents, user, role) {
       return team?.coachIds?.includes(user.id);
     }
     
-    return true; // Admin sees all
+    return true; // ADMIN SEES ALL.
   }).filter(event => {
-    // Apply team filter
+    // APPLY TEAM FILTER.
     if (filterTeamId && event.teamId !== filterTeamId) return false;
     
-    // Apply event type filter
+    // APPLY EVENT TYPE FILTER.
     if (filterEventType !== 'ALL' && event.type !== filterEventType) return false;
     
     return true;
   });
 }
 
+// RENDER CALENDAR HEADER AND GRID CELLS FOR THE CURRENT MONTH.
 function renderCalendar(allEvents, user, role) {
   const calendarContainer = document.getElementById('calendar-grid');
   if (!calendarContainer) return;
@@ -231,13 +235,13 @@ function renderCalendar(allEvents, user, role) {
   const days = getCalendarDays(currentDate.getFullYear(), currentDate.getMonth());
   const today = new Date();
   
-  // Render month/year header
+  // RENDER MONTH/YEAR HEADER.
   const monthYearDiv = document.getElementById('calendar-month-year');
   if (monthYearDiv) {
     monthYearDiv.textContent = currentDate.toLocaleDateString('en-IE', { month: 'long', year: 'numeric' });
   }
   
-  // Render calendar grid
+  // RENDER CALENDAR GRID CELLS.
   const dayLabels = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
   let html = dayLabels.map(label => `<div class="calendar-day-label">${label}</div>`).join('');
   
@@ -268,6 +272,7 @@ function renderCalendar(allEvents, user, role) {
   calendarContainer.innerHTML = html;
 }
 
+// RENDER TEAM AND TYPE FILTER CONTROLS BASED ON USER ACCESS.
 function renderTeamFilter(teams, user, role) {
   const filterContainer = document.getElementById('schedule-filters');
   if (!filterContainer) return;
@@ -296,6 +301,7 @@ function renderTeamFilter(teams, user, role) {
   `;
 }
 
+// RENDER THE RIGHT-SIDE EVENT LIST FOR THE SELECTED DAY.
 async function renderDayEvents(events) {
   const dayEventsContainer = document.getElementById('day-events');
   const canCreate = ['ADMIN', 'COACH'].includes(AppState.currentUser?.role);
@@ -324,6 +330,7 @@ async function renderDayEvents(events) {
   })).join('');
 }
 
+// POPULATE AND SHOW THE EVENT DETAIL MODAL.
 function renderEventModal(event) {
   const modal = document.getElementById('event-modal');
   const title = document.getElementById('event-modal-title');
@@ -378,8 +385,9 @@ function renderEventModal(event) {
   modal.style.setProperty('display', 'flex', 'important');
 }
 
+// ATTACH CALENDAR NAVIGATION, FILTER, AND TYPE BUTTON LISTENERS.
 function attachScheduleListeners(allEvents, user, role) {
-  // Prev/Next month buttons
+  // PREVIOUS/NEXT MONTH BUTTONS.
   const prevBtn = document.getElementById('calendar-prev');
   const nextBtn = document.getElementById('calendar-next');
   
@@ -397,7 +405,7 @@ function attachScheduleListeners(allEvents, user, role) {
     });
   }
   
-  // Team filter
+  // TEAM FILTER.
   const teamFilter = document.getElementById('team-filter');
   if (teamFilter) {
     teamFilter.addEventListener('change', (e) => {
@@ -413,7 +421,7 @@ function attachScheduleListeners(allEvents, user, role) {
     });
   }
   
-  // Event type filters
+  // EVENT TYPE FILTER BUTTONS.
   const typeFilterBtns = document.querySelectorAll('.filter-btn[data-type]');
   typeFilterBtns.forEach(btn => {
     btn.addEventListener('click', (e) => {
@@ -432,7 +440,7 @@ function attachScheduleListeners(allEvents, user, role) {
   });
 }
 
-// Global functions for onclick handlers
+// GLOBAL FUNCTIONS FOR INLINE ONCLICK HANDLERS.
 window.selectDay = function(day) {
   selectedDay = day;
   const filteredEvents = getFilteredEvents(AppState.events, AppState.currentUser, AppState.currentUser.role);

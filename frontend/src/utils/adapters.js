@@ -1,15 +1,21 @@
+// THIS FILE ADAPTS RAW BACKEND ROWS INTO FRONTEND-FRIENDLY OBJECT SHAPES.
+
+// PAD SINGLE-DIGIT TIME/DATE PARTS WITH A LEADING ZERO.
 function padTime(value) {
   return String(value).padStart(2, '0');
 }
 
+// FORMAT A JAVASCRIPT DATE INTO YYYY-MM-DD.
 function formatIsoDate(date) {
   return `${date.getFullYear()}-${padTime(date.getMonth() + 1)}-${padTime(date.getDate())}`;
 }
 
+// FORMAT A JAVASCRIPT DATE INTO HH:MM.
 function formatClockTime(date) {
   return `${padTime(date.getHours())}:${padTime(date.getMinutes())}`;
 }
 
+// NORMALISE DIFFERENT INTERVAL FORMATS INTO TOTAL MINUTES.
 function parseIntervalMinutes(intervalValue) {
   if (!intervalValue) return 0;
 
@@ -17,7 +23,7 @@ function parseIntervalMinutes(intervalValue) {
     return intervalValue;
   }
 
-  // Some drivers return interval as an object (hours/minutes/seconds).
+  // SOME DRIVERS RETURN INTERVAL AS AN OBJECT (HOURS/MINUTES/SECONDS).
   if (typeof intervalValue === 'object') {
     const hours = Number(intervalValue.hours || 0);
     const minutes = Number(intervalValue.minutes || 0);
@@ -32,7 +38,7 @@ function parseIntervalMinutes(intervalValue) {
     return (hours * 60) + minutes;
   }
 
-  // Fallback for textual intervals like "1 hour" or "45 mins".
+  // FALLBACK FOR TEXTUAL INTERVALS LIKE "1 HOUR" OR "45 MINS".
   const text = String(intervalValue).toLowerCase();
   const hourMatch = text.match(/(\d+)\s*h/);
   const minMatch = text.match(/(\d+)\s*m/);
@@ -41,6 +47,7 @@ function parseIntervalMinutes(intervalValue) {
   return (hours * 60) + minutes;
 }
 
+// CONVERT ONE EVENTS TABLE ROW INTO THE APP EVENT MODEL.
 export function adaptEventRow(row) {
   const startDate = row?.event_date ? new Date(row.event_date) : null;
   const endDate = startDate ? new Date(startDate.getTime() + (parseIntervalMinutes(row.duration) * 60 * 1000)) : null;
@@ -65,6 +72,7 @@ export function adaptEventRow(row) {
   };
 }
 
+// CONVERT ONE ANNOUNCEMENTS TABLE ROW INTO THE APP ANNOUNCEMENT MODEL.
 export function adaptAnnouncementRow(row) {
   let target = 'ALL';
   if (row.team_id !== null && row.team_id !== undefined) {
@@ -76,12 +84,17 @@ export function adaptAnnouncementRow(row) {
   return {
     id: row.announcement_id,
     announcementId: row.announcement_id,
+    admin_id: row.admin_id,
+    adminId: row.admin_id,
     title: row.title,
     content: row.description || '',
     description: row.description || '',
     category: (row.category || 'GENERAL').toUpperCase(),
+    audience: row.audience || 'club',
     target,
+    team_id: row.team_id,
     teamId: row.team_id,
+    created_at: row.created_at || null,
     author: row.admin_id ? `Admin ${row.admin_id}` : 'Admin',
     date: row.created_at || new Date().toISOString(),
     eventId: null,
@@ -89,6 +102,7 @@ export function adaptAnnouncementRow(row) {
   };
 }
 
+// CONVERT ONE SESSION PLAN ROW INTO THE APP PLAN MODEL.
 export function adaptPlanRow(row) {
   return {
     id: row.plan_id,
@@ -106,6 +120,7 @@ export function adaptPlanRow(row) {
   };
 }
 
+// CONVERT ONE USER ROW INTO THE APP USER MODEL.
 export function adaptUserRow(row) {
   const firstName = row.first_name || '';
   const lastName = row.last_name || '';
@@ -124,6 +139,7 @@ export function adaptUserRow(row) {
   };
 }
 
+// GROUP TEAM JOIN ROWS INTO A TEAM LIST WITH MEMBERS ATTACHED.
 export function adaptTeamRows(rows) {
   const teamsById = new Map();
 
@@ -132,8 +148,8 @@ export function adaptTeamRows(rows) {
       const coachId = row.coach_id !== null && row.coach_id !== undefined ? Number(row.coach_id) : null;
       teamsById.set(row.team_id, {
         id: row.team_id,
-        name: row.team_name,
-        teamName: row.team_name,
+        name: row.team_name || row.name || `Team ${row.team_id}`,
+        teamName: row.team_name || row.name || `Team ${row.team_id}`,
         coachIds: coachId ? [coachId] : [],
         members: []
       });
@@ -141,13 +157,17 @@ export function adaptTeamRows(rows) {
 
     const team = teamsById.get(row.team_id);
     if (row.user_id) {
+      const role = typeof row.user_role === 'string'
+        ? row.user_role.toUpperCase()
+        : 'MEMBER';
+
       team.members.push({
         id: row.user_id,
-        name: `${row.first_name || ''} ${row.last_name || ''}`.trim(),
+        name: `${row.first_name || ''} ${row.last_name || ''}`.trim() || row.name || 'Member',
         firstName: row.first_name || '',
         lastName: row.last_name || '',
         email: row.email || '',
-        role: typeof row.user_role === 'string' ? row.user_role.toUpperCase() : 'MEMBER',
+        role,
         joinedDate: null
       });
     }
