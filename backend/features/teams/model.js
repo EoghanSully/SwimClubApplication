@@ -28,10 +28,10 @@ export const getTeamsForAttendance = async (user_role, coach_id) => {
         let result;
 
         if(user_role === "admin"){
-            query_string = "SELECT t.team_id,t.team_name,u.user_id,u.first_name,u.last_name,u.email,u.user_role,tm.joined_date FROM teams t LEFT JOIN team_members tm ON tm.team_id = t.team_id LEFT JOIN users u ON u.user_id = tm.user_id ORDER BY t.team_name, u.last_name NULLS LAST, u.first_name NULLS LAST;";
+            query_string = "SELECT t.team_id,t.team_name,u.user_id,u.first_name,u.last_name,u.email,u.user_role,tm.joined_date FROM teams t LEFT JOIN team_members tm ON tm.team_id = t.team_id LEFT JOIN users u ON u.user_id = tm.user_id ORDER BY t.team_name;";
             result = await pool.query(query_string);
         } else if(user_role === "coach"){
-            query_string = "SELECT t.team_id,t.team_name,u.user_id,u.first_name,u.last_name,u.email,u.user_role,tm.joined_date FROM teams t LEFT JOIN team_members tm ON tm.team_id = t.team_id LEFT JOIN users u ON u.user_id = tm.user_id WHERE t.coach_id = $1 ORDER BY t.team_name, u.last_name NULLS LAST, u.first_name NULLS LAST;";
+            query_string = "SELECT t.team_id,t.team_name,u.user_id,u.first_name,u.last_name,u.email,u.user_role,tm.joined_date FROM teams t LEFT JOIN team_members tm ON tm.team_id = t.team_id LEFT JOIN users u ON u.user_id = tm.user_id WHERE t.coach_id = $1 ORDER BY t.team_name;";
             result = await pool.query(query_string, [coach_id]);
         } else {
             result = { rows: [] };
