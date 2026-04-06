@@ -36,17 +36,6 @@ app.use("/api", teamRoutes); //accesses routes in the teamRoutes file with the p
 //Error handling middleware
 app.use(errorHandler); //handles errors thrown in routes and sends appropriate responses  
 
-//Testing pool conncetion and retrieval of user data (with ThunderClient)
-app.get('/test-db', async (req, res) => {
-  try {
-    const result = await pool.query('SELECT * FROM users WHERE user_id = 2'); //query to test connection 
-    res.send({ message: 'Database connection confirmed ', result:  result.rows[0] }); //should return user information in thunderclient 
-    console.log("Database retrieval:", result.rows[0]); //displays result in terminal console
-  } catch (err) {
-    console.error("Error testing database connection:", err);
-    res.status(500).json({ error: "Failed to test database connection" });
-  }
-}); 
 
 //Checking Server Running in terminal
 app.listen(port, () => {
